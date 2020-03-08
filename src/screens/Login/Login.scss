@@ -1,0 +1,52 @@
+$background: #fafbfc;
+
+.login {
+  background-color: $background;
+  min-height: 100vh;
+
+  background-image: url('/jira-left.svg'), url('/jira-right.svg');
+  background-attachment: fixed, fixed;
+  background-size: 25%, 25%;
+  background-repeat: no-repeat, no-repeat;
+  background-position: left bottom, right bottom;
+
+  @media only screen and (max-width: 705px) {
+    background-image: none;
+  }
+
+  .container {
+    width: 400px;
+    margin: 0 auto;
+  }
+
+  header {
+    padding: 40px 0;
+    text-align: center;
+  }
+
+  .jira-logo {
+    width: 86px;
+    text-align: center;
+  }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 400px;
+    border-top: 1px solid rgb(223, 225, 230);
+    text-align: center;
+    padding: 24px 0;
+
+    img {
+      width: 190px;
+      display: block;
+      margin: 0 auto;
+      margin-bottom: 5px;
+    }
+  }
+
+  span {
+    font-size: 12px;
+    color: rgb(107, 119, 140);
+  }
+}

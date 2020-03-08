@@ -1,11 +1,12 @@
 import React from 'react';
+import { Login } from './screens/Login/Login';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">Hey</header>
+    <div className="jira-ui">
+      <Login />
     </div>
   );
-}
+};
 
 export default App;
