@@ -1,4 +1,5 @@
 $background: #fafbfc;
+$gray: rgb(107, 119, 140);
 
 .login {
   background-color: $background;
@@ -26,7 +27,43 @@ $background: #fafbfc;
 
   .jira-logo {
     width: 86px;
+  }
+
+  section {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 40px;
     text-align: center;
+
+    h5 {
+      color: rgb(94, 108, 132);
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    #google-signin-button {
+      width: 320px;
+      border-bottom: 1px solid rgb(213, 216, 222);
+      padding-bottom: 20px;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    a {
+      color: rgb(0, 82, 204);
+      text-decoration: none;
+
+      &:first-of-type:after {
+        content: '•';
+        margin: 0 20px;
+        font-size: 14px;
+        color: $gray;
+      }
+    }
   }
 
   footer {
@@ -39,14 +76,15 @@ $background: #fafbfc;
 
     img {
       width: 190px;
+      height: 32px;
       display: block;
       margin: 0 auto;
       margin-bottom: 5px;
     }
   }
 
-  span {
+  .subtext {
     font-size: 12px;
-    color: rgb(107, 119, 140);
+    color: $gray;
   }
 }
