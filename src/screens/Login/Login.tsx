@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { FC } from 'react';
 import './Login.scss';
 import { useGoogleSignIn } from './useGoogleSignIn';
 
-export const Login: React.FC = () => {
+export const Login: FC = () => {
   const googleButtonId = 'google-signin-button';
 
   useGoogleSignIn(googleButtonId);

@@ -1,10 +1,13 @@
-import React from 'react';
+import { useEffect, useContext } from 'react';
 import { fetcher } from '../../fetcher';
+import { AuthContext } from '../../App';
 
 declare const gapi: any;
 
 export const useGoogleSignIn = (elementId: string) => {
-  React.useEffect(() => {
+  const userContext = useContext(AuthContext);
+
+  useEffect(() => {
     const meta = document.createElement('meta');
 
     meta.name = 'google-signin-client_id';
@@ -31,25 +34,22 @@ export const useGoogleSignIn = (elementId: string) => {
 
           await fetcher('/csrf-protection');
 
-          const response = await fetcher.post(
-            '/signupViaGoogle',
-            {
-              idToken: id_token
-            },
-            {
-              headers: {
-                'X-XSRF-TOKEN': 'beef',
-                Cookie: 'beef'
-              }
-            }
-          );
+          const response = await fetcher.post('/signupViaGoogle', {
+            idToken: id_token
+          });
 
-          fetcher.post('/login', { idToken: response.data.userId });
+          fetcher
+            .post('/login', { idToken: response.data.userId })
+            .then((response) => {
+              userContext.setAuth(true);
+            });
         },
-        onfailure: console.warn
+        onfailure: () => {
+          userContext.setAuth(false);
+        }
       });
     };
 
     document.body.appendChild(script);
-  }, []);
+  }, [elementId]);
 };
