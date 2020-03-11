@@ -27,7 +27,6 @@ export const useGoogleSignIn = (elementId: string) => {
         longtitle: true,
         theme: 'dark',
         onsuccess: async (googleUser: any) => {
-          return;
           const { id_token } = googleUser.getAuthResponse();
 
           await fetcher('/csrf-protection');
