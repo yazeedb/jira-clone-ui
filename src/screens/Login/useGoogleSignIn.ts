@@ -41,11 +41,11 @@ export const useGoogleSignIn = (elementId: string) => {
           fetcher
             .post('/login', { idToken: response.data.userId })
             .then((response) => {
-              userContext.setAuth(true);
+              // userContext.setAuth(true);
             });
         },
         onfailure: () => {
-          userContext.setAuth(false);
+          // userContext.setAuth(false);
         }
       });
     };
