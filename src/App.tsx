@@ -70,19 +70,16 @@ const authMachine = Machine(
   }
 );
 
-export const AuthContext = createContext<any>({
-  user: null,
-  authenticated: false
-});
+export const AuthContext = createContext<any>(null);
 
 const AuthShell = () => {
   const [current, send] = useMachine(authMachine);
 
   /*
-        User goes to any URL, go into LOADING state.
+        User enters app, go into LOADING state.
         Make a call to /user to check if they're good.
         if SUCCESS
-          go /home
+          go /intendedRoute
         else if FAILURE
           go /login
 
@@ -105,15 +102,28 @@ const AuthShell = () => {
     );
   }, []);
 
+  const contextValue = {
+    ...current.context,
+    send
+  };
+
   switch (current.value) {
     case 'loading':
       return <h1>Loading homie...</h1>;
 
     case 'success':
-      return <AuthenticatedApp />;
+      return (
+        <AuthContext.Provider value={contextValue}>
+          <AuthenticatedApp />
+        </AuthContext.Provider>
+      );
 
     case 'failure':
-      return <UnauthenticatedApp />;
+      return (
+        <AuthContext.Provider value={contextValue}>
+          <UnauthenticatedApp />
+        </AuthContext.Provider>
+      );
 
     default:
       return (

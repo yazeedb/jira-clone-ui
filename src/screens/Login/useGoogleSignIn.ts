@@ -5,7 +5,7 @@ import { AuthContext } from '../../App';
 declare const gapi: any;
 
 export const useGoogleSignIn = (elementId: string) => {
-  const userContext = useContext(AuthContext);
+  const { send } = useContext(AuthContext);
 
   useEffect(() => {
     const meta = document.createElement('meta');
@@ -37,9 +37,10 @@ export const useGoogleSignIn = (elementId: string) => {
           });
 
           console.log(response);
+          send('SUCCESS');
         },
         onfailure: () => {
-          // userContext.setAuth(false);
+          send('FAILURE');
         }
       });
     };
