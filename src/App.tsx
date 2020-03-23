@@ -1,13 +1,7 @@
-import React, { useState, Fragment, createContext, useEffect } from 'react';
+import React, { Fragment, createContext, useEffect } from 'react';
 import { Login } from './screens/Login/Login';
 import { AnotherOne } from './screens/AnotherOne';
-import {
-  BrowserRouter,
-  Switch,
-  Route,
-  Redirect,
-  useHistory
-} from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { Machine } from 'xstate';
 import { useMachine } from '@xstate/react';
 import { fetcher } from './fetcher';
@@ -35,7 +29,7 @@ const authMachine = Machine(
           FAILURE: 'failure'
         },
         invoke: {
-          src: () => fetcher('/user'),
+          src: () => fetcher('/api/user'),
           onDone: {
             target: 'success',
             actions: 'setUser'
@@ -76,7 +70,10 @@ const authMachine = Machine(
   }
 );
 
-export const AuthContext = createContext<any>({});
+export const AuthContext = createContext<any>({
+  user: null,
+  authenticated: false
+});
 
 const AuthShell = () => {
   const [current, send] = useMachine(authMachine);
@@ -101,9 +98,12 @@ const AuthShell = () => {
         if (error.response.status === 401) {
           send('FAILURE');
         }
+
+        console.error('fetcher interceptor error!', error);
+        return error;
       }
     );
-  });
+  }, []);
 
   switch (current.value) {
     case 'loading':
@@ -139,7 +139,7 @@ const AuthenticatedApp = () => {
     <Switch>
       <button
         onClick={() => {
-          fetcher('/user').then(console.log);
+          fetcher('/api/user').then(console.log);
         }}
       >
         Click me

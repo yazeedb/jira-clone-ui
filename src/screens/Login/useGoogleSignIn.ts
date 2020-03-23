@@ -32,17 +32,11 @@ export const useGoogleSignIn = (elementId: string) => {
         onsuccess: async (googleUser: any) => {
           const { id_token } = googleUser.getAuthResponse();
 
-          await fetcher('/csrf-protection');
-
-          const response = await fetcher.post('/signupViaGoogle', {
+          const response = await fetcher.post('/login', {
             idToken: id_token
           });
 
-          fetcher
-            .post('/login', { idToken: response.data.userId })
-            .then((response) => {
-              // userContext.setAuth(true);
-            });
+          console.log(response);
         },
         onfailure: () => {
           // userContext.setAuth(false);
