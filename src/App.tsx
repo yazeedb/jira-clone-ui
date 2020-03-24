@@ -1,10 +1,11 @@
-import React, { Fragment, createContext, useEffect } from 'react';
-import { Login } from './screens/Login/Login';
+import React, { Fragment, createContext, useEffect, useContext } from 'react';
+import { Login } from './screens/Login';
 import { AnotherOne } from './screens/AnotherOne';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { Machine } from 'xstate';
+import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import { Machine, assign, createMachine } from 'xstate';
 import { useMachine } from '@xstate/react';
 import { fetcher } from './fetcher';
+import { CompleteSignup } from './screens/CompleteSignup';
 
 export const App = () => {
   return (
@@ -14,120 +15,132 @@ export const App = () => {
   );
 };
 
-const authMachine = Machine(
-  {
-    id: 'auth',
-    context: {
-      user: null,
-      errorMessage: null
-    },
-    initial: 'loading',
-    states: {
-      loading: {
-        on: {
-          SUCCESS: 'success',
-          FAILURE: 'failure'
+interface User {
+  googleId: string;
+  firstName: null;
+  lastName: null;
+  email: string;
+  dateJoined: string;
+  profileImg: null;
+  headerImg: null;
+  jobTitle: null;
+  department: null;
+  organization: null;
+  location: null;
+}
+
+enum States {
+  pending = 'pending',
+  success = 'success',
+  fail = 'fail'
+}
+
+type AuthState =
+  | {
+      value: States.pending;
+      context: AuthContext;
+    }
+  | {
+      value: States.success;
+      context: AuthContext;
+    }
+  | {
+      value: States.fail;
+      context: AuthContext;
+    };
+
+type AuthEvent =
+  | { type: 'SUCCESS'; user: User }
+  | { type: 'FAILED'; error: string }
+  | { type: 'RETRY' };
+
+interface AuthContext {
+  user?: User;
+  error: string;
+}
+
+// const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>({
+const authMachine = createMachine<AuthContext, AuthEvent, AuthState>({
+  id: 'auth',
+  context: {
+    user: undefined,
+    error: ''
+  },
+  initial: States.pending,
+  states: {
+    pending: {
+      on: {
+        SUCCESS: States.success,
+        FAILED: States.fail
+      },
+      invoke: {
+        src: () => fetcher('/api/user'),
+        onDone: {
+          target: States.success,
+          actions: assign({
+            user: (_, event) => event.data.data.user
+          })
         },
-        invoke: {
-          src: () => fetcher('/api/user'),
-          onDone: {
-            target: 'success',
-            actions: 'setUser'
-          },
-          onError: {
-            target: 'failure',
-            actions: 'setError'
-          }
-        }
-      },
-      success: {
-        on: {
-          FAILURE: 'failure'
-        }
-      },
-      failure: {
-        on: {
-          SUCCESS: 'success'
+        onError: {
+          target: States.fail,
+          actions: assign({
+            error: (_, event) => event.data
+          })
         }
       }
-    }
-  },
-  {
-    actions: {
-      setUser: (context, event) => {
-        return {
-          ...context,
-          user: event.data
-        };
-      },
-      setError: (context, event) => {
-        return {
-          ...context,
-          error: event.data
-        };
+    },
+    success: {},
+    fail: {
+      on: {
+        RETRY: States.pending
       }
     }
   }
-);
+});
 
-export const AuthContext = createContext<any>(null);
+export const AuthContext = createContext<any>({});
 
 const AuthShell = () => {
   const [current, send] = useMachine(authMachine);
-
-  /*
-        User enters app, go into LOADING state.
-        Make a call to /user to check if they're good.
-        if SUCCESS
-          go /intendedRoute
-        else if FAILURE
-          go /login
-
-        Then attach global HTTP interceptor
-        If any future request fails due to 401,
-          redirect to /login and flash "Unauthorized request. Please sign back in."
-  */
 
   useEffect(() => {
     fetcher.interceptors.response.use(
       (res) => res,
       (error) => {
         if (error.response.status === 401) {
-          send('FAILURE');
+          send({
+            type: 'FAILED',
+            error: 'Mock error: Big-time problem'
+          });
         }
 
-        console.error('fetcher interceptor error!', error);
+        console.error(error);
         return error;
       }
     );
-  }, []);
+  }, [send]);
 
   const contextValue = {
     ...current.context,
     send
   };
 
-  switch (current.value) {
-    case 'loading':
+  switch (current.value as States) {
+    case States.pending:
       return <h1>Loading homie...</h1>;
 
-    case 'success':
+    case States.success:
       return (
         <AuthContext.Provider value={contextValue}>
           <AuthenticatedApp />
         </AuthContext.Provider>
       );
 
-    case 'failure':
+    case States.fail:
       return (
         <AuthContext.Provider value={contextValue}>
           <UnauthenticatedApp />
         </AuthContext.Provider>
-      );
-
-    default:
-      return (
-        <h1>This should never render. Did you forget to include a case?</h1>
       );
   }
 };
@@ -145,20 +158,20 @@ const UnauthenticatedApp = () => {
 };
 
 const AuthenticatedApp = () => {
+  const { user } = useContext(AuthContext);
+  console.log(user);
+
+  if (!user.firstName || !user.lastName) {
+    return <CompleteSignup />;
+  }
+
   return (
-    <Switch>
-      <button
-        onClick={() => {
-          fetcher('/api/user').then(console.log);
-        }}
-      >
-        Click me
-      </button>
+    <>
       <Route exact path="/">
         <AnotherOne />
       </Route>
 
       <Redirect to="/" />
-    </Switch>
+    </>
   );
 };

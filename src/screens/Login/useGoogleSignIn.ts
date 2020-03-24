@@ -36,15 +36,16 @@ export const useGoogleSignIn = (elementId: string) => {
             idToken: id_token
           });
 
-          console.log(response);
-          send('SUCCESS');
+          send({
+            type: 'RETRY'
+          });
         },
         onfailure: () => {
-          send('FAILURE');
+          send('FAILED');
         }
       });
     };
 
     document.body.appendChild(script);
-  }, [elementId]);
+  }, [elementId, send]);
 };
