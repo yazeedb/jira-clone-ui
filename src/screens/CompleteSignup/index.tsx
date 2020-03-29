@@ -3,6 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { User } from '../../App';
 import './CompleteSignup.scss';
 import { mapObject } from 'shared/utils/mapObject';
+import { FormField } from 'shared/components/FormField';
 
 interface CompleteSignupProps {
   user: User;
@@ -34,46 +35,44 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({ user }) => {
             {({ errors, touched, isValid, isSubmitting, values }) => (
               <Form>
                 <Field type="email" name="email" disabled />
-                {console.log(values)}
 
-                <Field type="text" placeholder="First name" name="firstName" />
-                <ErrorMessage
+                <FormField
                   name="firstName"
-                  component="div"
-                  className="form-error"
+                  type="text"
+                  placeholder="First name"
                 />
 
-                <Field type="text" placeholder="Last name" name="lastName" />
-                <ErrorMessage
+                <FormField
                   name="lastName"
-                  component="div"
-                  className="form-error"
+                  placeholder="Last name"
+                  type="text"
                 />
 
-                <Field
+                <FormField
                   type="text"
                   placeholder="Job title (optional)"
                   name="jobTitle"
                 />
-                <Field
+
+                <FormField
                   type="text"
                   placeholder="Department (optional)"
                   name="department"
                 />
-                <Field
+
+                <FormField
                   type="text"
                   placeholder="Organization (optional)"
                   name="organization"
                 />
-                <Field
+
+                <FormField
                   type="text"
                   placeholder="Location (optional)"
                   name="location"
                 />
 
-                <button type="submit" disabled={!isValid || isSubmitting}>
-                  Complete profile
-                </button>
+                <button type="submit">Complete profile</button>
               </Form>
             )}
           </Formik>

@@ -65,10 +65,10 @@ $gray: rgb(107, 119, 140);
       &:disabled {
         background-color: #dcdde1;
       }
-    }
 
-    .form-error {
-      color: rgb(222, 53, 11);
+      &.error {
+        border-color: rgb(222, 53, 11);
+      }
     }
 
     button {
