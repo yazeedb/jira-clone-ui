@@ -40,13 +40,24 @@ export const useGoogleSignIn = (elementId: string) => {
         onsuccess: async (googleUser: any) => {
           const { id_token } = googleUser.getAuthResponse();
 
-          const response = await fetcher.post('/login', {
-            idToken: id_token
-          });
+          // Prevent automatic Google sign-in loop if request fails
+          gapi.auth2.getAuthInstance().disconnect();
 
-          send({
-            type: 'RETRY'
-          });
+          fetcher
+            .post('/login', {
+              idToken: id_token
+            })
+            .then(() => {
+              send({
+                type: 'RETRY'
+              });
+            })
+            .catch((error) => {
+              send({
+                type: 'FAILED',
+                error: error.message
+              });
+            });
         },
         onfailure: () => {
           send('FAILED');

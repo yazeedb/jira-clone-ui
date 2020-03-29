@@ -32,7 +32,7 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({ user }) => {
             }}
             onSubmit={console.log}
           >
-            {({ errors, touched, isValid, isSubmitting, values }) => (
+            {() => (
               <Form>
                 <Field type="email" name="email" disabled />
 
