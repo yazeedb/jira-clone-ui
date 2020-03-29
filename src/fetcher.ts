@@ -14,7 +14,6 @@ fetcher.interceptors.response.use(
 
   // Throw error on rejected
   (error) => {
-    console.log('going error path');
     throw error;
   }
 );
