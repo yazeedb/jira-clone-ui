@@ -1,12 +1,16 @@
 import React, { FC } from 'react';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { User } from '../../App';
 import './CompleteSignup.scss';
+import { mapObject } from '../../utils/mapObject';
 
 interface CompleteSignupProps {
   user: User;
 }
 
 export const CompleteSignup: FC<CompleteSignupProps> = ({ user }) => {
+  const fieldsWithEmptyStringDefaults = mapObject((value) => value || '', user);
+
   return (
     <main className="complete-signup">
       <div className="container">
@@ -17,18 +21,62 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({ user }) => {
         <section>
           <h5>Complete your profile</h5>
 
-          <form>
-            <input type="email" placeholder={user.email} disabled />
-            <input type="text" placeholder="First name" />
-            <input type="text" placeholder="Last name" />
+          <Formik
+            initialValues={fieldsWithEmptyStringDefaults}
+            validate={({ firstName, lastName }) => {
+              return {
+                firstName: !!firstName ? undefined : 'Required',
+                lastName: !!lastName ? undefined : 'Required'
+              };
+            }}
+            onSubmit={console.log}
+          >
+            {({ errors, touched, isValid, isSubmitting, values }) => (
+              <Form>
+                <Field type="email" name="email" disabled />
+                {console.log(values)}
 
-            <input type="text" placeholder="Job title (optional)" />
-            <input type="text" placeholder="Department (optional)" />
-            <input type="text" placeholder="Organization (optional)" />
-            <input type="text" placeholder="Location (optional)" />
+                <Field type="text" placeholder="First name" name="firstName" />
+                <ErrorMessage
+                  name="firstName"
+                  component="div"
+                  className="form-error"
+                />
 
-            <button type="submit">Complete profile</button>
-          </form>
+                <Field type="text" placeholder="Last name" name="lastName" />
+                <ErrorMessage
+                  name="lastName"
+                  component="div"
+                  className="form-error"
+                />
+
+                <Field
+                  type="text"
+                  placeholder="Job title (optional)"
+                  name="jobTitle"
+                />
+                <Field
+                  type="text"
+                  placeholder="Department (optional)"
+                  name="department"
+                />
+                <Field
+                  type="text"
+                  placeholder="Organization (optional)"
+                  name="organization"
+                />
+                <Field
+                  type="text"
+                  placeholder="Location (optional)"
+                  name="location"
+                />
+
+                <button type="submit" disabled={!isValid || isSubmitting}>
+                  Complete profile
+                </button>
+              </Form>
+            )}
+          </Formik>
         </section>
 
         <footer>
