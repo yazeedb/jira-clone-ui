@@ -78,13 +78,13 @@ const authMachine = createMachine<AuthContext, AuthEvent, AuthState>({
         onDone: {
           target: States.success,
           actions: assign({
-            user: (_, event) => event.data.data.user
+            user: (_, event) => event.data
           })
         },
         onError: {
           target: States.fail,
           actions: assign({
-            error: (_, event) => event.data
+            error: (_, event) => event.data.message
           })
         }
       }
@@ -107,12 +107,10 @@ const AuthShell = () => {
     fetcher.interceptors.response.use(
       (res) => res,
       (error) => {
-        if (error.response.status === 401) {
-          send({
-            type: 'FAILED',
-            error: 'Mock error: Big-time problem'
-          });
-        }
+        send({
+          type: 'FAILED',
+          error: error.message
+        });
 
         console.error(error);
         return error;
@@ -148,30 +146,27 @@ const AuthShell = () => {
 const UnauthenticatedApp = () => {
   return (
     <Fragment>
-      <Route path="/login">
+      <Redirect to="/login" />
+      <Route exact path="/login">
         <Login />
       </Route>
-
-      <Redirect to="/login" />
     </Fragment>
   );
 };
 
 const AuthenticatedApp = () => {
   const { user } = useContext(AuthContext);
-  console.log(user);
+  const signupComplete = user.firstName && user.lastName;
 
-  if (!user.firstName || !user.lastName) {
-    return <CompleteSignup />;
-  }
+  const nextRoute = signupComplete ? '/' : '/completeSignup';
+  const NextComponent = signupComplete ? AnotherOne : CompleteSignup;
 
   return (
-    <>
-      <Route exact path="/">
-        <AnotherOne />
+    <Fragment>
+      <Redirect exact to={nextRoute} />
+      <Route exact to={nextRoute}>
+        <NextComponent />
       </Route>
-
-      <Redirect to="/" />
-    </>
+    </Fragment>
   );
 };

@@ -2,21 +2,29 @@ import { useEffect, useContext } from 'react';
 import { fetcher } from '../../fetcher';
 import { AuthContext } from '../../App';
 
-declare const gapi: any;
+const googleClientId =
+  '235318923218-s6tms65fam3o6d51shlhmci587s5mi22.apps.googleusercontent.com';
+const googleApiSrc = 'https://apis.google.com/js/platform.js';
 
 export const useGoogleSignIn = (elementId: string) => {
   const { send } = useContext(AuthContext);
 
   useEffect(() => {
-    const meta = document.createElement('meta');
+    const metaQuery = `meta[content="${googleClientId}"]`;
+    const scriptQuery = `script[src="${googleApiSrc}"]`;
+
+    const meta =
+      (document.querySelector(metaQuery) as HTMLMetaElement) ||
+      document.createElement('meta');
 
     meta.name = 'google-signin-client_id';
-    meta.content =
-      '235318923218-s6tms65fam3o6d51shlhmci587s5mi22.apps.googleusercontent.com';
+    meta.content = googleClientId;
 
     document.head.appendChild(meta);
 
-    const script = document.createElement('script');
+    const script =
+      (document.querySelector(scriptQuery) as HTMLScriptElement) ||
+      document.createElement('script');
 
     script.src = 'https://apis.google.com/js/platform.js';
     script.async = true;
@@ -49,3 +57,5 @@ export const useGoogleSignIn = (elementId: string) => {
     document.body.appendChild(script);
   }, [elementId, send]);
 };
+
+declare const gapi: any;
