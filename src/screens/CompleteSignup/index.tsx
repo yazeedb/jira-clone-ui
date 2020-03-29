@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { User } from '../../App';
 import './CompleteSignup.scss';
-import { mapObject } from '../../utils/mapObject';
+import { mapObject } from 'shared/utils/mapObject';
 
 interface CompleteSignupProps {
   user: User;
