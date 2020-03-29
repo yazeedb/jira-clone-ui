@@ -15,7 +15,7 @@ export const App = () => {
   );
 };
 
-interface User {
+export interface User {
   googleId: string;
   firstName: null;
   lastName: null;
@@ -78,7 +78,7 @@ const authMachine = createMachine<AuthContext, AuthEvent, AuthState>({
         onDone: {
           target: States.success,
           actions: assign({
-            user: (_, event) => event.data
+            user: (_, event) => event.data.data.user
           })
         },
         onError: {
@@ -159,13 +159,17 @@ const AuthenticatedApp = () => {
   const signupComplete = user.firstName && user.lastName;
 
   const nextRoute = signupComplete ? '/' : '/completeSignup';
-  const NextComponent = signupComplete ? AnotherOne : CompleteSignup;
+  const NextComponent = signupComplete ? (
+    <AnotherOne />
+  ) : (
+    <CompleteSignup user={user} />
+  );
 
   return (
     <Fragment>
       <Redirect exact to={nextRoute} />
       <Route exact to={nextRoute}>
-        <NextComponent />
+        {NextComponent}
       </Route>
     </Fragment>
   );
