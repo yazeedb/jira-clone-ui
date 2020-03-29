@@ -2,7 +2,7 @@ import React, { Fragment, createContext, useEffect, useContext } from 'react';
 import { Login } from './screens/Login';
 import { AnotherOne } from './screens/AnotherOne';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
-import { Machine, assign, createMachine } from 'xstate';
+import { assign, createMachine } from 'xstate';
 import { useMachine } from '@xstate/react';
 import { fetcher } from './fetcher';
 import { CompleteSignup } from './screens/CompleteSignup';
@@ -146,7 +146,7 @@ const AuthShell = () => {
 const UnauthenticatedApp = () => {
   return (
     <Fragment>
-      <Redirect to="/login" />
+      <Redirect exact to="/login" />
       <Route exact path="/login">
         <Login />
       </Route>
