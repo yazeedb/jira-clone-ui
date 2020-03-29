@@ -37,7 +37,7 @@ export const useGoogleSignIn = (elementId: string) => {
         height: 50,
         longtitle: true,
         theme: 'dark',
-        onsuccess: async (googleUser: any) => {
+        onsuccess: (googleUser: any) => {
           const { id_token } = googleUser.getAuthResponse();
 
           // Prevent automatic Google sign-in loop if request fails
