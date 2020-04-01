@@ -53,7 +53,6 @@ export const useGoogleSignIn = (elementId: string) => {
               });
             })
             .catch((error) => {
-              debugger;
               send({
                 type: 'FAILED',
                 error: error.message
@@ -61,7 +60,6 @@ export const useGoogleSignIn = (elementId: string) => {
             });
         },
         onfailure: (error: any) => {
-          debugger;
           send({ type: 'FAILED', error: error.message });
         }
       });
