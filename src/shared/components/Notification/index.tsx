@@ -7,25 +7,25 @@ interface NotificationProps {
   primaryMessage: string;
   secondaryMessage: string;
   type: NotificationType;
-  onClose: () => void;
+  handleClose: () => void;
 }
 
 export const Notification: FC<NotificationProps> = ({
   primaryMessage,
   secondaryMessage,
   type,
-  onClose
+  handleClose
 }) => {
   return (
     <div className={`notification ${type}`}>
-      <img src={`/icon-${type}.svg`} className="icon-logo" />
+      <img src={`/icon-${type}.svg`} className="icon-logo" alt={type} />
 
       <section className="message-container">
         <h4>{primaryMessage}</h4>
         <p>{secondaryMessage}</p>
       </section>
-      <button className="close" onClick={onClose}>
-        <img src="/icon-close.svg" />
+      <button className="close" onClick={handleClose}>
+        <img src="/icon-close.svg" alt="close" />
       </button>
     </div>
   );

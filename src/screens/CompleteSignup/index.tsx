@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form } from 'formik';
 import { User } from '../../App';
 import './CompleteSignup.scss';
 import { mapObject } from 'shared/utils/mapObject';

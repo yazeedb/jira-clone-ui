@@ -7,13 +7,7 @@ export const fetcher = axios.create({
   }
 });
 
-// Allow all fetchers to receive errors
 fetcher.interceptors.response.use(
-  // Do nothing on fulfilled
   (response) => response,
-
-  // Throw error on rejected
-  (error) => {
-    throw error;
-  }
+  (error) => Promise.reject(error)
 );
