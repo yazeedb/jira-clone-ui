@@ -116,8 +116,6 @@ export const AuthContext = createContext<any>({});
 const AuthShell = () => {
   const [current, send] = useMachine(authMachine);
 
-  console.log(current);
-
   useEffect(() => {
     fetcher.interceptors.response.use(
       (res) => res,
