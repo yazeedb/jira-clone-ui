@@ -7,6 +7,7 @@ import { useMachine } from '@xstate/react';
 import { fetcher } from './fetcher';
 import { CompleteSignup } from './screens/CompleteSignup';
 import { Notification } from 'shared/components/Notification';
+import { apiRoutes } from 'shared/apiRoutes';
 
 export const App = () => {
   return (
@@ -85,7 +86,7 @@ const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>({
         FAILED: States.fail
       },
       invoke: {
-        src: () => fetcher('/api/user'),
+        src: () => fetcher(apiRoutes.user),
         onDone: {
           target: States.success,
           actions: assign({
