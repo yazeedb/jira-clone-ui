@@ -1,6 +1,7 @@
 import { useEffect, useContext } from 'react';
 import { fetcher } from '../../fetcher';
 import { AuthContext } from '../../App';
+import { apiRoutes } from 'shared/apiRoutes';
 
 const googleClientId =
   '235318923218-s6tms65fam3o6d51shlhmci587s5mi22.apps.googleusercontent.com';
@@ -44,12 +45,12 @@ export const useGoogleSignIn = (elementId: string) => {
           gapi.auth2.getAuthInstance().disconnect();
 
           fetcher
-            .post('/login', {
+            .post(apiRoutes.login, {
               idToken: id_token
             })
             .then(() => {
               send({
-                type: 'RETRY'
+                type: 'TRY_AUTH'
               });
             })
             .catch((error) => {
