@@ -1,15 +1,18 @@
 import React, { FC } from 'react';
 import { Formik, Field, Form } from 'formik';
-import { User } from '../../App';
+import { User } from '../../authMachine';
 import './CompleteSignup.scss';
 import { mapObject } from 'shared/utils/mapObject';
 import { FormField } from 'shared/components/FormField';
+import { useMachine } from '@xstate/react';
+import { validateForm, signupMachine, SignupStates } from './signupMachine';
 
 interface CompleteSignupProps {
   user: User;
 }
 
 export const CompleteSignup: FC<CompleteSignupProps> = ({ user }) => {
+  const [current, send] = useMachine(signupMachine);
   const fieldsWithEmptyStringDefaults = mapObject((value) => value || '', user);
 
   return (
@@ -20,26 +23,31 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({ user }) => {
         </header>
 
         <section>
-          <h5>Complete your profile</h5>
+          <h5>Complete your profile to continue</h5>
 
           <Formik
             initialValues={fieldsWithEmptyStringDefaults}
-            validate={({ firstName, lastName }) => {
-              return {
-                firstName: !!firstName ? undefined : 'Required',
-                lastName: !!lastName ? undefined : 'Required'
-              };
-            }}
+            validate={validateForm}
             onSubmit={console.log}
           >
-            {() => (
-              <Form>
+            {({ values, isValid }) => (
+              <Form
+                onSubmit={(event) => {
+                  event.preventDefault();
+
+                  send({
+                    type: 'SUBMIT',
+                    formData: values
+                  });
+                }}
+              >
                 <Field type="email" name="email" disabled />
 
                 <FormField
                   name="firstName"
                   type="text"
                   placeholder="First name"
+                  autoFocus
                 />
 
                 <FormField
@@ -72,7 +80,14 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({ user }) => {
                   name="location"
                 />
 
-                <button type="submit">Complete profile</button>
+                <button
+                  type="submit"
+                  disabled={
+                    !isValid || current.matches(SignupStates.submitting)
+                  }
+                >
+                  Complete profile
+                </button>
               </Form>
             )}
           </Formik>
