@@ -1,5 +1,5 @@
-import { Machine, assign, send } from 'xstate';
-import { authMachine, User } from '../../authMachine';
+import { Machine, assign, send, sendParent } from 'xstate';
+import { User } from '../../authMachine';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 
@@ -87,7 +87,13 @@ export const signupMachine = Machine<
             method: 'POST',
             data: context.formData
           }),
-        onDone: { target: SignupStates.success },
+        onDone: {
+          target: SignupStates.success,
+          actions: sendParent((context: SignupContext) => ({
+            type: 'SIGNUP_COMPLETE',
+            user: context.formData
+          }))
+        },
         onError: {
           target: SignupStates.fail,
           actions: assign({
@@ -99,16 +105,6 @@ export const signupMachine = Machine<
     fail: {
       after: { 5000: SignupStates.editing }
     },
-    success: {
-      invoke: {
-        id: authMachine.id,
-        src: authMachine,
-        data: (context: SignupContext) => {
-          console.log('sending data too');
-          return { hello: context.formData };
-        }
-      },
-      entry: send('SIGNUP_COMPLETE', { to: authMachine.id })
-    }
+    success: {}
   }
 });

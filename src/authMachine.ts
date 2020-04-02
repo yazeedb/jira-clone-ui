@@ -1,6 +1,7 @@
-import { Machine, assign } from 'xstate';
+import { Machine, assign, spawn } from 'xstate';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
+import { signupMachine } from 'screens/CompleteSignup/signupMachine';
 
 export interface User {
   googleId: string;
@@ -29,7 +30,6 @@ interface AuthStateSchema {
     [AuthStates.pending]: {};
     [AuthStates.success]: {};
     [AuthStates.fail]: {};
-    anotherOne: {};
   };
 }
 
@@ -42,6 +42,7 @@ type AuthEvent =
   | { type: 'SIGNUP_COMPLETE'; user: User };
 
 interface AuthContext {
+  signupMachineActor?: any;
   user?: User;
   error: string;
 }
@@ -50,9 +51,10 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>({
   id: 'auth',
   context: {
     user: undefined,
-    error: ''
+    error: '',
+    signupMachineActor: null
   },
-  initial: AuthStates.pending,
+  initial: AuthStates.idle,
   on: {
     FAILED: {
       target: AuthStates.fail,
@@ -77,7 +79,13 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>({
         onDone: {
           target: AuthStates.success,
           actions: assign({
-            user: (_, event) => event.data.data.user
+            user: (_, event) => event.data.data.user,
+            signupMachineActor: (context) => {
+              const machine =
+                context.signupMachineActor || spawn(signupMachine);
+
+              return machine;
+            }
           })
         },
         onError: {
@@ -89,13 +97,17 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>({
       }
     },
     success: {
-      on: { SIGNUP_COMPLETE: 'anotherOne' }
-    },
-    anotherOne: {
-      invoke: {
-        src: () => () => console.log('we made it')
+      on: {
+        SIGNUP_COMPLETE: {
+          actions: assign((context, event) => {
+            return {
+              user: event.user
+            };
+          })
+        }
       }
     },
+
     fail: {
       on: {
         RETRY: AuthStates.pending,

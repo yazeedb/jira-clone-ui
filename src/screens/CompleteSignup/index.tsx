@@ -4,15 +4,19 @@ import { User } from '../../authMachine';
 import './CompleteSignup.scss';
 import { mapObject } from 'shared/utils/mapObject';
 import { FormField } from 'shared/components/FormField';
-import { useMachine } from '@xstate/react';
-import { validateForm, signupMachine, SignupStates } from './signupMachine';
+import { useService } from '@xstate/react';
+import { validateForm, SignupStates } from './signupMachine';
 
 interface CompleteSignupProps {
   user: User;
+  signupMachineActor: any;
 }
 
-export const CompleteSignup: FC<CompleteSignupProps> = ({ user }) => {
-  const [current, send] = useMachine(signupMachine);
+export const CompleteSignup: FC<CompleteSignupProps> = ({
+  user,
+  signupMachineActor
+}) => {
+  const [current, send] = useService(signupMachineActor);
   const fieldsWithEmptyStringDefaults = mapObject((value) => value || '', user);
 
   return (
@@ -28,19 +32,17 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({ user }) => {
           <Formik
             initialValues={fieldsWithEmptyStringDefaults}
             validate={validateForm}
-            onSubmit={console.log}
+            onSubmit={(values) => {
+              send({
+                type: 'SUBMIT',
+
+                // @ts-ignore
+                formData: values
+              });
+            }}
           >
             {({ values, isValid }) => (
-              <Form
-                onSubmit={(event) => {
-                  event.preventDefault();
-
-                  send({
-                    type: 'SUBMIT',
-                    formData: values
-                  });
-                }}
-              >
+              <Form>
                 <Field type="email" name="email" disabled />
 
                 <FormField

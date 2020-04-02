@@ -21,8 +21,6 @@ export const AuthContext = createContext<any>({});
 const AuthShell = () => {
   const [current, send] = useMachine(authMachine);
 
-  console.log(current);
-
   useEffect(() => {
     fetcher.interceptors.response.use(
       (res) => res,
@@ -37,6 +35,8 @@ const AuthShell = () => {
         return Promise.reject(error);
       }
     );
+
+    send('TRY_AUTH');
   }, [send]);
 
   const contextValue = {
@@ -87,14 +87,14 @@ const UnauthenticatedApp = () => {
 };
 
 const AuthenticatedApp = () => {
-  const { user } = useContext(AuthContext);
+  const { user, signupMachineActor } = useContext(AuthContext);
   const signupComplete = user.firstName && user.lastName;
 
   const nextRoute = signupComplete ? '/' : '/completeSignup';
   const NextComponent = signupComplete ? (
     <AnotherOne />
   ) : (
-    <CompleteSignup user={user} />
+    <CompleteSignup signupMachineActor={signupMachineActor} user={user} />
   );
 
   return (
