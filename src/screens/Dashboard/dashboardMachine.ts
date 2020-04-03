@@ -48,6 +48,7 @@ export const dashboardMachine = Machine<
     error: undefined,
     projectFilter: undefined
   },
+  initial: DashboardStates.fetching,
   states: {
     fetching: {
       invoke: {
