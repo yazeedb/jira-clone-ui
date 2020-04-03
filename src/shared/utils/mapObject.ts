@@ -1,15 +1,17 @@
 type ValueOf<T> = T[keyof T];
 
-export const mapObject = <OldObject, NewValue>(
+export const mapObject = <OldObject extends object, NewValue>(
   mappingFn: (value: ValueOf<OldObject>) => NewValue,
   obj: OldObject
-): Record<keyof OldObject, NewValue> =>
-  Object.keys(obj).reduce((newObj, key) => {
-    // @ts-ignore (Not sure how to work around this)
-    const oldValue = obj[key];
+): Record<keyof OldObject, NewValue> => {
+  const newObj = {} as Record<keyof OldObject, NewValue>;
 
-    // @ts-ignore (Not sure how to work around this)
-    newObj[key] = mappingFn(oldValue);
+  for (let i in obj) {
+    if (obj.hasOwnProperty(i)) {
+      const oldValue = obj[i];
+      newObj[i] = mappingFn(oldValue);
+    }
+  }
 
-    return newObj;
-  }, {} as Record<keyof OldObject, NewValue>);
+  return newObj;
+};
