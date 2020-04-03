@@ -1,12 +1,12 @@
 import React, { Fragment, createContext, useEffect, useContext } from 'react';
 import { Login } from './screens/Login';
-import { AnotherOne } from './screens/AnotherOne';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { fetcher } from './fetcher';
 import { CompleteSignup } from './screens/CompleteSignup';
 import { Notification } from 'shared/components/Notification';
 import { authMachine, AuthStates } from './authMachine';
+import { Dashboard } from 'screens/Dashboard';
 
 export const App = () => {
   return (
@@ -92,7 +92,7 @@ const AuthenticatedApp = () => {
 
   const nextRoute = signupComplete ? '/' : '/completeSignup';
   const NextComponent = signupComplete ? (
-    <AnotherOne />
+    <Dashboard />
   ) : (
     <CompleteSignup signupMachineActor={signupMachineActor} user={user} />
   );
