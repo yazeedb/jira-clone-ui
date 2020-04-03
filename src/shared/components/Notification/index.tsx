@@ -8,16 +8,21 @@ interface NotificationProps {
   secondaryMessage: string;
   type: NotificationType;
   handleClose: () => void;
+  show: boolean;
 }
 
 export const Notification: FC<NotificationProps> = ({
   primaryMessage,
   secondaryMessage,
   type,
-  handleClose
+  handleClose,
+  show
 }) => {
+  const baseClassName = `notification ${type}`;
+  const className = show ? `${baseClassName} show` : baseClassName;
+
   return (
-    <div className={`notification ${type}`}>
+    <div className={className}>
       <img src={`/icon-${type}.svg`} className="icon-logo" alt={type} />
 
       <section className="message-container">

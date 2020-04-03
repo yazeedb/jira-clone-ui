@@ -59,16 +59,16 @@ const AuthShell = () => {
     case AuthStates.idle:
       return (
         <AuthContext.Provider value={contextValue}>
-          {current.matches(AuthStates.fail) && (
-            <Notification
-              type="error"
-              primaryMessage={contextValue.error}
-              secondaryMessage="Please try again"
-              handleClose={() => {
-                send('RESET');
-              }}
-            />
-          )}
+          <Notification
+            type="error"
+            primaryMessage={contextValue.error}
+            secondaryMessage="Please try again"
+            handleClose={() => {
+              send('RESET');
+            }}
+            show={current.matches(AuthStates.fail)}
+          />
+
           <UnauthenticatedApp />
         </AuthContext.Provider>
       );

@@ -1,8 +1,7 @@
+$notification-width: 400px;
+
 .notification {
-  position: fixed;
   z-index: 1;
-  top: 30px;
-  right: 50px;
   border-radius: 3px;
   box-shadow: rgba(9, 30, 66, 0.31) 0px 0px 1px,
     rgba(9, 30, 66, 0.25) 0px 20px 32px -8px;
@@ -11,7 +10,22 @@
   display: flex;
   justify-content: space-between;
   background-color: white;
-  width: 400px;
+  width: $notification-width;
+  transition: all 400ms ease-in-out 0s;
+  position: fixed;
+
+  // transition properties
+  visibility: hidden;
+  top: 30px;
+  right: -$notification-width;
+  opacity: 0;
+
+  &.show {
+    right: 50px;
+    visibility: hidden;
+    visibility: visible;
+    opacity: 1;
+  }
 
   .message-container {
     width: 270px;

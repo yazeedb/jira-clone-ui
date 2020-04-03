@@ -60,8 +60,11 @@ export const useGoogleSignIn = (elementId: string) => {
               });
             });
         },
-        onfailure: (error: any) => {
-          send({ type: 'FAILED', error: error.message });
+        onfailure: ({ error }: any) => {
+          send({
+            type: 'FAILED',
+            error: 'Error encountered while signing in with Google'
+          });
         }
       });
     };
