@@ -59,9 +59,7 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>({
     FAILED: {
       target: AuthStates.fail,
       actions: assign({
-        error: (_, event) => {
-          return event.error;
-        }
+        error: (_, event) => event.error
       })
     }
   },
@@ -70,22 +68,14 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>({
       on: { TRY_AUTH: AuthStates.pending }
     },
     pending: {
-      on: {
-        SUCCESS: AuthStates.success,
-        FAILED: AuthStates.fail
-      },
       invoke: {
         src: () => fetcher(apiRoutes.user),
         onDone: {
           target: AuthStates.success,
           actions: assign({
             user: (_, event) => event.data.data.user,
-            signupMachineActor: (context) => {
-              const machine =
-                context.signupMachineActor || spawn(signupMachine);
-
-              return machine;
-            }
+            signupMachineActor: (context) =>
+              context.signupMachineActor || spawn(signupMachine)
           })
         },
         onError: {
@@ -99,15 +89,12 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>({
     success: {
       on: {
         SIGNUP_COMPLETE: {
-          actions: assign((context, event) => {
-            return {
-              user: event.user
-            };
-          })
+          actions: assign((context, event) => ({
+            user: event.user
+          }))
         }
       }
     },
-
     fail: {
       on: {
         RETRY: AuthStates.pending,
