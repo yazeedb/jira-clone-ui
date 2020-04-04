@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 import { Formik, Field, Form } from 'formik';
-import { User } from '../../authMachine';
 import './CompleteSignup.scss';
 import { mapObject } from 'shared/utils/mapObject';
 import { FormField } from 'shared/components/FormField';
 import { useService } from '@xstate/react';
 import { validateForm, SignupStates } from './signupMachine';
+import { User } from 'shared/interfaces/User';
 
 interface CompleteSignupProps {
   user: User;

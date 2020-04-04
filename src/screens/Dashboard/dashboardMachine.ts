@@ -1,5 +1,5 @@
 import { Machine, assign } from 'xstate';
-import { User } from 'authMachine';
+import { User } from 'shared/interfaces/User';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 

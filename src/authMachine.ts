@@ -2,20 +2,7 @@ import { Machine, assign, spawn } from 'xstate';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { signupMachine } from 'screens/CompleteSignup/signupMachine';
-
-export interface User {
-  googleId: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  dateJoined: string;
-  profileImg: string;
-  headerImg: string;
-  jobTitle: string;
-  department: string;
-  organization: string;
-  location: string;
-}
+import { User } from 'shared/interfaces/User';
 
 export enum AuthStates {
   idle = 'idle',

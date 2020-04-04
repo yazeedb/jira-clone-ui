@@ -1,7 +1,7 @@
-import { Machine, assign, send, sendParent } from 'xstate';
-import { User } from '../../authMachine';
+import { Machine, assign, sendParent } from 'xstate';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
+import { User } from 'shared/interfaces/User';
 
 export const validateForm = ({ firstName, lastName }: User) => {
   interface FormErrors {
