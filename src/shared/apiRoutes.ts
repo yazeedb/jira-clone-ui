@@ -4,5 +4,6 @@ export const apiRoutes = {
   login: '/login',
   user: `${apiBase}/user`,
   completeSignup: `${apiBase}/completeSignup`,
-  projects: `${apiBase}/projects`
+  projects: `${apiBase}/projects`,
+  orgs: `${apiBase}/orgs`
 };
