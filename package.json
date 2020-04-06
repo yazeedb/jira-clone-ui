@@ -16,6 +16,7 @@
     "axios": "^0.19.2",
     "formik": "^2.1.4",
     "node-sass": "^4.13.1",
+    "prettier": "^2.0.4",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-router-dom": "^5.1.2",
@@ -27,7 +28,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "prettier --write ./src"
   },
   "eslintConfig": {
     "extends": "react-app"
