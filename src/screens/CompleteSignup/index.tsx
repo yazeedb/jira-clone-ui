@@ -4,12 +4,16 @@ import './CompleteSignup.scss';
 import { mapObject } from 'shared/utils/mapObject';
 import { FormField } from 'shared/components/FormField';
 import { useService } from '@xstate/react';
-import { validateForm, SignupStates } from './signupMachine';
+import {
+  validateForm,
+  SignupStates,
+  signupMachineActor
+} from './signupMachine';
 import { User } from 'shared/interfaces/User';
 
 interface CompleteSignupProps {
   user: User;
-  signupMachineActor: any;
+  signupMachineActor: signupMachineActor;
 }
 
 export const CompleteSignup: FC<CompleteSignupProps> = ({

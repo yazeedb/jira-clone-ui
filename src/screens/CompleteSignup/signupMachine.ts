@@ -1,4 +1,4 @@
-import { Machine, assign, sendParent } from 'xstate';
+import { Machine, assign, sendParent, Interpreter } from 'xstate';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { User } from 'shared/interfaces/User';
@@ -26,6 +26,7 @@ export enum SignupStates {
   editing = 'editing',
   submitting = 'submitting',
   fail = 'fail',
+  needOrgInfo = 'needOrgInfo',
   success = 'success'
 }
 
@@ -34,6 +35,7 @@ interface SignupStateSchema {
     [SignupStates.editing]: {};
     [SignupStates.submitting]: {};
     [SignupStates.fail]: {};
+    [SignupStates.needOrgInfo]: {};
     [SignupStates.success]: {};
   };
 }
@@ -55,6 +57,12 @@ interface SignupContext {
   formData: User | {};
   errorMessage: string;
 }
+
+export type signupMachineActor = Interpreter<
+  SignupContext,
+  SignupStateSchema,
+  SignupEvent
+>;
 
 export const signupMachine = Machine<
   SignupContext,
@@ -87,13 +95,22 @@ export const signupMachine = Machine<
             method: 'POST',
             data: context.formData
           }),
-        onDone: {
-          target: SignupStates.success,
-          actions: sendParent((context: SignupContext) => ({
-            type: 'SIGNUP_COMPLETE',
-            user: context.formData
-          }))
-        },
+        onDone: [
+          {
+            target: SignupStates.success,
+            cond: (_, event) => event.data.data.hasOrg === true,
+            actions: sendParent((context: SignupContext) => {
+              return {
+                type: 'SIGNUP_COMPLETE',
+                user: context.formData
+              };
+            })
+          },
+          {
+            target: SignupStates.needOrgInfo,
+            cond: (_, event) => event.data.data.hasOrg === false
+          }
+        ],
         onError: {
           target: SignupStates.fail,
           actions: assign({
@@ -105,6 +122,7 @@ export const signupMachine = Machine<
     fail: {
       after: { 5000: SignupStates.editing }
     },
+    needOrgInfo: {},
     success: {}
   }
 });

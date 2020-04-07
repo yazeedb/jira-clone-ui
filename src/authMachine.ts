@@ -76,9 +76,11 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>({
     success: {
       on: {
         SIGNUP_COMPLETE: {
-          actions: assign((context, event) => ({
-            user: event.user
-          }))
+          actions: assign((_, event) => {
+            return {
+              user: event.user
+            };
+          })
         }
       }
     },
