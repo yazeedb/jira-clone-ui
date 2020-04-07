@@ -7,13 +7,13 @@ import { useService } from '@xstate/react';
 import {
   validateForm,
   SignupStates,
-  signupMachineActor
+  SignupMachineActor
 } from './signupMachine';
 import { User } from 'shared/interfaces/User';
 
 interface CompleteSignupProps {
   user: User;
-  signupMachineActor: signupMachineActor;
+  signupMachineActor: SignupMachineActor;
 }
 
 export const CompleteSignup: FC<CompleteSignupProps> = ({

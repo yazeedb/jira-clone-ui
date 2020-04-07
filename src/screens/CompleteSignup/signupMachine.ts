@@ -58,7 +58,7 @@ interface SignupContext {
   errorMessage: string;
 }
 
-export type signupMachineActor = Interpreter<
+export type SignupMachineActor = Interpreter<
   SignupContext,
   SignupStateSchema,
   SignupEvent
