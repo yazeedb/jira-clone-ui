@@ -39,9 +39,6 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
             onSubmit={(values) => {
               send({
                 type: 'SUBMIT',
-
-                // @ts-ignore
-                // TODO: Why doesn't TS like this?
                 formData: values
               });
             }}
