@@ -37,6 +37,7 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
                 type: 'SUBMIT',
 
                 // @ts-ignore
+                // TODO: Why doesn't TS like this?
                 formData: values
               });
             }}
