@@ -3,14 +3,13 @@ import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { User } from 'shared/interfaces/User';
 import { createSignupCompleteEvent } from 'authMachine';
+import { Optional } from 'shared/interfaces/Optional';
 
-export const validateForm = ({ firstName, lastName }: User) => {
-  interface FormErrors {
-    firstName?: string;
-    lastName?: string;
-  }
+type SignupFields = Optional<User>;
 
-  const result: FormErrors = {};
+export const validateForm = (fields: User) => {
+  const { firstName, lastName } = fields;
+  const result: SignupFields = {};
 
   if (!firstName) {
     result.firstName = 'Required';
@@ -58,7 +57,7 @@ type SignupEvent =
     };
 
 interface SignupContext {
-  formData: User | {};
+  formData: SignupFields;
   errorMessage: string;
 }
 
@@ -103,9 +102,12 @@ export const signupMachine = Machine<
           {
             target: SignupStates.success,
             cond: (_, event) => event.data.data.hasOrg === true,
-            actions: sendParent((context: SignupContext) =>
-              createSignupCompleteEvent(context.formData as User)
-            )
+            actions: sendParent((context: SignupContext) => {
+              // Safe to assume
+              const formData = context.formData as User;
+
+              return createSignupCompleteEvent(context.formData as User);
+            })
           },
           {
             target: SignupStates.needOrgInfo,
