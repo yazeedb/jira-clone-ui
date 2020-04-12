@@ -107,7 +107,7 @@ export const signupMachine = Machine<
               // so type-casting should be fine.
               const formData = context.formData as User;
 
-              return createSignupCompleteEvent(context.formData as User);
+              return createSignupCompleteEvent(formData);
             })
           },
           {
