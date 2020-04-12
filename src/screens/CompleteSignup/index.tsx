@@ -44,7 +44,7 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
               });
             }}
           >
-            {({ values, isValid }) => (
+            {({ isValid }) => (
               <Form>
                 <Field type="email" name="email" disabled />
 
