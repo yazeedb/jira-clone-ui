@@ -103,7 +103,8 @@ export const signupMachine = Machine<
             target: SignupStates.success,
             cond: (_, event) => event.data.data.hasOrg === true,
             actions: sendParent((context: SignupContext) => {
-              // Safe to assume
+              // Safe to assume valid data at this point.
+              // so type-casting should be fine.
               const formData = context.formData as User;
 
               return createSignupCompleteEvent(context.formData as User);
