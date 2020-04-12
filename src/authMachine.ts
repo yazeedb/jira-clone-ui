@@ -20,13 +20,26 @@ interface AuthStateSchema {
   };
 }
 
+export type SignupCompleteEvent = {
+  type: 'SIGNUP_COMPLETE';
+  user: User;
+};
+
+// For signupMachine, when user completes their signup.
+export const createSignupCompleteEvent = (user: User): SignupCompleteEvent => {
+  return {
+    type: 'SIGNUP_COMPLETE',
+    user
+  };
+};
+
 type AuthEvent =
   | { type: 'TRY_AUTH' }
   | { type: 'SUCCESS'; user: User }
   | { type: 'FAILED'; error: string }
   | { type: 'RETRY' }
   | { type: 'RESET' }
-  | { type: 'SIGNUP_COMPLETE'; user: User };
+  | SignupCompleteEvent;
 
 interface AuthContext {
   signupMachineActor?: any;

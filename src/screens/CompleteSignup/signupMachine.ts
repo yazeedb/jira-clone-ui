@@ -2,6 +2,7 @@ import { Machine, assign, sendParent, Interpreter } from 'xstate';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { User } from 'shared/interfaces/User';
+import { createSignupCompleteEvent } from 'authMachine';
 
 export const validateForm = ({ firstName, lastName }: User) => {
   interface FormErrors {
@@ -51,6 +52,9 @@ type SignupEvent =
     }
   | {
       type: 'SUCCESS';
+    }
+  | {
+      type: 'CLEAR_ERROR';
     };
 
 interface SignupContext {
@@ -99,12 +103,9 @@ export const signupMachine = Machine<
           {
             target: SignupStates.success,
             cond: (_, event) => event.data.data.hasOrg === true,
-            actions: sendParent((context: SignupContext) => {
-              return {
-                type: 'SIGNUP_COMPLETE',
-                user: context.formData
-              };
-            })
+            actions: sendParent((context: SignupContext) =>
+              createSignupCompleteEvent(context.formData as User)
+            )
           },
           {
             target: SignupStates.needOrgInfo,
@@ -114,13 +115,14 @@ export const signupMachine = Machine<
         onError: {
           target: SignupStates.fail,
           actions: assign({
-            errorMessage: (_, event) => event.data
+            errorMessage: (_, event) => event.data.message
           })
         }
       }
     },
     fail: {
-      after: { 5000: SignupStates.editing }
+      after: { 5000: SignupStates.editing },
+      on: { CLEAR_ERROR: SignupStates.editing }
     },
     needOrgInfo: {},
     success: {}

@@ -10,6 +10,7 @@ import {
   SignupMachineActor
 } from './signupMachine';
 import { User } from 'shared/interfaces/User';
+import { Notification } from 'shared/components/Notification';
 
 interface CompleteSignupProps {
   user: User;
@@ -30,7 +31,7 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
           <img src="jira-logo.svg" alt="Jira Logo" className="jira-logo" />
         </header>
 
-        <section>
+        <section className="form-section">
           <h5>Complete your profile to continue</h5>
 
           <Formik
@@ -112,6 +113,16 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
             .
           </span>
         </footer>
+
+        <Notification
+          handleClose={() => {
+            send('CLEAR_ERROR');
+          }}
+          primaryMessage={current.context.errorMessage}
+          secondaryMessage="Please try again"
+          show={current.matches(SignupStates.fail)}
+          type="error"
+        />
       </div>
     </main>
   );
