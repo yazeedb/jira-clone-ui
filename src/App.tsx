@@ -22,20 +22,6 @@ const AuthShell = () => {
   const [current, send] = useMachine(authMachine);
 
   useEffect(() => {
-    fetcher.interceptors.response.use(
-      (res) => res,
-      (error) => {
-        if (error.response && error.response.status === 401) {
-          send({
-            type: 'FAILED',
-            error: error.message
-          });
-        }
-
-        return Promise.reject(error);
-      }
-    );
-
     send('TRY_AUTH');
   }, [send]);
 

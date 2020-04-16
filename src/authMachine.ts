@@ -54,6 +54,23 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>({
     error: '',
     signupMachineActor: null
   },
+  invoke: {
+    src: (context, event) => (hollaBack) => {
+      fetcher.interceptors.response.use(
+        (res) => res,
+        (error) => {
+          if (error.response && error.response.status === 401) {
+            hollaBack({
+              type: 'FAILED',
+              error: error.message
+            });
+          }
+
+          return Promise.reject(error);
+        }
+      );
+    }
+  },
   initial: AuthStates.idle,
   on: {
     FAILED: {
