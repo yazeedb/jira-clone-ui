@@ -1,12 +1,9 @@
 import React, { FC } from 'react';
 import './Login.scss';
-import { useGoogleSignIn } from './useGoogleSignIn';
+
+export const googleButtonId = 'google-signin-button';
 
 export const Login: FC = () => {
-  const googleButtonId = 'google-signin-button';
-
-  useGoogleSignIn(googleButtonId);
-
   return (
     <main className="login">
       <div className="container">

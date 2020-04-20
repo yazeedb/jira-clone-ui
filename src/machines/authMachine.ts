@@ -1,27 +1,24 @@
-import { Machine, assign, DoneInvokeEvent, spawn, Interpreter } from 'xstate';
+import { Machine, assign, DoneInvokeEvent, spawn } from 'xstate';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
-import { signupMachine } from './signupMachine';
-import { User } from 'shared/interfaces/User';
-import { confirmOrgMachine } from './confirmOrgMachine';
-
-export enum AuthStates {
-  idle = 'idle',
-  authenticating = 'authenticating',
-  authFailed = 'authFailed',
-  awaitingSignup = 'awaitingSignup',
-  awaitingOrgConfirmation = 'awaitingOrgConfirmation',
-  appUsable = 'appUsable'
-}
+import { signupMachine, SignupService } from './signupMachine';
+import { User, createEmptyUser } from 'shared/interfaces/User';
+import { confirmOrgMachine, ConfirmOrgService } from './confirmOrgMachine';
+import { googleButtonId } from 'screens/Login';
+import { initGoogleSignIn } from 'shared/initGoogleSignIn';
 
 interface AuthStateSchema {
   states: {
-    [AuthStates.idle]: {};
-    [AuthStates.authenticating]: {};
-    [AuthStates.authFailed]: {};
-    [AuthStates.awaitingSignup]: {};
-    [AuthStates.awaitingOrgConfirmation]: {};
-    [AuthStates.appUsable]: {};
+    notSignedIn: {
+      states: {
+        idle: {};
+        displayError: {};
+      };
+    };
+    authenticating: {};
+    awaitingSignup: {};
+    awaitingOrgConfirmation: {};
+    appUsable: {};
   };
 }
 
@@ -42,82 +39,79 @@ type AuthEvent =
   | { type: 'TRY_AUTH' }
   | { type: 'SUCCESS'; user: User }
   | { type: 'FAILED'; error: string }
-  | { type: 'RETRY' }
   | { type: 'CLEAR_ERROR' }
   | { type: 'ORG_CONFIRMED' }
   | SignupCompleteEvent;
 
 interface AuthContext {
-  user?: User;
+  user: User;
   error: string;
-  signupService?: Interpreter<any, any, any>;
-  confirmOrgService?: Interpreter<any, any, any>;
+  signupService: SignupService;
+  confirmOrgService: ConfirmOrgService;
 }
 
 export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
   {
     id: 'auth',
     context: {
-      user: undefined,
+      user: createEmptyUser(),
       error: '',
-      signupService: undefined,
-      confirmOrgService: undefined
+      signupService: spawn(signupMachine),
+      confirmOrgService: spawn(confirmOrgMachine)
     },
     invoke: { src: 'kickUserIfEverUnauthenticated' },
-    initial: AuthStates.idle,
+    initial: 'notSignedIn',
     on: {
+      TRY_AUTH: 'authenticating',
       FAILED: {
-        target: AuthStates.authFailed,
+        target: 'notSignedIn.displayError',
         actions: assign({
           error: (_, event) => event.error
         })
       }
     },
     states: {
-      idle: {
-        on: { TRY_AUTH: AuthStates.authenticating }
+      notSignedIn: {
+        initial: 'idle',
+        invoke: { src: 'initGoogleSignIn' },
+        states: {
+          idle: {},
+          displayError: {
+            on: { CLEAR_ERROR: 'idle' },
+            after: { 50000: 'idle' }
+          }
+        }
       },
       authenticating: {
         invoke: {
           src: 'authenticateUser',
           onDone: [
             {
-              target: AuthStates.awaitingOrgConfirmation,
+              target: 'awaitingOrgConfirmation',
               actions: 'updateUser',
               cond: 'signupComplete'
             },
             {
-              target: AuthStates.awaitingSignup,
+              target: 'awaitingSignup',
               actions: 'updateUser',
               cond: 'signupNotComplete'
             }
           ],
           onError: {
-            target: AuthStates.authFailed,
+            target: 'notSignedIn.displayError',
             actions: 'updateErrorMessage'
           }
-        }
-      },
-      authFailed: {
-        on: {
-          RETRY: AuthStates.authenticating,
-          CLEAR_ERROR: AuthStates.idle
         },
-        after: { 5000: AuthStates.idle }
+        on: { TRY_AUTH: undefined }
       },
       awaitingSignup: {
         entry: assign({
-          signupService: (context) =>
-            context.signupService || spawn(signupMachine)
+          signupService: () => spawn(signupMachine)
         }),
-        on: { SIGNUP_COMPLETE: AuthStates.awaitingOrgConfirmation }
+        on: { SIGNUP_COMPLETE: 'awaitingOrgConfirmation' }
       },
       awaitingOrgConfirmation: {
-        entry: assign({
-          confirmOrgService: (context) =>
-            context.confirmOrgService || spawn(confirmOrgMachine)
-        }),
-        on: { ORG_CONFIRMED: AuthStates.appUsable }
+        on: { ORG_CONFIRMED: 'appUsable' }
       },
       appUsable: {}
     }
@@ -136,13 +130,16 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
       }
     },
     services: {
+      initGoogleSignIn: () => (callback) => {
+        initGoogleSignIn(googleButtonId, callback);
+      },
       authenticateUser: () => fetcher(apiRoutes.user),
-      kickUserIfEverUnauthenticated: () => (cb) => {
+      kickUserIfEverUnauthenticated: () => (callback) => {
         fetcher.interceptors.response.use(
           (res) => res,
           (error) => {
             if (error.response && error.response.status === 401) {
-              cb({
+              callback({
                 type: 'FAILED',
                 error: error.message
               });
@@ -173,9 +170,8 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
   }
 );
 
+const userHasFullName = (user: User) => !!user.firstName && !!user.lastName;
 type AuthDoneEvent = DoneInvokeEvent<User>;
 interface AuthResponse {
   data: { user: User };
 }
-
-const userHasFullName = (user: User) => !!user.firstName && !!user.lastName;

@@ -11,3 +11,20 @@ export interface User {
   organization: string;
   location: string;
 }
+
+// For initial values to make TS happy
+export const createEmptyUser = (): User => {
+  return {
+    googleId: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    dateJoined: '',
+    profileImg: '',
+    headerImg: '',
+    jobTitle: '',
+    department: '',
+    organization: '',
+    location: ''
+  };
+};

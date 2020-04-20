@@ -75,6 +75,12 @@ export type SignupMachineActor = Interpreter<
   SignupEvent
 >;
 
+export type SignupService = Interpreter<
+  SignupContext,
+  SignupStateSchema,
+  SignupEvent
+>;
+
 export const signupMachine = Machine<
   SignupContext,
   SignupStateSchema,

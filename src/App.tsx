@@ -1,12 +1,11 @@
-import React, { Fragment, createContext, useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { Login } from './screens/Login';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { CompleteSignup } from './screens/CompleteSignup';
 import { Notification } from 'shared/components/Notification';
-import { authMachine, AuthStates } from 'machines/authMachine';
+import { authMachine } from 'machines/authMachine';
 import { Dashboard } from 'screens/Dashboard';
-import { User } from 'shared/interfaces/User';
 
 export const App = () => {
   return (
@@ -16,8 +15,6 @@ export const App = () => {
   );
 };
 
-export const AuthContext = createContext<any>({});
-
 const AuthShell = () => {
   const [current, send] = useMachine(authMachine);
 
@@ -25,65 +22,48 @@ const AuthShell = () => {
     send('TRY_AUTH');
   }, [send]);
 
-  const contextValue = {
-    ...current.context,
-    send
-  };
-
   console.log('App.tsx', current);
 
-  switch (current.value as AuthStates) {
-    case AuthStates.authenticating:
+  switch (true) {
+    case current.matches('authenticating'):
       return <h1>Loading homie...</h1>;
 
-    case AuthStates.awaitingSignup:
+    case current.matches('notSignedIn'):
+      return (
+        <Fragment>
+          <Redirect exact to="/login" />
+          <Route exact path="/login">
+            <Login />
+          </Route>
+
+          <Notification
+            show={current.matches('notSignedIn.displayError')}
+            type="error"
+            primaryMessage={current.context.error}
+            secondaryMessage="Please try again"
+            handleClose={() => send('CLEAR_ERROR')}
+          />
+        </Fragment>
+      );
+
+    case current.matches('awaitingSignup'):
       return (
         <CompleteSignup
-          user={current.context.user as User}
-          // @ts-ignore
+          user={current.context.user}
           signupService={current.context.signupService}
         />
       );
 
-    case AuthStates.awaitingOrgConfirmation:
+    case current.matches('awaitingOrgConfirmation'):
       return <h1>Confirm yo org</h1>;
 
-    case AuthStates.appUsable:
-      return (
-        <AuthContext.Provider value={contextValue}>
-          <AuthenticatedApp />
-        </AuthContext.Provider>
-      );
+    case current.matches('appUsable'):
+      return <AuthenticatedApp />;
 
-    case AuthStates.authFailed:
-    case AuthStates.idle:
-      return (
-        <AuthContext.Provider value={contextValue}>
-          <Notification
-            type="error"
-            primaryMessage={contextValue.error}
-            secondaryMessage="Please try again"
-            handleClose={() => {
-              send('RETRY');
-            }}
-            show={current.matches(AuthStates.authFailed)}
-          />
-
-          <UnauthenticatedApp />
-        </AuthContext.Provider>
-      );
+    default:
+      console.error('Default case hit!', current);
+      return null;
   }
-};
-
-const UnauthenticatedApp = () => {
-  return (
-    <Fragment>
-      <Redirect exact to="/login" />
-      <Route exact path="/login">
-        <Login />
-      </Route>
-    </Fragment>
-  );
 };
 
 const AuthenticatedApp = () => {

@@ -24,6 +24,7 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
   user,
   signupService
 }) => {
+  console.log(signupService);
   const [current, send] = useService(signupService);
   const fieldsWithEmptyStringDefaults = mapObject((value) => value || '', user);
 

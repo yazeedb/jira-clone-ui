@@ -1,4 +1,4 @@
-import { Machine, assign, DoneInvokeEvent } from 'xstate';
+import { Machine, assign, DoneInvokeEvent, Interpreter } from 'xstate';
 import { createOrgMachine } from './createOrgMachine';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
@@ -10,6 +10,8 @@ export enum ConfirmOrgStates {
   awaitingOrgCreation = 'awaitingOrgCreation',
   confirmFailed = 'confirmFailed'
 }
+
+export type ConfirmOrgService = Interpreter<any, any, any>;
 
 export const confirmOrgMachine = Machine(
   {
