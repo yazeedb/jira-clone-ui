@@ -57,7 +57,6 @@ export const initGoogleSignIn = (elementId: string, callback: Sender<any>) => {
           });
       },
       onfailure: ({ error }: any) => {
-        console.log('failure');
         callback({
           type: 'FAILED',
           error: 'Error encountered while signing in with Google'

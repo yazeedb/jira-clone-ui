@@ -154,7 +154,6 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
       updateUser: assign({
         user: (_, event) => {
           const e = event as DoneInvokeEvent<AuthResponse>;
-          console.log(e);
 
           return e.data.data.user;
         }
