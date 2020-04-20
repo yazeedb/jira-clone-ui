@@ -1,12 +1,12 @@
-import React, { Fragment, createContext, useEffect, useContext } from 'react';
+import React, { Fragment, createContext, useEffect } from 'react';
 import { Login } from './screens/Login';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
-import { fetcher } from './fetcher';
 import { CompleteSignup } from './screens/CompleteSignup';
 import { Notification } from 'shared/components/Notification';
-import { authMachine, AuthStates } from './authMachine';
+import { authMachine, AuthStates } from 'machines/authMachine';
 import { Dashboard } from 'screens/Dashboard';
+import { User } from 'shared/interfaces/User';
 
 export const App = () => {
   return (
@@ -22,20 +22,6 @@ const AuthShell = () => {
   const [current, send] = useMachine(authMachine);
 
   useEffect(() => {
-    fetcher.interceptors.response.use(
-      (res) => res,
-      (error) => {
-        if (error.response && error.response.status === 401) {
-          send({
-            type: 'FAILED',
-            error: error.message
-          });
-        }
-
-        return Promise.reject(error);
-      }
-    );
-
     send('TRY_AUTH');
   }, [send]);
 
@@ -44,18 +30,32 @@ const AuthShell = () => {
     send
   };
 
+  console.log('App.tsx', current);
+
   switch (current.value as AuthStates) {
-    case AuthStates.pending:
+    case AuthStates.authenticating:
       return <h1>Loading homie...</h1>;
 
-    case AuthStates.success:
+    case AuthStates.awaitingSignup:
+      return (
+        <CompleteSignup
+          user={current.context.user as User}
+          // @ts-ignore
+          signupService={current.context.signupService}
+        />
+      );
+
+    case AuthStates.awaitingOrgConfirmation:
+      return <h1>Confirm yo org</h1>;
+
+    case AuthStates.appUsable:
       return (
         <AuthContext.Provider value={contextValue}>
           <AuthenticatedApp />
         </AuthContext.Provider>
       );
 
-    case AuthStates.fail:
+    case AuthStates.authFailed:
     case AuthStates.idle:
       return (
         <AuthContext.Provider value={contextValue}>
@@ -64,9 +64,9 @@ const AuthShell = () => {
             primaryMessage={contextValue.error}
             secondaryMessage="Please try again"
             handleClose={() => {
-              send('RESET');
+              send('RETRY');
             }}
-            show={current.matches(AuthStates.fail)}
+            show={current.matches(AuthStates.authFailed)}
           />
 
           <UnauthenticatedApp />
@@ -87,21 +87,11 @@ const UnauthenticatedApp = () => {
 };
 
 const AuthenticatedApp = () => {
-  const { user, signupMachineActor } = useContext(AuthContext);
-  const signupComplete = user.firstName && user.lastName;
-
-  const nextRoute = signupComplete ? '/' : '/completeSignup';
-  const NextComponent = signupComplete ? (
-    <Dashboard />
-  ) : (
-    <CompleteSignup signupMachineActor={signupMachineActor} user={user} />
-  );
-
   return (
     <Fragment>
-      <Redirect exact to={nextRoute} />
-      <Route exact to={nextRoute}>
-        {NextComponent}
+      <Redirect exact to="/" />
+      <Route exact to="/">
+        <Dashboard />
       </Route>
     </Fragment>
   );

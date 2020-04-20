@@ -7,22 +7,27 @@ import { useService } from '@xstate/react';
 import {
   validateForm,
   SignupStates,
-  SignupMachineActor
-} from './signupMachine';
+  SignupContext,
+  SignupStateSchema,
+  SignupEvent
+} from 'machines/signupMachine';
 import { User } from 'shared/interfaces/User';
 import { Notification } from 'shared/components/Notification';
+import { Interpreter } from 'xstate';
 
 interface CompleteSignupProps {
+  signupService: Interpreter<SignupContext, SignupStateSchema, SignupEvent>;
   user: User;
-  signupMachineActor: SignupMachineActor;
 }
 
 export const CompleteSignup: FC<CompleteSignupProps> = ({
   user,
-  signupMachineActor
+  signupService
 }) => {
-  const [current, send] = useService(signupMachineActor);
+  const [current, send] = useService(signupService);
   const fieldsWithEmptyStringDefaults = mapObject((value) => value || '', user);
+
+  console.log('CompleteSignup', current);
 
   return (
     <main className="complete-signup">
