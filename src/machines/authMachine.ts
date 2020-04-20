@@ -78,7 +78,7 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
           idle: {},
           displayError: {
             on: { CLEAR_ERROR: 'idle' },
-            after: { 50000: 'idle' }
+            after: { 5000: 'idle' }
           }
         }
       },
@@ -111,6 +111,9 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
         on: { SIGNUP_COMPLETE: 'awaitingOrgConfirmation' }
       },
       awaitingOrgConfirmation: {
+        entry: assign({
+          confirmOrgService: () => spawn(confirmOrgMachine)
+        }),
         on: { ORG_CONFIRMED: 'appUsable' }
       },
       appUsable: {}
