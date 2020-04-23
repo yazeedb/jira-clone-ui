@@ -4,17 +4,11 @@ import { apiRoutes } from 'shared/apiRoutes';
 import { signupMachine, SignupService } from './signupMachine';
 import { User, createEmptyUser } from 'shared/interfaces/User';
 import { confirmOrgMachine, ConfirmOrgService } from './confirmOrgMachine';
-import { googleButtonId } from 'screens/Login';
-import { initGoogleSignIn } from 'shared/initGoogleSignIn';
 
 interface AuthStateSchema {
   states: {
-    notSignedIn: {
-      states: {
-        idle: {};
-        displayError: {};
-      };
-    };
+    notSignedIn: {};
+    signinFailed: {};
     authenticating: {};
     awaitingSignup: {};
     awaitingOrgConfirmation: {};
@@ -38,7 +32,7 @@ export const createSignupCompleteEvent = (user: User): SignupCompleteEvent => {
 type AuthEvent =
   | { type: 'TRY_AUTH' }
   | { type: 'SUCCESS'; user: User }
-  | { type: 'FAILED'; error: string }
+  | { type: 'SIGN_IN_FAILED'; error: string }
   | { type: 'CLEAR_ERROR' }
   | { type: 'ORG_CONFIRMED' }
   | SignupCompleteEvent;
@@ -61,24 +55,27 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
     },
     invoke: { src: 'kickUserIfEverUnauthenticated' },
     initial: 'notSignedIn',
-    on: {
-      TRY_AUTH: 'authenticating',
-      FAILED: {
-        target: 'notSignedIn.displayError',
-        actions: assign({
-          error: (_, event) => event.error
-        })
-      }
-    },
     states: {
       notSignedIn: {
-        initial: 'idle',
-        invoke: { src: 'initGoogleSignIn' },
-        states: {
-          idle: {},
-          displayError: {
-            on: { CLEAR_ERROR: 'idle' },
-            after: { 5000: 'idle' }
+        on: {
+          TRY_AUTH: 'authenticating',
+          SIGN_IN_FAILED: {
+            target: 'signinFailed',
+            actions: assign({
+              error: (_, event) => event.error
+            })
+          }
+        }
+      },
+      signinFailed: {
+        after: { 3000: 'notSignedIn' },
+        on: {
+          TRY_AUTH: 'authenticating',
+          SIGN_IN_FAILED: {
+            target: 'signinFailed',
+            actions: assign({
+              error: (_, event) => event.error
+            })
           }
         }
       },
@@ -98,22 +95,17 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
             }
           ],
           onError: {
-            target: 'notSignedIn.displayError',
+            target: 'signinFailed',
             actions: 'updateErrorMessage'
           }
-        },
-        on: { TRY_AUTH: undefined }
+        }
       },
       awaitingSignup: {
-        entry: assign({
-          signupService: () => spawn(signupMachine)
-        }),
+        entry: 'spawnSignupService',
         on: { SIGNUP_COMPLETE: 'awaitingOrgConfirmation' }
       },
       awaitingOrgConfirmation: {
-        entry: assign({
-          confirmOrgService: () => spawn(confirmOrgMachine)
-        }),
+        entry: 'spawnConfirmOrgService',
         on: { ORG_CONFIRMED: 'appUsable' }
       },
       appUsable: {}
@@ -133,17 +125,15 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
       }
     },
     services: {
-      initGoogleSignIn: () => (callback) => {
-        initGoogleSignIn(googleButtonId, callback);
-      },
       authenticateUser: () => fetcher(apiRoutes.user),
       kickUserIfEverUnauthenticated: () => (callback) => {
+        console.log('401 logic set up');
         fetcher.interceptors.response.use(
           (res) => res,
           (error) => {
             if (error.response && error.response.status === 401) {
               callback({
-                type: 'FAILED',
+                type: 'SIGN_IN_FAILED',
                 error: error.message
               });
             }
@@ -151,9 +141,19 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
             return Promise.reject(error);
           }
         );
+
+        return () => {
+          console.log('401 logic cleaned up');
+        };
       }
     },
     actions: {
+      spawnSignupService: assign({
+        signupService: () => spawn(signupMachine)
+      }),
+      spawnConfirmOrgService: assign({
+        confirmOrgService: () => spawn(confirmOrgMachine)
+      }),
       updateUser: assign({
         user: (_, event) => {
           const e = event as DoneInvokeEvent<AuthResponse>;

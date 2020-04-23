@@ -29,15 +29,16 @@ const AuthShell = () => {
       return <h1>Loading homie...</h1>;
 
     case current.matches('notSignedIn'):
+    case current.matches('signinFailed'):
       return (
         <Fragment>
           <Redirect exact to="/login" />
           <Route exact path="/login">
-            <Login />
+            <Login send={send} />
           </Route>
 
           <Notification
-            show={current.matches('notSignedIn.displayError')}
+            show={current.matches('signinFailed')}
             type="error"
             primaryMessage={current.context.error}
             secondaryMessage="Please try again"

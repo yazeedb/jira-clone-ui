@@ -1,9 +1,17 @@
 import React, { FC } from 'react';
 import './Login.scss';
+import { Sender } from 'xstate';
+import { useGoogleSignIn } from './useGoogleSignIn';
+
+interface LoginProps {
+  send: Sender<any>;
+}
 
 export const googleButtonId = 'google-signin-button';
 
-export const Login: FC = () => {
+export const Login: FC<LoginProps> = ({ send }) => {
+  useGoogleSignIn(googleButtonId, send);
+
   return (
     <main className="login">
       <div className="container">
