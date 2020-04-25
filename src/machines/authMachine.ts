@@ -70,6 +70,7 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
       signinFailed: {
         after: { 3000: 'notSignedIn' },
         on: {
+          CLEAR_ERROR: 'notSignedIn',
           TRY_AUTH: 'authenticating',
           SIGN_IN_FAILED: {
             target: 'signinFailed',
