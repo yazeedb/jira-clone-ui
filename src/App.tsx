@@ -49,14 +49,26 @@ const AuthShell = () => {
 
     case current.matches('awaitingSignup'):
       return (
-        <CompleteSignup
-          user={current.context.user}
-          signupService={current.context.signupService}
-        />
+        <Fragment>
+          <Redirect exact to="/completeSignup" />
+          <Route exact path="/completeSignup">
+            <CompleteSignup
+              user={current.context.user}
+              signupService={current.context.signupService}
+            />
+          </Route>
+        </Fragment>
       );
 
     case current.matches('awaitingOrgConfirmation'):
-      return <h1>Confirm yo org</h1>;
+      return (
+        <Fragment>
+          <Redirect exact to="/confirmOrg" />
+          <Route exact path="/confirmOrg">
+            <h1>Confirm yo org</h1>
+          </Route>
+        </Fragment>
+      );
 
     case current.matches('appUsable'):
       return <AuthenticatedApp />;
