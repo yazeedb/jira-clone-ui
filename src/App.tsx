@@ -6,6 +6,7 @@ import { CompleteSignup } from './screens/CompleteSignup';
 import { Notification } from 'shared/components/Notification';
 import { authMachine } from 'machines/authMachine';
 import { Dashboard } from 'screens/Dashboard';
+import { ConfirmOrg } from 'screens/ConfirmOrg';
 
 export const App = () => {
   return (
@@ -65,7 +66,10 @@ const AuthShell = () => {
         <Fragment>
           <Redirect exact to="/confirmOrg" />
           <Route exact path="/confirmOrg">
-            <h1>Confirm yo org</h1>
+            <ConfirmOrg
+              confirmOrgService={current.context.confirmOrgService}
+              user={current.context.user}
+            />
           </Route>
         </Fragment>
       );

@@ -1,5 +1,5 @@
-import { Machine, assign, DoneInvokeEvent, Interpreter } from 'xstate';
-import { createOrgMachine } from './createOrgMachine';
+import { Machine, assign, DoneInvokeEvent, Interpreter, spawn } from 'xstate';
+import { createOrgMachine, CreateOrgService } from './createOrgMachine';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { Org } from 'shared/interfaces/Org';
@@ -11,12 +11,20 @@ export enum ConfirmOrgStates {
   confirmFailed = 'confirmFailed'
 }
 
-export type ConfirmOrgService = Interpreter<any, any, any>;
+interface MachineContext {
+  errorMessage: string;
+  createOrgService: CreateOrgService;
+}
 
-export const confirmOrgMachine = Machine(
+export type ConfirmOrgService = Interpreter<MachineContext, any, any>;
+
+export const confirmOrgMachine = Machine<MachineContext, any, any>(
   {
     initial: ConfirmOrgStates.confirming,
-    context: { errorMessage: '' },
+    context: {
+      errorMessage: '',
+      createOrgService: spawn(createOrgMachine)
+    },
     states: {
       confirming: {
         invoke: {
@@ -38,15 +46,13 @@ export const confirmOrgMachine = Machine(
         }
       },
       awaitingOrgCreation: {
-        invoke: {
-          src: createOrgMachine,
-          onDone: ConfirmOrgStates.orgConfirmed
-        }
+        entry: 'spawnCreateOrgService',
+        on: { ORG_CREATED: ConfirmOrgStates.orgConfirmed }
       },
-      orgConfirmed: { type: 'final' },
       confirmFailed: {
         on: { RETRY: ConfirmOrgStates.confirming }
-      }
+      },
+      orgConfirmed: { type: 'final' }
     }
   },
   {
@@ -66,6 +72,9 @@ export const confirmOrgMachine = Machine(
       }
     },
     actions: {
+      spawnCreateOrgService: assign({
+        createOrgService: (context, event) => spawn(createOrgMachine)
+      }),
       updateErrorMessage: assign({
         errorMessage: (_, event) => {
           const e = event as DoneInvokeEvent<Error>;

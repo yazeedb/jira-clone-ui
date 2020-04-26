@@ -117,12 +117,12 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
       signupComplete: (context, event) => {
         const e = event as AuthDoneEvent;
 
-        return userHasFullName(e.data);
+        return userHasFullName(e.data.data.user);
       },
       signupNotComplete: (context, event) => {
         const e = event as AuthDoneEvent;
 
-        return !userHasFullName(e.data);
+        return !userHasFullName(e.data.data.user);
       }
     },
     services: {
@@ -174,7 +174,7 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
 );
 
 const userHasFullName = (user: User) => !!user.firstName && !!user.lastName;
-type AuthDoneEvent = DoneInvokeEvent<User>;
+type AuthDoneEvent = DoneInvokeEvent<AuthResponse>;
 interface AuthResponse {
   data: { user: User };
 }

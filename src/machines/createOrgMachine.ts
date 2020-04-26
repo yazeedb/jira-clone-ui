@@ -1,4 +1,12 @@
-import { Machine, assign, DoneInvokeEvent } from 'xstate';
+import {
+  Machine,
+  assign,
+  DoneInvokeEvent,
+  sendParent,
+  Interpreter
+} from 'xstate';
+import { fetcher } from 'fetcher';
+import { apiRoutes } from 'shared/apiRoutes';
 
 export enum CreateOrgStates {
   editing = 'editing',
@@ -9,21 +17,31 @@ export enum CreateOrgStates {
 
 type FormFields = { org: string };
 
-type SubmitEvent = { type: 'SUBMIT'; formData: FormFields };
+interface MachineContext {
+  formData: FormFields;
+  errorMessage: string;
+}
 
-export const createOrgMachine = Machine(
+type SubmitEvent = { type: 'SUBMIT'; formData: FormFields };
+type ClearErrorEvent = { type: 'CLEAR_ERROR' };
+type RetryEvent = { type: 'RETRY' };
+
+type MachineEvent = SubmitEvent | ClearErrorEvent | RetryEvent;
+
+export type CreateOrgService = Interpreter<MachineContext, any, MachineEvent>;
+
+export const createOrgMachine = Machine<MachineContext, any, MachineEvent>(
   {
     initial: CreateOrgStates.editing,
     context: {
-      formData: {
-        org: ''
-      },
+      formData: { org: '' },
       errorMessage: ''
     },
     states: {
       editing: {
         on: {
           SUBMIT: {
+            target: 'submitting',
             actions: 'updateFormData',
             cond: 'formIsValid'
           }
@@ -32,7 +50,10 @@ export const createOrgMachine = Machine(
       submitting: {
         invoke: {
           src: 'createOrg',
-          onDone: CreateOrgStates.success,
+          onDone: {
+            target: CreateOrgStates.success,
+            actions: sendParent('ORG_CREATED')
+          },
           onError: {
             target: CreateOrgStates.submitFailed,
             actions: 'updateErrorMessage'
@@ -53,6 +74,14 @@ export const createOrgMachine = Machine(
     }
   },
   {
+    services: {
+      createOrg: (context, event) =>
+        fetcher({
+          url: apiRoutes.orgs,
+          method: 'POST',
+          data: context.formData
+        })
+    },
     actions: {
       updateFormData: assign({
         formData: (_, event) => {
@@ -68,6 +97,9 @@ export const createOrgMachine = Machine(
           return e.data.message;
         }
       })
+    },
+    guards: {
+      formIsValid: (context, event) => true
     }
   }
 );
