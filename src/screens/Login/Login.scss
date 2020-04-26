@@ -2,90 +2,32 @@ $background: #fafbfc;
 $gray: rgb(107, 119, 140);
 
 .login {
-  background-color: $background;
-  min-height: 100vh;
-
-  background-image: url('/jira-left.svg'), url('/jira-right.svg');
-  background-attachment: fixed, fixed;
-  background-size: 25%, 25%;
-  background-repeat: no-repeat, no-repeat;
-  background-position: left bottom, right bottom;
-
-  @media only screen and (max-width: 705px) {
-    background-image: none;
+  h5 {
+    color: rgb(94, 108, 132);
+    font-weight: 600;
+    margin-bottom: 20px;
   }
 
-  .container {
-    width: 400px;
-    margin: 0 auto;
+  #google-signin-button {
+    width: 320px;
+    border-bottom: 1px solid rgb(213, 216, 222);
+    padding-bottom: 20px;
   }
 
-  header {
-    padding: 40px 0;
+  .links {
     text-align: center;
+    margin-top: 20px;
   }
 
-  .jira-logo {
-    width: 86px;
-  }
+  a {
+    color: rgb(0, 82, 204);
+    text-decoration: none;
 
-  .container section {
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 10px;
-    display: flex;
-    flex-direction: column;
-    padding: 32px 40px;
-    text-align: center;
-    background: white;
-
-    h5 {
-      color: rgb(94, 108, 132);
-      font-weight: 600;
-      margin-bottom: 20px;
+    &:first-of-type:after {
+      content: '•';
+      margin: 0 20px;
+      font-size: 14px;
+      color: $gray;
     }
-
-    #google-signin-button {
-      width: 320px;
-      border-bottom: 1px solid rgb(213, 216, 222);
-      padding-bottom: 20px;
-    }
-
-    .links {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    a {
-      color: rgb(0, 82, 204);
-      text-decoration: none;
-
-      &:first-of-type:after {
-        content: '•';
-        margin: 0 20px;
-        font-size: 14px;
-        color: $gray;
-      }
-    }
-  }
-
-  footer {
-    position: fixed;
-    bottom: 0;
-    width: 400px;
-    border-top: 1px solid rgb(223, 225, 230);
-    text-align: center;
-    padding: 24px 0;
-
-    img {
-      width: 190px;
-      height: 32px;
-      display: block;
-      margin: 0 auto;
-      margin-bottom: 5px;
-    }
-  }
-
-  .subtext {
-    font-size: 12px;
-    color: $gray;
   }
 }
