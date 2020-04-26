@@ -62,7 +62,7 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
           SIGN_IN_FAILED: {
             target: 'signinFailed',
             actions: assign({
-              error: (_, event) => event.error
+              error: (context, event) => event.error
             })
           }
         }
@@ -75,7 +75,7 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
           SIGN_IN_FAILED: {
             target: 'signinFailed',
             actions: assign({
-              error: (_, event) => event.error
+              error: (context, event) => event.error
             })
           }
         }
@@ -150,20 +150,20 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
     },
     actions: {
       spawnSignupService: assign({
-        signupService: () => spawn(signupMachine)
+        signupService: (context, event) => spawn(signupMachine)
       }),
       spawnConfirmOrgService: assign({
-        confirmOrgService: () => spawn(confirmOrgMachine)
+        confirmOrgService: (context, event) => spawn(confirmOrgMachine)
       }),
       updateUser: assign({
-        user: (_, event) => {
+        user: (context, event) => {
           const e = event as DoneInvokeEvent<AuthResponse>;
 
           return e.data.data.user;
         }
       }),
       updateErrorMessage: assign({
-        error: (_, event) => {
+        error: (context, event) => {
           const e = event as DoneInvokeEvent<Error>;
 
           return e.data.message;
