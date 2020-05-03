@@ -108,7 +108,12 @@ export const signupMachine = Machine<
           src: 'completeSignup',
           onDone: {
             target: SignupStates.success,
-            actions: sendParent('SIGNUP_COMPLETE')
+            actions: sendParent((context: SignupContext) => {
+              return {
+                type: 'SIGNUP_COMPLETE',
+                user: context.formData
+              };
+            })
           },
           onError: {
             target: SignupStates.fail,

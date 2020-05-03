@@ -16,26 +16,13 @@ interface AuthStateSchema {
   };
 }
 
-export type SignupCompleteEvent = {
-  type: 'SIGNUP_COMPLETE';
-  user: User;
-};
-
-// For signupMachine, when user completes their signup.
-export const createSignupCompleteEvent = (user: User): SignupCompleteEvent => {
-  return {
-    type: 'SIGNUP_COMPLETE',
-    user
-  };
-};
-
 type AuthEvent =
   | { type: 'TRY_AUTH' }
   | { type: 'SUCCESS'; user: User }
   | { type: 'SIGN_IN_FAILED'; error: string }
   | { type: 'CLEAR_ERROR' }
   | { type: 'ORG_CONFIRMED' }
-  | SignupCompleteEvent;
+  | { type: 'SIGNUP_COMPLETE'; user: User };
 
 interface AuthContext {
   user: User;
@@ -103,7 +90,18 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
       },
       awaitingSignup: {
         entry: 'spawnSignupService',
-        on: { SIGNUP_COMPLETE: 'awaitingOrgConfirmation' }
+        on: {
+          SIGNUP_COMPLETE: {
+            target: 'awaitingOrgConfirmation',
+            actions: assign({
+              user: (context, event) => {
+                console.log('SIGNUP_COMPLETE RAN', { context, event });
+
+                return event.user;
+              }
+            })
+          }
+        }
       },
       awaitingOrgConfirmation: {
         entry: 'spawnConfirmOrgService',

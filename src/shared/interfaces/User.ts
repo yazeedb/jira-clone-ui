@@ -1,5 +1,5 @@
 export interface User {
-  googleId: string;
+  sub: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -15,7 +15,7 @@ export interface User {
 // For initial values to make TS happy
 export const createEmptyUser = (): User => {
   return {
-    googleId: '',
+    sub: '',
     email: '',
     firstName: '',
     lastName: '',
