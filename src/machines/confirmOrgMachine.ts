@@ -1,4 +1,11 @@
-import { Machine, assign, DoneInvokeEvent, Interpreter, spawn } from 'xstate';
+import {
+  Machine,
+  assign,
+  DoneInvokeEvent,
+  Interpreter,
+  spawn,
+  sendParent
+} from 'xstate';
 import { createOrgMachine, CreateOrgService } from './createOrgMachine';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
@@ -32,7 +39,8 @@ export const confirmOrgMachine = Machine<MachineContext, any, any>(
           onDone: [
             {
               target: ConfirmOrgStates.orgConfirmed,
-              cond: 'userHasOrg'
+              cond: 'userHasOrg',
+              actions: sendParent('ORG_CONFIRMED')
             },
             {
               target: ConfirmOrgStates.awaitingOrgCreation,
