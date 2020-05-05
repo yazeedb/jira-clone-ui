@@ -86,8 +86,8 @@ const AuthShell = () => {
 const AuthenticatedApp = () => {
   return (
     <Fragment>
-      <Redirect exact to="/dashboard" />
-      <Route exact to="/dashboard">
+      <Redirect exact to="/projects" />
+      <Route exact to="/projects">
         <Dashboard />
       </Route>
     </Fragment>
