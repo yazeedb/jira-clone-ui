@@ -7,6 +7,7 @@ import { Notification } from 'shared/components/Notification';
 import { authMachine } from 'machines/authMachine';
 import { Dashboard } from 'screens/Dashboard';
 import { ConfirmOrg } from 'screens/ConfirmOrg';
+import { GlobalNav } from 'shared/components/GlobalNav';
 
 export const App = () => {
   return (
@@ -86,6 +87,7 @@ const AuthShell = () => {
 const AuthenticatedApp = () => {
   return (
     <Fragment>
+      <GlobalNav />
       <Redirect exact to="/projects" />
       <Route exact to="/projects">
         <Dashboard />
