@@ -55,7 +55,12 @@ export const confirmOrgMachine = Machine<MachineContext, any, any>(
       },
       awaitingOrgCreation: {
         entry: 'spawnCreateOrgService',
-        on: { ORG_CREATED: ConfirmOrgStates.orgConfirmed }
+        on: {
+          ORG_CREATED: {
+            target: ConfirmOrgStates.orgConfirmed,
+            actions: sendParent('ORG_CONFIRMED')
+          }
+        }
       },
       confirmFailed: {
         on: { RETRY: ConfirmOrgStates.confirming }
