@@ -11,6 +11,14 @@
     tslib "^1.9.3"
     uuid "^3.1.0"
 
+"@atlaskit/logo@^12.3.4":
+  version "12.3.4"
+  resolved "https://registry.yarnpkg.com/@atlaskit/logo/-/logo-12.3.4.tgz#174cf1e5fdb39f2f586f9bc7ff9e3523c1cc229d"
+  integrity sha512-iL/4eJrSD6y3LbnlLoAYcR//zJKLnxE/8PAaVVkmLH+btOr0dmJuahu92onmAnSFBjsx0pmc8W2DuCkrzbX3Gw==
+  dependencies:
+    react-uid "^2.2.0"
+    tslib "^1.9.3"
+
 "@atlaskit/spinner@^12.1.6":
   version "12.1.6"
   resolved "https://registry.yarnpkg.com/@atlaskit/spinner/-/spinner-12.1.6.tgz#bf8cfef92ebbdb87c492d087032e4096c4840078"
@@ -9230,6 +9238,11 @@ react-transition-group@^2.2.1:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
     react-lifecycles-compat "^3.0.4"
+
+react-uid@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/react-uid/-/react-uid-2.2.0.tgz#0f77e1e0594fbf29fc4fe528cc9aa415c5bf9159"
+  integrity sha512-z+g5+hFOQ08hCfrGcJ1PNs+cmvH8Uq2CVzCmPeWBsUi5A4W4NWXR5jouledzy3oSKGMU9HOzf8zFuGi15TXJoQ==
 
 react@^16.13.0:
   version "16.13.1"
