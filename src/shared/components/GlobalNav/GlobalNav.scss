@@ -16,15 +16,20 @@ $nav-padding-top: 30px;
 
   .first-nav {
     width: $first-nav-width;
-    text-align: center;
     padding-top: $nav-padding-top - 5;
+    padding-bottom: $nav-padding-top - 15;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    text-align: center;
 
-    .jira-icon-wrapper {
-      margin-bottom: 15px;
+    .jira-logo-wrapper {
+      margin-bottom: 20px;
     }
 
     .icon-wrapper {
-      margin-bottom: 12px;
+      margin-bottom: 15px;
     }
   }
 
