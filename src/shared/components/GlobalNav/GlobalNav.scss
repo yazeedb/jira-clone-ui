@@ -18,6 +18,14 @@ $nav-padding-top: 30px;
     width: $first-nav-width;
     text-align: center;
     padding-top: $nav-padding-top - 5;
+
+    .jira-icon-wrapper {
+      margin-bottom: 15px;
+    }
+
+    .icon-wrapper {
+      margin-bottom: 12px;
+    }
   }
 
   .second-nav {
