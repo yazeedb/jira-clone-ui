@@ -35,9 +35,7 @@ const AuthShell = () => {
       return (
         <Fragment>
           <Redirect exact to="/login" />
-          <Route exact path="/login">
-            <Login send={send} />
-          </Route>
+          <Login send={send} />
 
           <Notification
             show={current.matches('signinFailed')}
@@ -53,12 +51,11 @@ const AuthShell = () => {
       return (
         <Fragment>
           <Redirect exact to="/completeSignup" />
-          <Route exact path="/completeSignup">
-            <CompleteSignup
-              user={current.context.user}
-              signupService={current.context.signupService}
-            />
-          </Route>
+
+          <CompleteSignup
+            user={current.context.user}
+            signupService={current.context.signupService}
+          />
         </Fragment>
       );
 
@@ -66,12 +63,11 @@ const AuthShell = () => {
       return (
         <Fragment>
           <Redirect exact to="/confirmOrg" />
-          <Route exact path="/confirmOrg">
-            <ConfirmOrg
-              confirmOrgService={current.context.confirmOrgService}
-              user={current.context.user}
-            />
-          </Route>
+
+          <ConfirmOrg
+            confirmOrgService={current.context.confirmOrgService}
+            user={current.context.user}
+          />
         </Fragment>
       );
 
