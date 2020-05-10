@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import FolderIcon from '@atlaskit/icon/glyph/folder';
 import PeopleIcon from '@atlaskit/icon/glyph/people';
 import QuestionCircleIcon from '@atlaskit/icon/glyph/question-circle';
@@ -93,16 +93,16 @@ export const GlobalNav: FC = () => {
         <h1 className="title">Jira Software</h1>
         <ul>
           <li>
-            <Link to="/">
+            <NavLink to="/dashboard/projects">
               <FolderIcon label="Projects" />
               <span className="link-text">Projects</span>
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link to="/">
+            <NavLink to="/dashboard/people">
               <PeopleIcon label="People" />
               <span className="link-text">People</span>
-            </Link>
+            </NavLink>
           </li>
         </ul>
 
