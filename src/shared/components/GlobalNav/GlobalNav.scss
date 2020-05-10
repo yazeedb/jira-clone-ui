@@ -1,11 +1,13 @@
 $first-nav-width: 64px;
 $second-nav-width: 240px;
 $nav-padding-top: 30px;
+$global-nav-bg: rgb(7, 71, 166);
+$light-global-nav-bg: lighten($global-nav-bg, 10%);
 
 .global-nav {
   height: 100vh;
   color: #deebff;
-  background-color: rgb(7, 71, 166);
+  background-color: $global-nav-bg;
   width: $first-nav-width + $second-nav-width;
   display: flex;
 
@@ -16,8 +18,37 @@ $nav-padding-top: 30px;
 
   .first-nav {
     width: $first-nav-width;
-    text-align: center;
     padding-top: $nav-padding-top - 5;
+    padding-bottom: $nav-padding-top - 15;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+
+    .icon-row {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .icon-wrapper {
+      margin-bottom: 8px;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      text-align: center;
+      padding-top: 3px;
+
+      &:hover {
+        background-color: $light-global-nav-bg;
+      }
+    }
+
+    .jira-logo-wrapper {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 13px;
+    }
   }
 
   .second-nav {
@@ -32,7 +63,7 @@ $nav-padding-top: 30px;
   .title {
     font-size: 24px;
     margin-left: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
   }
 
   a {
@@ -43,7 +74,7 @@ $nav-padding-top: 30px;
     height: 40px;
 
     &:hover {
-      background-color: rgb(28, 99, 206);
+      background-color: $light-global-nav-bg;
     }
 
     .link-text {
