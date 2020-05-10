@@ -6,6 +6,7 @@
   "dependencies": {
     "@atlaskit/icon": "^20.1.1",
     "@atlaskit/logo": "^12.3.4",
+    "@atlaskit/progress-bar": "^0.2.8",
     "@atlaskit/spinner": "^12.1.6",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",

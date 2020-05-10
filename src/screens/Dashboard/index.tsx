@@ -2,7 +2,8 @@ import React from 'react';
 import './Dashboard.scss';
 import { useMachine } from '@xstate/react';
 import { dashboardMachine } from 'machines/dashboardMachine';
-import Spinner from '@atlaskit/spinner';
+import ProgressBar from '@atlaskit/progress-bar';
+import { ViewProjects } from './ViewProjects';
 
 export const Dashboard = () => {
   const [current, send] = useMachine(dashboardMachine);
@@ -10,19 +11,16 @@ export const Dashboard = () => {
   console.log('Dashboard current:', current);
 
   const renderContent = () => {
-    // switch (true) {
-    // case current.matches('fetchingOrgs'):
-    return (
-      <section>
-        <Spinner size="large" />
-        <h2>Fetching your orgs</h2>
-      </section>
-    );
+    switch (true) {
+      case current.matches('fetchingOrgs'):
+        return <ProgressBar isIndeterminate />;
 
-    // case current.matches('fetchingProjects'):
+      case current.matches('fetchingProjects'):
+        return <ProgressBar isIndeterminate />;
 
-    // case current.matches('viewingProjects'):
-    // }
+      case current.matches('viewingProjects'):
+        return <ViewProjects projects={current.context.projects} />;
+    }
   };
 
   return <main className="dashboard">{renderContent()}</main>;

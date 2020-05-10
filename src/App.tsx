@@ -86,12 +86,12 @@ const AuthShell = () => {
 
 const AuthenticatedApp = () => {
   return (
-    <Fragment>
+    <div className="authenticated-app">
       <GlobalNav />
       <Redirect exact to="/dashboard" />
       <Route exact to="/">
         <Dashboard />
       </Route>
-    </Fragment>
+    </div>
   );
 };
