@@ -4,6 +4,7 @@ $nav-padding-top: 30px;
 $global-nav-bg: rgb(7, 71, 166);
 $light-global-nav-bg: lighten($global-nav-bg, 10%);
 $light-global-nav-bg-2: lighten($global-nav-bg, 25%);
+$dark-global-nav-bg: darken($global-nav-bg, 8%);
 $toggle-second-nav-width: 24px;
 
 .global-nav {
@@ -118,6 +119,10 @@ $toggle-second-nav-width: 24px;
 
       &:hover {
         background-color: $light-global-nav-bg;
+      }
+
+      &.active {
+        background-color: $dark-global-nav-bg;
       }
 
       .link-text {

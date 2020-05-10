@@ -93,13 +93,13 @@ export const GlobalNav: FC = () => {
         <h1 className="title">Jira Software</h1>
         <ul>
           <li>
-            <NavLink to="/dashboard/projects">
+            <NavLink to="/projects">
               <FolderIcon label="Projects" />
               <span className="link-text">Projects</span>
             </NavLink>
           </li>
           <li>
-            <NavLink to="/dashboard/people">
+            <NavLink to="/people">
               <PeopleIcon label="People" />
               <span className="link-text">People</span>
             </NavLink>

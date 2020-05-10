@@ -1,6 +1,12 @@
 import React, { Fragment, useEffect } from 'react';
 import { Login } from './screens/Login';
-import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Route,
+  Redirect,
+  Switch,
+  useHistory
+} from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { CompleteSignup } from './screens/CompleteSignup';
 import { Notification } from 'shared/components/Notification';
@@ -19,12 +25,18 @@ export const App = () => {
 
 const AuthShell = () => {
   const [current, send] = useMachine(authMachine);
+  console.log('App.tsx', current);
 
   useEffect(() => {
     send('TRY_AUTH');
   }, [send]);
 
-  console.log('App.tsx', current);
+  const history = useHistory();
+  useEffect(() => {
+    if (current.value === 'appUsable') {
+      history.push('/projects');
+    }
+  }, [current.value, history]);
 
   switch (true) {
     case current.matches('authenticating'):
@@ -49,26 +61,18 @@ const AuthShell = () => {
 
     case current.matches('awaitingSignup'):
       return (
-        <Fragment>
-          <Redirect exact to="/completeSignup" />
-
-          <CompleteSignup
-            user={current.context.user}
-            signupService={current.context.signupService}
-          />
-        </Fragment>
+        <CompleteSignup
+          user={current.context.user}
+          signupService={current.context.signupService}
+        />
       );
 
     case current.matches('awaitingOrgConfirmation'):
       return (
-        <Fragment>
-          <Redirect exact to="/confirmOrg" />
-
-          <ConfirmOrg
-            confirmOrgService={current.context.confirmOrgService}
-            user={current.context.user}
-          />
-        </Fragment>
+        <ConfirmOrg
+          confirmOrgService={current.context.confirmOrgService}
+          user={current.context.user}
+        />
       );
 
     case current.matches('appUsable'):
@@ -83,11 +87,16 @@ const AuthShell = () => {
 const AuthenticatedApp = () => {
   return (
     <div className="authenticated-app">
-      <GlobalNav />
-      <Redirect exact to="/dashboard" />
-      <Route exact to="/">
-        <Dashboard />
-      </Route>
+      <Switch>
+        <Route path="/">
+          <GlobalNav />
+          <Dashboard />
+        </Route>
+
+        <Route path="*">
+          <h1>TODO: Add 404 page</h1>
+        </Route>
+      </Switch>
     </div>
   );
 };
