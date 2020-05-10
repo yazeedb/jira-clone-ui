@@ -1,12 +1,13 @@
 $first-nav-width: 64px;
 $second-nav-width: 240px;
 $nav-padding-top: 30px;
-$global-nav-background-color: rgb(7, 71, 166);
+$global-nav-bg: rgb(7, 71, 166);
+$light-global-nav-bg: lighten($global-nav-bg, 10%);
 
 .global-nav {
   height: 100vh;
   color: #deebff;
-  background-color: $global-nav-background-color;
+  background-color: $global-nav-bg;
   width: $first-nav-width + $second-nav-width;
   display: flex;
 
@@ -39,7 +40,7 @@ $global-nav-background-color: rgb(7, 71, 166);
       padding-top: 3px;
 
       &:hover {
-        background-color: lighten($global-nav-background-color, 10%);
+        background-color: $light-global-nav-bg;
       }
     }
 
@@ -73,7 +74,7 @@ $global-nav-background-color: rgb(7, 71, 166);
     height: 40px;
 
     &:hover {
-      background-color: rgb(28, 99, 206);
+      background-color: $light-global-nav-bg;
     }
 
     .link-text {
