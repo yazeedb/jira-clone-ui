@@ -11,7 +11,7 @@ interface MachineContext {
   projectsErrorMessage: string;
 }
 
-export const dashboardMachine = Machine<MachineContext>(
+export const projectsMachine = Machine<MachineContext>(
   {
     initial: 'fetchingOrgs',
     context: {

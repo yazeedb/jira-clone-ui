@@ -1,14 +1,14 @@
 import React from 'react';
 import './Dashboard.scss';
 import { useMachine } from '@xstate/react';
-import { dashboardMachine } from 'machines/dashboardMachine';
+import { projectsMachine } from 'machines/projectsMachine';
 import ProgressBar from '@atlaskit/progress-bar';
 import { ViewProjects } from './ViewProjects';
 import { Switch, Route } from 'react-router-dom';
 
 export const Dashboard = () => {
   const RenderProjects = () => {
-    const [current, send] = useMachine(dashboardMachine);
+    const [current, send] = useMachine(projectsMachine);
     console.log('Dashboard current:', current);
 
     switch (current.value) {
