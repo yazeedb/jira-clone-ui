@@ -8,6 +8,12 @@ export interface Project {
   columns: Column[];
 }
 
+export interface ProjectsResponse {
+  data: {
+    projects: Project[];
+  };
+}
+
 export interface Column {
   id: string;
   projectId: string;

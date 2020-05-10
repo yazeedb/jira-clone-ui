@@ -1,9 +1,22 @@
-import { Project } from './Project';
-
 export interface Org {
   id: string;
   ownerId: string;
   name: string;
   dateCreated: string;
-  projects: Project[];
 }
+
+export interface OrgsResponse {
+  data: {
+    orgs: Org[];
+  };
+}
+
+// For initial values to make TS happy
+export const createEmptyOrg = (): Org => {
+  return {
+    id: '',
+    ownerId: '',
+    name: '',
+    dateCreated: ''
+  };
+};

@@ -4,6 +4,6 @@ export const apiRoutes = {
   login: '/login',
   user: `${apiBase}/user`,
   completeSignup: `${apiBase}/completeSignup`,
-  projects: `${apiBase}/projects`,
-  orgs: `${apiBase}/orgs`
+  orgs: `${apiBase}/orgs`,
+  getProjectsByOrg: (orgId: string) => `${apiBase}/orgs/${orgId}/projects`
 };

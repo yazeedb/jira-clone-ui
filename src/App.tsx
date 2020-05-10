@@ -88,8 +88,8 @@ const AuthenticatedApp = () => {
   return (
     <Fragment>
       <GlobalNav />
-      <Redirect exact to="/projects" />
-      <Route exact to="/projects">
+      <Redirect exact to="/dashboard" />
+      <Route exact to="/">
         <Dashboard />
       </Route>
     </Fragment>
