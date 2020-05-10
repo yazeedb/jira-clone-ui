@@ -14,8 +14,6 @@ export const Dashboard = () => {
   const renderContent = () => {
     switch (true) {
       case current.matches('fetchingOrgs'):
-        return <ProgressBar isIndeterminate />;
-
       case current.matches('fetchingProjects'):
         return <ProgressBar isIndeterminate />;
 
