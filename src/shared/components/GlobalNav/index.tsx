@@ -19,8 +19,8 @@ export const GlobalNav: FC = () => {
   return (
     <div className="global-nav">
       <div className="first-nav">
-        <div>
-          <div className="jira-logo-wrapper">
+        <div className="icon-row">
+          <div className="icon-wrapper jira-logo-wrapper">
             <Tooltip position="right" title="Jira Software">
               <JiraSoftwareIcon label="Jira Software" iconColor="inherit" />
             </Tooltip>
@@ -48,7 +48,7 @@ export const GlobalNav: FC = () => {
           </div>
         </div>
 
-        <div>
+        <div className="icon-row">
           <div className="icon-wrapper">
             <Tooltip position="right" title="Notifications">
               <NotificationIcon
