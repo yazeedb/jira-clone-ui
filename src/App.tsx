@@ -1,12 +1,6 @@
 import React, { Fragment, useEffect } from 'react';
 import { Login } from './screens/Login';
-import {
-  BrowserRouter,
-  Route,
-  Redirect,
-  Switch,
-  useHistory
-} from 'react-router-dom';
+import { BrowserRouter, Route, Switch, useHistory } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { CompleteSignup } from './screens/CompleteSignup';
 import { Notification } from 'shared/components/Notification';
@@ -46,7 +40,6 @@ const AuthShell = () => {
     case current.matches('signinFailed'):
       return (
         <Fragment>
-          <Redirect exact to="/login" />
           <Login send={send} />
 
           <Notification
