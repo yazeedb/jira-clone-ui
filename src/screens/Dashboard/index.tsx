@@ -1,23 +1,24 @@
 import React from 'react';
 import './Dashboard.scss';
 import { useMachine } from '@xstate/react';
-import { projectsMachine } from 'machines/projectsMachine';
+import { dashboardMachine } from 'machines/dashboardMachine';
 import ProgressBar from '@atlaskit/progress-bar';
 import { ViewProjects } from './ViewProjects';
 import { Switch, Route } from 'react-router-dom';
 
 export const Dashboard = () => {
   const RenderProjects = () => {
-    const [current, send] = useMachine(projectsMachine);
+    const [current, send] = useMachine(dashboardMachine);
+    const { projectsService } = current.context;
+
     console.log('Dashboard current:', current);
 
-    switch (current.value) {
-      case 'fetchingOrgs':
-      case 'fetchingProjects':
+    switch (true) {
+      case current.matches('fetchingOrgs'):
         return <ProgressBar isIndeterminate />;
 
-      case 'viewingProjects':
-        return <ViewProjects projects={current.context.projects} />;
+      case current.matches('receivedOrgs'):
+        return <ViewProjects projectsService={projectsService} />;
 
       default:
         console.error('Impossible state reached', current);

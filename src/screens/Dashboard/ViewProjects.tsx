@@ -1,11 +1,16 @@
 import React, { FC } from 'react';
-import { Project } from 'shared/interfaces/Project';
+import { ProjectsService } from 'machines/projectsMachine';
+import { useService } from '@xstate/react';
+import ProgressBar from '@atlaskit/progress-bar';
 
 interface ViewProjectsProps {
-  projects: Project[];
+  projectsService: ProjectsService;
 }
 
-export const ViewProjects: FC<ViewProjectsProps> = ({ projects }) => {
+export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
+  const [current, send] = useService(projectsService);
+  const { projects } = current.context;
+
   const renderContent = () => {
     if (projects.length === 0) {
       return (
@@ -21,10 +26,20 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projects }) => {
     return projects.map((p) => JSON.stringify(p));
   };
 
-  return (
-    <section className="view-projects">
-      <h1 className="title">Projects</h1>
-      {renderContent()}
-    </section>
-  );
+  switch (true) {
+    case current.matches('fetchingProjects'):
+      return <ProgressBar isIndeterminate />;
+
+    case current.matches('viewingProjects'):
+      return (
+        <section className="view-projects">
+          <h1 className="title">Projects</h1>
+          {renderContent()}
+        </section>
+      );
+
+    default:
+      console.error('Impossible state reached', current);
+      return null;
+  }
 };
