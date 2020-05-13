@@ -9,21 +9,14 @@ const googleApiSrc = 'https://apis.google.com/js/platform.js';
 
 export const useGoogleSignIn = (elementId: string, send: Sender<any>) => {
   useEffect(() => {
-    const metaQuery = `meta[content="${googleClientId}"]`;
-    const scriptQuery = `script[src="${googleApiSrc}"]`;
-
-    const meta =
-      (document.querySelector(metaQuery) as HTMLMetaElement) ||
-      document.createElement('meta');
+    const meta = document.createElement('meta');
 
     meta.name = 'google-signin-client_id';
     meta.content = googleClientId;
 
     document.head.appendChild(meta);
 
-    const script =
-      (document.querySelector(scriptQuery) as HTMLScriptElement) ||
-      document.createElement('script');
+    const script = document.createElement('script');
 
     script.src = 'https://apis.google.com/js/platform.js';
     script.async = true;
