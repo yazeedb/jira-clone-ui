@@ -6,31 +6,34 @@ import ProgressBar from '@atlaskit/progress-bar';
 import { ViewProjects } from './ViewProjects';
 import { Switch, Route } from 'react-router-dom';
 
+const Projects = () => {
+  const [current, send] = useMachine(dashboardMachine);
+  const { projectsService } = current.context;
+
+  console.log('Dashboard current:', current);
+
+  switch (true) {
+    case current.matches('fetchingOrgs'):
+      return <ProgressBar isIndeterminate />;
+
+    case current.matches('receivedOrgs'):
+      return <ViewProjects projectsService={projectsService} />;
+
+    case current.matches('fetchOrgFailed'):
+      return <h1>Oh no!</h1>;
+
+    default:
+      console.error('Impossible state reached', current);
+      return null;
+  }
+};
+
 export const Dashboard = () => {
-  const RenderProjects = () => {
-    const [current, send] = useMachine(dashboardMachine);
-    const { projectsService } = current.context;
-
-    console.log('Dashboard current:', current);
-
-    switch (true) {
-      case current.matches('fetchingOrgs'):
-        return <ProgressBar isIndeterminate />;
-
-      case current.matches('receivedOrgs'):
-        return <ViewProjects projectsService={projectsService} />;
-
-      default:
-        console.error('Impossible state reached', current);
-        return null;
-    }
-  };
-
   return (
     <main className="dashboard">
       <Switch>
         <Route exact path="/projects">
-          <RenderProjects />
+          <Projects />
         </Route>
 
         <Route exact path="/people">

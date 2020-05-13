@@ -38,6 +38,13 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
         </section>
       );
 
+    case current.matches('fetchProjectsFailed'):
+      return (
+        <section>
+          <h1></h1>
+        </section>
+      );
+
     default:
       console.error('Impossible state reached', current);
       return null;

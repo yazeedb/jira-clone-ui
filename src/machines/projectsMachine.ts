@@ -26,7 +26,7 @@ export const projectsMachine = Machine<MachineContext>(
           src: 'fetchProjects',
           onDone: {
             target: 'viewingProjects',
-            actions: 'spawnProjectsMachine'
+            actions: 'setProjects'
           },
           onError: {
             target: 'fetchProjectsFailed',
@@ -35,7 +35,9 @@ export const projectsMachine = Machine<MachineContext>(
         }
       },
       viewingProjects: {},
-      fetchProjectsFailed: {}
+      fetchProjectsFailed: {
+        on: { RETRY: 'fetchingProjects' }
+      }
       // idle: {
       //   on: { CREATE_PROJECT: 'creatingProject' }
       // },
@@ -53,6 +55,13 @@ export const projectsMachine = Machine<MachineContext>(
         fetcher(apiRoutes.getProjectsByOrg(context.orgs[0].id))
     },
     actions: {
+      setProjects: assign((context, event) => {
+        const e = event as DoneInvokeEvent<ProjectsResponse>;
+
+        return {
+          projects: e.data.data.projects
+        };
+      }),
       updateErrorMessage: assign((context, event) => {
         const e = event as DoneInvokeEvent<Error>;
 
