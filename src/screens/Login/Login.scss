@@ -1,16 +1,19 @@
-$background: #fafbfc;
-$gray: rgb(107, 119, 140);
+@import '../../theme.scss';
 
 .login {
-  h5 {
-    color: rgb(94, 108, 132);
+  .heading,
+  a:first-of-type:after {
+    color: $subtle-heading;
+  }
+
+  .heading {
     font-weight: 600;
     margin-bottom: 20px;
   }
 
   #google-signin-button {
     width: 320px;
-    border-bottom: 1px solid rgb(213, 216, 222);
+    border-bottom: 1px solid rgba($subtle-heading, 0.3);
     padding-bottom: 20px;
   }
 
@@ -20,14 +23,10 @@ $gray: rgb(107, 119, 140);
   }
 
   a {
-    color: rgb(0, 82, 204);
-    text-decoration: none;
-
     &:first-of-type:after {
       content: '•';
       margin: 0 20px;
       font-size: 14px;
-      color: $gray;
     }
   }
 }
