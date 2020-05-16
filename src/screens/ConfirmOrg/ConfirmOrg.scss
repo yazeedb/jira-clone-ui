@@ -1,35 +1,6 @@
-$background: #fafbfc;
-$gray: rgb(107, 119, 140);
-$submit-color: rgb(0, 82, 204);
+@import '../../theme.scss';
 
 .confirm-org {
-  background-color: $background;
-  min-height: 100vh;
-
-  background-image: url('/jira-left.svg'), url('/jira-right.svg');
-  background-attachment: fixed, fixed;
-  background-size: 25%, 25%;
-  background-repeat: no-repeat, no-repeat;
-  background-position: left bottom, right bottom;
-
-  @media only screen and (max-width: 705px) {
-    background-image: none;
-  }
-
-  .container {
-    width: 400px;
-    margin: 0 auto;
-  }
-
-  header {
-    padding: 40px 0;
-    text-align: center;
-  }
-
-  .jira-logo {
-    width: 86px;
-  }
-
   h1 {
     color: #253858;
     font-weight: 600;
@@ -38,81 +9,44 @@ $submit-color: rgb(0, 82, 204);
     text-align: center;
   }
 
-  .form-section {
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 10px;
-    padding: 32px 40px;
-    background-color: white;
+  h4 {
+    color: $subtle-heading;
+    font-weight: 600;
+  }
 
-    label {
-      color: rgb(94, 108, 132);
-      font-weight: 600;
+  input {
+    font-size: 16px;
+    padding: 8px;
+    display: block;
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 30px;
+    border-radius: 3px;
+    border: 2px solid $grayish;
+    background-color: rgb(250, 251, 252);
+    transition: background-color 0.2s ease-in-out 0s,
+      border-color 0.2s ease-in-out 0s;
+
+    &:focus,
+    &:focus:hover {
+      background-color: white;
     }
 
-    input {
-      font-size: 16px;
-      padding: 8px;
-      display: block;
-      width: 100%;
-      margin-top: 15px;
-      margin-bottom: 30px;
-      border-radius: 3px;
-      border: 2px solid rgb(223, 225, 230);
-      background-color: rgb(250, 251, 252);
-      transition: background-color 0.2s ease-in-out 0s,
-        border-color 0.2s ease-in-out 0s;
-
-      &:focus,
-      &:focus:hover {
-        background-color: white;
-      }
-
-      &:hover {
-        background-color: rgb(235, 236, 240);
-      }
-
-      &:disabled {
-        background-color: #dcdde1;
-      }
-
-      &.error {
-        border-color: rgb(222, 53, 11);
-      }
+    &:hover {
+      background-color: rgb(235, 236, 240);
     }
 
-    button {
-      background-color: $submit-color;
-      border-radius: 3px;
-      color: white;
-      padding: 16px;
-      width: 100%;
-      font-size: 14px;
-      cursor: pointer;
+    &:disabled {
+      background-color: #dcdde1;
+    }
 
-      &:disabled {
-        background-color: lighten($color: $submit-color, $amount: 35);
-      }
+    &.error {
+      border-color: $red;
     }
   }
 
-  footer {
-    position: fixed;
-    bottom: 0;
-    width: 400px;
-    border-top: 1px solid rgb(223, 225, 230);
-    text-align: center;
-    padding: 24px 0;
-
-    img {
-      width: 190px;
-      height: 32px;
-      display: block;
-      margin: 0 auto;
-      margin-bottom: 5px;
-    }
-  }
-
-  .subtext {
-    font-size: 12px;
-    color: $gray;
+  button {
+    padding: 16px;
+    width: 100%;
   }
 }

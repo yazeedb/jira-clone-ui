@@ -90,7 +90,7 @@ export const GlobalNav: FC = () => {
       </div>
 
       <div className={secondNavOpen ? 'second-nav open' : 'second-nav closed'}>
-        <h1 className="title">Jira Software</h1>
+        <h2 className="title">Jira Software</h2>
         <ul>
           <li>
             <NavLink to="/projects">

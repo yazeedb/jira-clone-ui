@@ -1,11 +1,11 @@
+@import '../../theme.scss';
+
 $background: #fafbfc;
 $gray: rgb(107, 119, 140);
-$submit-color: rgb(0, 82, 204);
 
 .complete-signup {
   h5 {
-    color: rgb(94, 108, 132);
-    font-weight: 600;
+    color: $subtle-heading;
     margin-bottom: 20px;
   }
 
@@ -16,8 +16,8 @@ $submit-color: rgb(0, 82, 204);
     width: 100%;
     margin: 30px 0;
     border-radius: 3px;
-    border: 2px solid rgb(223, 225, 230);
-    background-color: rgb(250, 251, 252);
+    border: 2px solid $grayish;
+    background-color: $skeleton;
     transition: background-color 0.2s ease-in-out 0s,
       border-color 0.2s ease-in-out 0s;
 
@@ -35,21 +35,12 @@ $submit-color: rgb(0, 82, 204);
     }
 
     &.error {
-      border-color: rgb(222, 53, 11);
+      border-color: $red;
     }
   }
 
   button {
-    background-color: $submit-color;
-    border-radius: 3px;
-    color: white;
     padding: 16px;
     width: 100%;
-    font-size: 14px;
-    cursor: pointer;
-
-    &:disabled {
-      background-color: lighten($color: $submit-color, $amount: 35);
-    }
   }
 }
