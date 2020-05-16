@@ -15,7 +15,7 @@ export const Login: FC<LoginProps> = ({ send }) => {
 
   return (
     <LandingForm containerClassName="login">
-      <h5>Log in to your account</h5>
+      <h4 className="heading">Log in to your account</h4>
 
       <div id={googleButtonId}></div>
 

@@ -1,23 +1,35 @@
+@import '../../../theme.scss';
+
 $first-nav-width: 64px;
 $second-nav-width: 240px;
 $nav-padding-top: 30px;
-$global-nav-bg: rgb(7, 71, 166);
-$light-global-nav-bg: lighten($global-nav-bg, 10%);
-$light-global-nav-bg-2: lighten($global-nav-bg, 25%);
-$dark-global-nav-bg: darken($global-nav-bg, 8%);
+$light-global-nav-bg: lighten($primary, 10%);
+$light-global-nav-bg-2: lighten($primary, 25%);
+$dark-global-nav-bg: darken($primary, 8%);
 $toggle-second-nav-width: 24px;
 
 .global-nav {
   height: 100vh;
-  color: #deebff;
+  color: $background-active;
   max-width: $first-nav-width + $second-nav-width;
   display: flex;
   flex-direction: row;
 
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  a,
+  a:hover {
+    color: inherit;
+    text-decoration: none;
+  }
+
   .first-nav,
   .second-nav {
     padding-top: $nav-padding-top;
-    background-color: $global-nav-bg;
+    background-color: $primary;
   }
 
   .first-nav {
@@ -61,7 +73,7 @@ $toggle-second-nav-width: 24px;
     will-change: width;
     padding-left: 20px;
     padding-right: 20px;
-    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 0px 5px 0px rgba($black, 0.2);
     position: relative;
     white-space: nowrap;
 
@@ -98,15 +110,15 @@ $toggle-second-nav-width: 24px;
       border: none;
       outline: none;
       cursor: pointer;
-      box-shadow: rgba(9, 30, 66, 0.08) 0px 0px 0px 1px,
-        rgba(9, 30, 66, 0.08) 0px 2px 4px 1px;
+      box-shadow: $second-nav-box-shadow 0px 0px 0px 1px,
+        $second-nav-box-shadow 0px 2px 4px 1px;
       transition: background-color 100ms linear 0s, color 100ms linear 0s,
         opacity 300ms cubic-bezier(0.2, 0, 0, 1) 0s,
         transform 300ms cubic-bezier(0.2, 0, 0, 1) 0s;
 
       &:hover {
-        background-color: rgb(76, 154, 255);
-        color: white;
+        background-color: $second-nav-hover;
+        color: $white;
       }
     }
 
@@ -115,7 +127,6 @@ $toggle-second-nav-width: 24px;
       border-radius: 3px;
       display: flex;
       align-items: center;
-      height: 40px;
 
       &:hover {
         background-color: $light-global-nav-bg;
@@ -132,8 +143,8 @@ $toggle-second-nav-width: 24px;
   }
 
   .title {
-    font-size: 24px;
     margin-left: 10px;
     margin-bottom: 30px;
+    color: $background-active;
   }
 }

@@ -12,9 +12,9 @@ import {
   SignupEvent
 } from 'machines/signupMachine';
 import { User } from 'shared/interfaces/User';
-import { Notification } from 'shared/components/Notification';
 import { Interpreter } from 'xstate';
 import { LandingForm } from 'shared/components/LandingForm';
+import { ActionButton } from 'shared/ActionButton';
 
 interface CompleteSignupProps {
   signupService: Interpreter<SignupContext, SignupStateSchema, SignupEvent>;
@@ -81,12 +81,12 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
               name="location"
             />
 
-            <button
+            <ActionButton
               type="submit"
               disabled={!isValid || current.matches(SignupStates.submitting)}
             >
               Complete profile
-            </button>
+            </ActionButton>
           </Form>
         )}
       </Formik>
