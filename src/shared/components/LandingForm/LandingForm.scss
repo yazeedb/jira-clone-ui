@@ -1,8 +1,7 @@
-$background: #fafbfc;
-$gray: rgb(107, 119, 140);
+@import '../../../theme.scss';
 
 .landing-form {
-  background-color: $background;
+  background-color: $skeleton;
   min-height: 100vh;
 
   background-image: url('/jira-left.svg'), url('/jira-right.svg');
@@ -43,7 +42,7 @@ $gray: rgb(107, 119, 140);
         content: '•';
         margin: 0 20px;
         font-size: 14px;
-        color: $gray;
+        color: $subtle-heading;
       }
     }
   }
@@ -67,6 +66,6 @@ $gray: rgb(107, 119, 140);
 
   .subtext {
     font-size: 12px;
-    color: $gray;
+    color: $subtle-heading;
   }
 }
