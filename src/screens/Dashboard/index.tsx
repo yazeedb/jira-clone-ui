@@ -5,12 +5,15 @@ import { dashboardMachine } from 'machines/dashboardMachine';
 import ProgressBar from '@atlaskit/progress-bar';
 import { ViewProjects } from './ViewProjects';
 import { Switch, Route } from 'react-router-dom';
+import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 
 const Projects = () => {
   const [current, send] = useMachine(dashboardMachine);
   const { projectsService } = current.context;
 
   console.log('Dashboard current:', current);
+
+  return <SomethingWentWrong />;
 
   switch (true) {
     case current.matches('fetchingOrgs'):
@@ -20,7 +23,7 @@ const Projects = () => {
       return <ViewProjects projectsService={projectsService} />;
 
     case current.matches('fetchOrgFailed'):
-      return <h1>Oh no!</h1>;
+      return <SomethingWentWrong />;
 
     default:
       console.error('Impossible state reached', current);

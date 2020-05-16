@@ -1,5 +1,6 @@
 .dashboard {
   width: 100%;
+  position: relative;
 
   .view-projects {
     padding: 0 40px;
@@ -48,5 +49,14 @@
         background-color: rgb(0, 101, 255);
       }
     }
+  }
+
+  .something-went-wrong {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
   }
 }

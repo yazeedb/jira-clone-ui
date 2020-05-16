@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { ProjectsService } from 'machines/projectsMachine';
 import { useService } from '@xstate/react';
 import ProgressBar from '@atlaskit/progress-bar';
+import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 
 interface ViewProjectsProps {
   projectsService: ProjectsService;
@@ -39,11 +40,7 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
       );
 
     case current.matches('fetchProjectsFailed'):
-      return (
-        <section>
-          <h1></h1>
-        </section>
-      );
+      return <SomethingWentWrong />;
 
     default:
       console.error('Impossible state reached', current);
