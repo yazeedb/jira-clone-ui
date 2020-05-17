@@ -17,40 +17,43 @@ export const CreateOrg: FC<CreateOrgProps> = ({ user, createOrgService }) => {
   const [current, send] = useService(createOrgService);
 
   return (
-    <LandingForm containerClassName="confirm-org">
-      <Formik
-        initialValues={{ org: '' }}
-        validate={(values) => {
-          return {};
-        }}
-        onSubmit={(values) => {
-          send({
-            type: 'SUBMIT',
-            formData: values
-          });
-        }}
-      >
-        {({ isValid }) => (
-          <Form>
-            <h4>What should your org's name be, {user.firstName}?</h4>
+    <>
+      <LandingForm containerClassName="confirm-org">
+        <Formik
+          initialValues={{ org: '' }}
+          validate={(values) => {
+            return {};
+          }}
+          onSubmit={(values) => {
+            send({
+              type: 'SUBMIT',
+              formData: values
+            });
+          }}
+        >
+          {({ isValid }) => (
+            <Form>
+              <h4>What should your org's name be, {user.firstName}?</h4>
 
-            <FormField
-              name="org"
-              type="text"
-              placeholder="Org name"
-              autoFocus
-            />
+              <FormField
+                name="org"
+                type="text"
+                placeholder="Org name"
+                autoFocus
+              />
 
-            <ActionButton
-              type="submit"
-              disabled={!isValid || current.matches(CreateOrgStates.submitting)}
-            >
-              Create and go to projects
-            </ActionButton>
-          </Form>
-        )}
-      </Formik>
-
+              <ActionButton
+                type="submit"
+                disabled={
+                  !isValid || current.matches(CreateOrgStates.submitting)
+                }
+              >
+                Create and go to projects
+              </ActionButton>
+            </Form>
+          )}
+        </Formik>
+      </LandingForm>
       <Notification
         handleClose={() => {
           send('CLEAR_ERROR');
@@ -60,6 +63,6 @@ export const CreateOrg: FC<CreateOrgProps> = ({ user, createOrgService }) => {
         show={current.matches(CreateOrgStates.submitFailed)}
         type="error"
       />
-    </LandingForm>
+    </>
   );
 };

@@ -15,6 +15,7 @@ import { User } from 'shared/interfaces/User';
 import { Interpreter } from 'xstate';
 import { LandingForm } from 'shared/components/LandingForm';
 import { ActionButton } from 'shared/ActionButton';
+import { Notification } from 'shared/components/Notification';
 
 interface CompleteSignupProps {
   signupService: Interpreter<SignupContext, SignupStateSchema, SignupEvent>;
@@ -26,70 +27,81 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
   signupService
 }) => {
   const [current, send] = useService(signupService);
+  const { context } = current;
+
   const fieldsWithEmptyStringDefaults = mapObject((value) => value || '', user);
 
   console.log('CompleteSignup', current);
 
   return (
-    <LandingForm containerClassName="complete-signup">
-      <h5>Complete your profile to continue</h5>
+    <>
+      <LandingForm containerClassName="complete-signup">
+        <h4 className="heading">Complete your profile to continue</h4>
 
-      <Formik
-        initialValues={fieldsWithEmptyStringDefaults}
-        validate={validateForm}
-        onSubmit={(values) => {
-          send({
-            type: 'SUBMIT',
-            formData: values
-          });
-        }}
-      >
-        {({ isValid }) => (
-          <Form>
-            <Field type="email" name="email" disabled />
+        <Formik
+          initialValues={fieldsWithEmptyStringDefaults}
+          validate={validateForm}
+          onSubmit={(values) => {
+            send({
+              type: 'SUBMIT',
+              formData: values
+            });
+          }}
+        >
+          {({ isValid }) => (
+            <Form>
+              <Field type="email" name="email" disabled />
 
-            <FormField
-              name="firstName"
-              type="text"
-              placeholder="First name"
-              autoFocus
-            />
+              <FormField
+                name="firstName"
+                type="text"
+                placeholder="First name"
+                autoFocus
+              />
 
-            <FormField name="lastName" placeholder="Last name" type="text" />
+              <FormField name="lastName" placeholder="Last name" type="text" />
 
-            <FormField
-              type="text"
-              placeholder="Job title (optional)"
-              name="jobTitle"
-            />
+              <FormField
+                type="text"
+                placeholder="Job title (optional)"
+                name="jobTitle"
+              />
 
-            <FormField
-              type="text"
-              placeholder="Department (optional)"
-              name="department"
-            />
+              <FormField
+                type="text"
+                placeholder="Department (optional)"
+                name="department"
+              />
 
-            <FormField
-              type="text"
-              placeholder="Organization (optional)"
-              name="organization"
-            />
+              <FormField
+                type="text"
+                placeholder="Organization (optional)"
+                name="organization"
+              />
 
-            <FormField
-              type="text"
-              placeholder="Location (optional)"
-              name="location"
-            />
+              <FormField
+                type="text"
+                placeholder="Location (optional)"
+                name="location"
+              />
 
-            <ActionButton
-              type="submit"
-              disabled={!isValid || current.matches(SignupStates.submitting)}
-            >
-              Complete profile
-            </ActionButton>
-          </Form>
-        )}
-      </Formik>
-    </LandingForm>
+              <ActionButton
+                type="submit"
+                disabled={!isValid || current.matches(SignupStates.submitting)}
+              >
+                Complete profile
+              </ActionButton>
+            </Form>
+          )}
+        </Formik>
+      </LandingForm>
+      <Notification
+        show={current.matches(SignupStates.fail)}
+        primaryMessage={context.errorMessage}
+        handleClose={() => send('CLEAR_ERROR')}
+        type="error"
+        secondaryMessage="Please try again"
+      />
+    </>
   );
 };

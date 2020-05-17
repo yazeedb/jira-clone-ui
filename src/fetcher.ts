@@ -12,6 +12,10 @@ export const defaultHttpErrorMessage = 'Something went wrong';
 fetcher.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (!error.response) {
+      return Promise.reject({ message: defaultHttpErrorMessage });
+    }
+
     const { message } = error.response.data;
 
     return Promise.reject({
