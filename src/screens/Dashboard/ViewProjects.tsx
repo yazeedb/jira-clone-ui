@@ -3,6 +3,7 @@ import { ProjectsService } from 'machines/projectsMachine';
 import { useService } from '@xstate/react';
 import Button from '@atlaskit/button';
 import ProgressBar from '@atlaskit/progress-bar';
+import Drawer from '@atlaskit/drawer';
 import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 import { ImpossibleStateNotice } from 'shared/components/ImpossibleStateNotice';
 
@@ -14,6 +15,8 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
   const [current, send] = useService(projectsService);
   const { projects } = current.context;
 
+  console.log('ViewProjects current:', current);
+
   const renderContent = () => {
     if (projects.length === 0) {
       return (
@@ -21,7 +24,9 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
           <img src="empty-folder.svg" alt="Empty folder image" />
           <h3>You currently have no projects</h3>
           <p>Let's create your first project in Jira</p>
-          <Button appearance="primary">Create project</Button>
+          <Button onClick={() => send('CREATE_PROJECT')} appearance="primary">
+            Create project
+          </Button>
         </section>
       );
     }
@@ -38,6 +43,14 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
         <section className="view-projects">
           <h2 className="title">Projects</h2>
           {renderContent()}
+
+          <Drawer
+            onClose={() => send('CLOSE')}
+            isOpen={current.matches('viewingProjects.creatingProject')}
+            width="full"
+          >
+            <code>Drawer contents</code>
+          </Drawer>
         </section>
       );
 

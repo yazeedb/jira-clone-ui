@@ -6,6 +6,7 @@
   "dependencies": {
     "@atlaskit/button": "^13.3.12",
     "@atlaskit/css-reset": "^5.0.10",
+    "@atlaskit/drawer": "^5.3.7",
     "@atlaskit/icon": "^20.1.1",
     "@atlaskit/logo": "^12.3.4",
     "@atlaskit/progress-bar": "^0.2.8",
