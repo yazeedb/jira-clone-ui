@@ -28,7 +28,7 @@ const Projects = () => {
       return (
         <SomethingWentWrong
           title="Fatal system error"
-          subtitle="Sorry about that! We're working to fix the issue immediately."
+          subtitle="Sorry about that! We're working to fix the issue."
         />
       );
   }
