@@ -9,5 +9,12 @@ export const fetcher = axios.create({
 
 fetcher.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  (error) => {
+    const { message } = error.response.data;
+    const defaultMessage = 'Something went wrong';
+
+    return Promise.reject({
+      message: message || defaultMessage
+    });
+  }
 );
