@@ -93,16 +93,15 @@ export const signupMachine = Machine<
       formData: {},
       errorMessage: ''
     },
+    on: {
+      SUBMIT: {
+        target: SignupStates.submitting,
+        actions: 'updateFormData',
+        cond: 'formIsValid'
+      }
+    },
     states: {
-      editing: {
-        on: {
-          SUBMIT: {
-            target: SignupStates.submitting,
-            actions: 'updateFormData',
-            cond: 'formIsValid'
-          }
-        }
-      },
+      editing: {},
       submitting: {
         invoke: {
           src: 'completeSignup',
@@ -119,18 +118,14 @@ export const signupMachine = Machine<
             target: SignupStates.fail,
             actions: 'updateErrorMessage'
           }
-        }
+        },
+        on: { SUBMIT: undefined }
       },
       fail: {
         on: {
-          RETRY_SUBMIT: {
-            target: SignupStates.submitting,
-            actions: 'updateFormData',
-            cond: 'formIsValid'
-          },
           CLEAR_ERROR: { target: SignupStates.editing }
         },
-        after: { 5000: SignupStates.editing }
+        after: { 3000: SignupStates.editing }
       },
       success: { type: 'final' }
     }

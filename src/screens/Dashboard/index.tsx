@@ -17,7 +17,7 @@ const Projects = () => {
     case current.matches('fetchingOrgs'):
       return <ProgressBar isIndeterminate />;
 
-    case current.matches('receivejdOrgs'):
+    case current.matches('receivedOrgs'):
       return <ViewProjects projectsService={projectsService} />;
 
     case current.matches('fetchOrgFailed'):

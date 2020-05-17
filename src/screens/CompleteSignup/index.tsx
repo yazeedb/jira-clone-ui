@@ -3,6 +3,7 @@ import { Formik, Field, Form } from 'formik';
 import './CompleteSignup.scss';
 import { mapObject } from 'shared/utils/mapObject';
 import { FormField } from 'shared/components/FormField';
+import Button from '@atlaskit/button';
 import { useService } from '@xstate/react';
 import {
   validateForm,
@@ -14,7 +15,6 @@ import {
 import { User } from 'shared/interfaces/User';
 import { Interpreter } from 'xstate';
 import { LandingForm } from 'shared/components/LandingForm';
-import { ActionButton } from 'shared/ActionButton';
 import { Notification } from 'shared/components/Notification';
 
 interface CompleteSignupProps {
@@ -85,12 +85,15 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
                 name="location"
               />
 
-              <ActionButton
+              <Button
                 type="submit"
-                disabled={!isValid || current.matches(SignupStates.submitting)}
+                isLoading={current.matches(SignupStates.submitting)}
+                isDisabled={!isValid}
+                appearance="primary"
+                shouldFitContainer
               >
                 Complete profile
-              </ActionButton>
+              </Button>
             </Form>
           )}
         </Formik>

@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { ProjectsService } from 'machines/projectsMachine';
 import { useService } from '@xstate/react';
+import Button from '@atlaskit/button';
 import ProgressBar from '@atlaskit/progress-bar';
 import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 
@@ -19,7 +20,7 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
           <img src="empty-folder.svg" alt="Empty folder image" />
           <h2>You currently have no projects</h2>
           <p>Let's create your first project in Jira</p>
-          <button>Create project</button>
+          <Button appearance="primary">Create project</Button>
         </section>
       );
     }

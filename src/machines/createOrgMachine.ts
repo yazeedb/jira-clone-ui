@@ -37,16 +37,15 @@ export const createOrgMachine = Machine<MachineContext, any, MachineEvent>(
       formData: { org: '' },
       errorMessage: ''
     },
+    on: {
+      SUBMIT: {
+        target: 'submitting',
+        actions: 'updateFormData',
+        cond: 'formIsValid'
+      }
+    },
     states: {
-      editing: {
-        on: {
-          SUBMIT: {
-            target: 'submitting',
-            actions: 'updateFormData',
-            cond: 'formIsValid'
-          }
-        }
-      },
+      editing: {},
       submitting: {
         invoke: {
           src: 'createOrg',
@@ -58,17 +57,12 @@ export const createOrgMachine = Machine<MachineContext, any, MachineEvent>(
             target: CreateOrgStates.submitFailed,
             actions: 'updateErrorMessage'
           }
-        }
+        },
+        on: { SUBMIT: undefined }
       },
       submitFailed: {
         after: { 5000: CreateOrgStates.editing },
-        on: {
-          CLEAR_ERROR: CreateOrgStates.editing,
-          RETRY: {
-            target: CreateOrgStates.submitting,
-            cond: 'formIsValid'
-          }
-        }
+        on: { CLEAR_ERROR: CreateOrgStates.editing }
       },
       success: { type: 'final' }
     }
@@ -99,7 +93,11 @@ export const createOrgMachine = Machine<MachineContext, any, MachineEvent>(
       })
     },
     guards: {
-      formIsValid: (context, event) => true
+      formIsValid: (context, event) => {
+        const e = event as SubmitEvent;
+
+        return e.formData.org.trim().length > 0;
+      }
     }
   }
 );

@@ -5,7 +5,7 @@ import { Formik, Form } from 'formik';
 import { FormField } from 'shared/components/FormField';
 import { useService } from '@xstate/react';
 import { Notification } from 'shared/components/Notification';
-import { ActionButton } from 'shared/ActionButton';
+import Button from '@atlaskit/button';
 import { LandingForm } from 'shared/components/LandingForm';
 
 interface CreateOrgProps {
@@ -42,14 +42,15 @@ export const CreateOrg: FC<CreateOrgProps> = ({ user, createOrgService }) => {
                 autoFocus
               />
 
-              <ActionButton
+              <Button
                 type="submit"
-                disabled={
-                  !isValid || current.matches(CreateOrgStates.submitting)
-                }
+                isLoading={current.matches(CreateOrgStates.submitting)}
+                disabled={!isValid}
+                shouldFitContainer
+                appearance="primary"
               >
                 Create and go to projects
-              </ActionButton>
+              </Button>
             </Form>
           )}
         </Formik>
