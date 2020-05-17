@@ -1,6 +1,16 @@
+@import '../../../theme.scss';
+
 .something-went-wrong {
   svg {
     width: 100%;
     height: auto;
+  }
+
+  .title {
+    color: $red;
+  }
+
+  .subtitle {
+    color: $subtle-heading;
   }
 }

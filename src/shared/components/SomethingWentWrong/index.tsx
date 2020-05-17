@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import { RobotSvg } from '../RobotSvg';
 import './SomethingWentWrong.scss';
 import { defaultHttpErrorMessage } from 'fetcher';
+import { ServerDownSvg } from '../ServerDownSvg';
 
 interface SomethingWentWrongProps {
   title?: string;
@@ -14,9 +14,9 @@ export const SomethingWentWrong: FC<SomethingWentWrongProps> = ({
 }) => {
   return (
     <section className="something-went-wrong">
-      <RobotSvg />
-      <h1>{title}</h1>
-      <h4>{subtitle}</h4>
+      <ServerDownSvg />
+      <h1 className="title">{title}</h1>
+      <h4 className="subtitle">{subtitle}</h4>
     </section>
   );
 };
