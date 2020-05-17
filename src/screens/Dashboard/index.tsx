@@ -6,6 +6,7 @@ import ProgressBar from '@atlaskit/progress-bar';
 import { ViewProjects } from './ViewProjects';
 import { Switch, Route } from 'react-router-dom';
 import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
+import { ImpossibleStateNotice } from 'shared/components/ImpossibleStateNotice';
 
 const Projects = () => {
   const [current, send] = useMachine(dashboardMachine);
@@ -25,12 +26,7 @@ const Projects = () => {
 
     default:
       console.error('Impossible state reached', current);
-      return (
-        <SomethingWentWrong
-          title="Fatal system error"
-          subtitle="Sorry about that! We're working to fix the issue."
-        />
-      );
+      return <ImpossibleStateNotice />;
   }
 };
 

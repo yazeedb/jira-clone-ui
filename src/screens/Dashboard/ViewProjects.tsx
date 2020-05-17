@@ -4,6 +4,7 @@ import { useService } from '@xstate/react';
 import Button from '@atlaskit/button';
 import ProgressBar from '@atlaskit/progress-bar';
 import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
+import { ImpossibleStateNotice } from 'shared/components/ImpossibleStateNotice';
 
 interface ViewProjectsProps {
   projectsService: ProjectsService;
@@ -45,6 +46,6 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
 
     default:
       console.error('Impossible state reached', current);
-      return null;
+      return <ImpossibleStateNotice />;
   }
 };
