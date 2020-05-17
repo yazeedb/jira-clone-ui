@@ -7,14 +7,15 @@ export const fetcher = axios.create({
   }
 });
 
+export const defaultHttpErrorMessage = 'Something went wrong';
+
 fetcher.interceptors.response.use(
   (response) => response,
   (error) => {
     const { message } = error.response.data;
-    const defaultMessage = 'Something went wrong';
 
     return Promise.reject({
-      message: message || defaultMessage
+      message: message || defaultHttpErrorMessage
     });
   }
 );

@@ -1,12 +1,22 @@
-import React from 'react';
-import { RobotImg } from '../RobotImg';
+import React, { FC } from 'react';
+import { RobotSvg } from '../RobotSvg';
 import './SomethingWentWrong.scss';
+import { defaultHttpErrorMessage } from 'fetcher';
 
-export const SomethingWentWrong = () => {
+interface SomethingWentWrongProps {
+  title?: string;
+  subtitle?: string;
+}
+
+export const SomethingWentWrong: FC<SomethingWentWrongProps> = ({
+  title = defaultHttpErrorMessage,
+  subtitle = 'Please reload the page or try again later.'
+}) => {
   return (
     <section className="something-went-wrong">
-      <h1>An error occurred</h1>
-      <RobotImg />
+      <RobotSvg />
+      <h1>{title}</h1>
+      <h4>{subtitle}</h4>
     </section>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const RobotImg = () => {
+export const RobotSvg = () => {
   return (
     <svg
       id="bc263456-463a-4a26-ab4e-25ee29596588"
