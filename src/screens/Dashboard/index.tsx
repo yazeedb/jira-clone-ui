@@ -13,13 +13,11 @@ const Projects = () => {
 
   console.log('Dashboard current:', current);
 
-  return <SomethingWentWrong />;
-
   switch (true) {
     case current.matches('fetchingOrgs'):
       return <ProgressBar isIndeterminate />;
 
-    case current.matches('receivedOrgs'):
+    case current.matches('receivejdOrgs'):
       return <ViewProjects projectsService={projectsService} />;
 
     case current.matches('fetchOrgFailed'):
@@ -27,7 +25,12 @@ const Projects = () => {
 
     default:
       console.error('Impossible state reached', current);
-      return null;
+      return (
+        <SomethingWentWrong
+          title="Fatal system error"
+          subtitle="Sorry about that! We're working to fix the issue immediately."
+        />
+      );
   }
 };
 
