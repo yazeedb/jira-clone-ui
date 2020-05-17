@@ -5,8 +5,7 @@
   .view-projects {
     padding: 0 40px;
 
-    h1 {
-      font-size: 24px;
+    .title {
       margin-top: 24px;
     }
   }
@@ -20,14 +19,11 @@
       max-width: 160px;
     }
 
-    h2 {
-      font-size: 20px;
+    h3 {
       margin-top: 15px;
     }
 
     p {
-      font-size: 14px;
-      color: rgb(23, 43, 77);
       margin-bottom: 24px;
     }
   }

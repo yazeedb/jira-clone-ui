@@ -18,7 +18,7 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
       return (
         <section className="no-projects">
           <img src="empty-folder.svg" alt="Empty folder image" />
-          <h2>You currently have no projects</h2>
+          <h3>You currently have no projects</h3>
           <p>Let's create your first project in Jira</p>
           <Button appearance="primary">Create project</Button>
         </section>
@@ -35,7 +35,7 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
     case current.matches('viewingProjects'):
       return (
         <section className="view-projects">
-          <h1 className="title">Projects</h1>
+          <h2 className="title">Projects</h2>
           {renderContent()}
         </section>
       );
