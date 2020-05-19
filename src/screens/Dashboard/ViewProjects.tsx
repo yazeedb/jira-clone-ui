@@ -1,11 +1,13 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { ProjectsService } from 'machines/projectsMachine';
 import { useService } from '@xstate/react';
 import Button from '@atlaskit/button';
 import ProgressBar from '@atlaskit/progress-bar';
+import Popup from '@atlaskit/popup';
 import Drawer from '@atlaskit/drawer';
 import Form, { Field } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
+import InfoIcon from '@atlaskit/icon/glyph/info';
 import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 import { ImpossibleStateNotice } from 'shared/components/ImpossibleStateNotice';
 
@@ -35,6 +37,8 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
 
     return projects.map((p) => JSON.stringify(p));
   };
+
+  const [open, setOpen] = useState(false);
 
   switch (true) {
     case current.matches('fetchingProjects'):
@@ -75,13 +79,76 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
                       {({ fieldProps }) => (
                         <TextField
                           placeholder="Enter a project name"
+                          autoFocus
                           {...fieldProps}
                         />
                       )}
                     </Field>
 
                     <Field name="projectKey" defaultValue="" label="Key">
-                      {({ fieldProps }) => <TextField {...fieldProps} />}
+                      {({ fieldProps }) => (
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignContent: 'row',
+                            alignItems: 'center',
+                            width: '180px'
+                          }}
+                        >
+                          <TextField {...fieldProps} />
+
+                          <Popup
+                            isOpen={open}
+                            placement="right"
+                            onClose={() => setOpen(false)}
+                            zIndex={9999}
+                            content={() => {
+                              return (
+                                <div
+                                  style={{
+                                    width: '300px',
+                                    padding: '16px 24px'
+                                  }}
+                                >
+                                  <p style={{ marginBottom: '10px' }}>
+                                    The project key is used as the prefix of
+                                    your project's issue keys (e.g. 'TEST-100').
+                                    Choose one that is descriptive and easy to
+                                    type.
+                                  </p>
+
+                                  <a
+                                    href="https://support.atlassian.com/jira-core-cloud/docs/work-with-issues-in-jira-cloud/"
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                  >
+                                    Learn more
+                                  </a>
+                                </div>
+                              );
+                            }}
+                            trigger={(triggerProps) => {
+                              return (
+                                // @ts-ignore
+                                <div
+                                  style={{
+                                    marginLeft: '10px',
+                                    cursor: 'pointer'
+                                  }}
+                                  onClick={() => setOpen((v) => !v)}
+                                  {...triggerProps}
+                                >
+                                  <InfoIcon
+                                    label="More info"
+                                    primaryColor="rgb(101, 84, 192)"
+                                    size="medium"
+                                  />
+                                </div>
+                              );
+                            }}
+                          />
+                        </div>
+                      )}
                     </Field>
 
                     <Field
