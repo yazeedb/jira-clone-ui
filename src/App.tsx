@@ -29,6 +29,9 @@ const AuthShell = () => {
   useEffect(() => {
     if (current.value === 'appUsable') {
       history.push('/projects');
+      // TODO: What if user's trying to go somewhere else?
+      // Recall that URL, and send them there instead.
+      // Don't just blindly send to /projects
     }
   }, [current.value, history]);
 
