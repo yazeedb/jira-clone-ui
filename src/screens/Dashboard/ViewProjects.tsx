@@ -137,7 +137,7 @@ export const ViewProjects: FC<ViewProjectsProps> = ({ projectsService }) => {
     }
 
     case current.matches('fetchProjectsFailed'):
-      return <SomethingWentWrong />;
+      return <SomethingWentWrong title={current.context.errorMessage} />;
 
     default:
       console.error('Impossible state reached', current);
