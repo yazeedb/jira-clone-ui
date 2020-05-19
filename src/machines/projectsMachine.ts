@@ -34,19 +34,20 @@ export const projectsMachine = Machine<MachineContext>(
           }
         }
       },
-      viewingProjects: {},
+      viewingProjects: {
+        initial: 'idle',
+        states: {
+          idle: {
+            on: { CREATE_PROJECT: 'creatingProject' }
+          },
+          creatingProject: {
+            on: { CLOSE: 'idle' }
+          }
+        }
+      },
       fetchProjectsFailed: {
         on: { RETRY: 'fetchingProjects' }
       }
-      // idle: {
-      //   on: { CREATE_PROJECT: 'creatingProject' }
-      // },
-      // creatingProject: {
-      //   on: { EXIT: 'idle' }
-      // },
-      // savingProject: {},
-      // success: {},
-      // failed: {}
     }
   },
   {
