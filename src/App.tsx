@@ -36,14 +36,12 @@ const AuthShell = () => {
   }, [current.value, history]);
 
   switch (true) {
-    case current.matches('authenticating'):
-      return <h1>Loading homie...</h1>;
-
     case current.matches('notSignedIn'):
     case current.matches('signinFailed'):
+    case current.matches('authenticating'):
       return (
         <Fragment>
-          <Login send={send} />
+          <Login loading={current.matches('authenticating')} send={send} />
 
           <Notification
             show={current.matches('signinFailed')}

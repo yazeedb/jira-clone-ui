@@ -7,7 +7,11 @@ const googleClientId =
   '235318923218-s6tms65fam3o6d51shlhmci587s5mi22.apps.googleusercontent.com';
 const googleApiSrc = 'https://apis.google.com/js/platform.js';
 
-export const useGoogleSignIn = (elementId: string, send: Sender<any>) => {
+export const useGoogleSignIn = (
+  elementId: string,
+  send: Sender<any>,
+  loading: boolean
+) => {
   useEffect(() => {
     const meta = document.createElement('meta');
 
@@ -61,7 +65,7 @@ export const useGoogleSignIn = (elementId: string, send: Sender<any>) => {
     };
 
     document.body.appendChild(script);
-  }, [elementId, send]);
+  }, [elementId, send, loading]);
 };
 
 declare const gapi: any;

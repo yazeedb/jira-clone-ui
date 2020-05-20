@@ -3,21 +3,32 @@ import './Login.scss';
 import { Sender } from 'xstate';
 import { useGoogleSignIn } from './useGoogleSignIn';
 import { LandingForm } from 'shared/components/LandingForm';
+import Spinner from '@atlaskit/spinner';
 
 interface LoginProps {
   send: Sender<any>;
+  loading: boolean;
 }
 
 export const googleButtonId = 'google-signin-button';
 
-export const Login: FC<LoginProps> = ({ send }) => {
-  useGoogleSignIn(googleButtonId, send);
+export const Login: FC<LoginProps> = ({ send, loading }) => {
+  useGoogleSignIn(googleButtonId, send, loading);
 
   return (
     <LandingForm containerClassName="login">
-      <h4 className="heading">Log in to your account</h4>
+      {loading ? (
+        <>
+          <h4 className="heading">Authenticating...</h4>
+          <Spinner />
+        </>
+      ) : (
+        <>
+          <h4 className="heading">Log in to your account</h4>
 
-      <div id={googleButtonId}></div>
+          <div id={googleButtonId}></div>
+        </>
+      )}
 
       <div className="links">
         <a
