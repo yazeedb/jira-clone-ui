@@ -15,38 +15,43 @@ export const googleButtonId = 'google-signin-button';
 export const Login: FC<LoginProps> = ({ send, loading }) => {
   useGoogleSignIn(googleButtonId, send, loading);
 
-  return (
-    <LandingForm containerClassName="login">
-      {loading ? (
+  const renderContent = () => {
+    if (loading) {
+      return (
         <>
           <h4 className="heading">Authenticating...</h4>
-          <Spinner />
+          <Spinner size="large" />
         </>
-      ) : (
-        <>
-          <h4 className="heading">Log in to your account</h4>
+      );
+    }
 
-          <div id={googleButtonId}></div>
-        </>
-      )}
+    return (
+      <>
+        <h4 className="heading">Log in to your account</h4>
 
-      <div className="links">
-        <a
-          href="https://www.atlassian.com/legal/privacy-policy"
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          Privacy policy
-        </a>
+        <div id={googleButtonId}></div>
+        <div className="links">
+          <a
+            href="https://www.atlassian.com/legal/privacy-policy"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            Privacy policy
+          </a>
 
-        <a
-          href="https://www.atlassian.com/legal/cloud-terms-of-service"
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          Terms of use
-        </a>
-      </div>
-    </LandingForm>
+          <a
+            href="https://www.atlassian.com/legal/cloud-terms-of-service"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            Terms of use
+          </a>
+        </div>
+      </>
+    );
+  };
+
+  return (
+    <LandingForm containerClassName="login">{renderContent()}</LandingForm>
   );
 };
