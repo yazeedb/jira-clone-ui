@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Login } from './screens/Login';
 import { BrowserRouter, Route, Switch, useHistory } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
@@ -40,7 +40,7 @@ const AuthShell = () => {
     case current.matches('signinFailed'):
     case current.matches('authenticating'):
       return (
-        <Fragment>
+        <>
           <Login loading={current.matches('authenticating')} send={send} />
 
           <Notification
@@ -50,7 +50,7 @@ const AuthShell = () => {
             secondaryMessage="Please try again"
             handleClose={() => send('CLEAR_ERROR')}
           />
-        </Fragment>
+        </>
       );
 
     case current.matches('awaitingSignup'):
