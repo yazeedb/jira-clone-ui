@@ -1,7 +1,7 @@
 import { Machine, assign, DoneInvokeEvent, Interpreter } from 'xstate';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
-import { Org } from 'shared/interfaces/Org';
+import { Org, OrgsResponse } from 'shared/interfaces/Org';
 import { Project, ProjectsResponse } from 'shared/interfaces/Project';
 
 interface MachineContext {
@@ -23,14 +23,14 @@ export const projectsMachine = Machine<MachineContext>(
     states: {
       fetchingProjects: {
         invoke: {
-          src: 'fetchProjects',
+          src: 'fetchProjectsByOrg',
           onDone: {
             target: 'viewingProjects',
             actions: 'setProjects'
           },
           onError: {
-            target: 'fetchProjectsFailed',
-            actions: 'updateErrorMessage'
+            target: 'fetchFailed',
+            actions: 'setErrorMessage'
           }
         }
       },
@@ -45,15 +45,21 @@ export const projectsMachine = Machine<MachineContext>(
           }
         }
       },
-      fetchProjectsFailed: {
+      fetchFailed: {
         on: { RETRY: 'fetchingProjects' }
       }
     }
   },
   {
     services: {
-      fetchProjects: (context, event) =>
-        fetcher(apiRoutes.getProjectsByOrg(context.orgs[0].id))
+      fetchProjectsByOrg: () =>
+        fetcher.get<OrgsResponse>(apiRoutes.orgs).then((response) => {
+          // TODO: Support multiple orgs?
+          // We're hardcoding the first one for now.
+          const [firstOrg] = response.data.orgs;
+
+          return fetcher(apiRoutes.getProjectsByOrg(firstOrg.id));
+        })
     },
     actions: {
       setProjects: assign((context, event) => {
@@ -63,7 +69,7 @@ export const projectsMachine = Machine<MachineContext>(
           projects: e.data.data.projects
         };
       }),
-      updateErrorMessage: assign((context, event) => {
+      setErrorMessage: assign((context, event) => {
         const e = event as DoneInvokeEvent<Error>;
 
         return {

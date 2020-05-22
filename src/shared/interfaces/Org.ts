@@ -6,9 +6,7 @@ export interface Org {
 }
 
 export interface OrgsResponse {
-  data: {
-    orgs: Org[];
-  };
+  orgs: Org[];
 }
 
 // For initial values to make TS happy

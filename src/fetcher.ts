@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 export const fetcher = axios.create({
   withCredentials: true,
@@ -23,3 +23,5 @@ fetcher.interceptors.response.use(
     });
   }
 );
+
+export type FetcherResponse<T> = AxiosResponse<T>;

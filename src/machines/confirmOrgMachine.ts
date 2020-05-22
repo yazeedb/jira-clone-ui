@@ -7,9 +7,9 @@ import {
   sendParent
 } from 'xstate';
 import { createOrgMachine, CreateOrgService } from './createOrgMachine';
-import { fetcher } from 'fetcher';
+import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
-import { Org } from 'shared/interfaces/Org';
+import { Org, OrgsResponse } from 'shared/interfaces/Org';
 
 export enum ConfirmOrgStates {
   confirming = 'confirming',
@@ -74,12 +74,12 @@ export const confirmOrgMachine = Machine<MachineContext, any, any>(
     },
     guards: {
       userHasOrg: (_, event) => {
-        const e = event as DoneInvokeEvent<OrgsResponse>;
+        const e = event as DoneInvokeEvent<FetcherResponse<OrgsResponse>>;
 
         return userHasOrg(e.data.data.orgs);
       },
       userHasNoOrg: (_, event) => {
-        const e = event as DoneInvokeEvent<OrgsResponse>;
+        const e = event as DoneInvokeEvent<FetcherResponse<OrgsResponse>>;
 
         return !userHasOrg(e.data.data.orgs);
       }
@@ -98,9 +98,5 @@ export const confirmOrgMachine = Machine<MachineContext, any, any>(
     }
   }
 );
-
-interface OrgsResponse {
-  data: { orgs: Org[] };
-}
 
 const userHasOrg = (orgs: Org[]) => orgs.length > 0;
