@@ -5,7 +5,6 @@ import { Org, OrgsResponse } from 'shared/interfaces/Org';
 import { Project, ProjectsResponse } from 'shared/interfaces/Project';
 
 interface MachineContext {
-  orgs: Org[];
   projects: Project[];
   errorMessage: string;
 }
@@ -16,7 +15,6 @@ export const projectsMachine = Machine<MachineContext>(
     id: 'projects',
     initial: 'fetchingProjects',
     context: {
-      orgs: [],
       projects: [],
       errorMessage: ''
     },
