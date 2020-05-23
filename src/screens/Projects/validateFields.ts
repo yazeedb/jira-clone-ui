@@ -20,19 +20,22 @@ export const validateName = (name?: string) => {
   return undefined;
 };
 
-export const keyError =
-  'Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters.';
+export const keyErrors = {
+  required: 'Project key is required.',
+  tooLong: 'The project key must not exceed 10 characters in length.',
+  general: 'Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters.'
+}
 
 export const validateKey = (key?: string) => {
   if (!key) {
-    return keyError;
+    return keyErrors.required;
   }
 
   const [firstCharacter, ...restOfString] = key;
   const firstLetterCapital = /[A-Z]/.test(firstCharacter);
 
   if (!firstLetterCapital) {
-    return keyError;
+    return keyErrors.general;
   }
 
   const isAlphanumeric = (v: string) => /\w/.test(v);
@@ -40,10 +43,14 @@ export const validateKey = (key?: string) => {
     isAlphanumeric(v) && v.toUpperCase() === v;
 
   if (!restOfString.every(isAlphanumeric)) {
-    return keyError;
+    return keyErrors.general;
   }
 
   if (!restOfString.some(isCapitalAlphanumeric)) {
-    return keyError;
+    return keyErrors.general;
+  }
+
+  if (key.length > 10) {
+    return keyErrors.tooLong;
   }
 };
