@@ -37,3 +37,7 @@ export interface Task {
   dateUpdated: string;
   description: string;
 }
+
+export interface ProjectNameAvailableResponse {
+  available: boolean;
+}
