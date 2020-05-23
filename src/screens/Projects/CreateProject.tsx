@@ -7,17 +7,23 @@ import InfoIcon from '@atlaskit/icon/glyph/info';
 import Button from '@atlaskit/button';
 import './CreateProject.scss';
 import { validateName, validateKey } from './validateFields';
+import { CreateProjectService } from 'machines/createProjectMachine';
+import { useService } from '@xstate/react';
 
 interface CreateProjectProps {
-  onClose: () => void;
   isOpen: boolean;
+  createProjectService: CreateProjectService;
 }
 
-export const CreateProject: FC<CreateProjectProps> = ({ onClose, isOpen }) => {
+export const CreateProject: FC<CreateProjectProps> = ({
+  isOpen,
+  createProjectService
+}) => {
+  const [current, send] = useService(createProjectService);
   const [popupOpen, setPopupOpen] = useState(false);
 
   return (
-    <Drawer width="full" onClose={onClose} isOpen={isOpen}>
+    <Drawer width="full" onClose={() => send('CLOSE')} isOpen={isOpen}>
       <div className="create-projects">
         <Form onSubmit={(data) => console.log('form data', data)}>
           {({ formProps, dirty, submitting }) => {

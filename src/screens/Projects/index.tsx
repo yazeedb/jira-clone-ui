@@ -28,7 +28,7 @@ export const Projects = () => {
   }
 
   function ViewProjects() {
-    const { projects } = current.context;
+    const { projects, createProjectService } = current.context;
 
     console.log('ViewProjects current:', current);
 
@@ -56,7 +56,7 @@ export const Projects = () => {
 
         <CreateProject
           isOpen={current.matches('viewingProjects.creatingProject')}
-          onClose={() => send('CLOSE')}
+          createProjectService={createProjectService}
         />
       </section>
     );

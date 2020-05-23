@@ -1,12 +1,24 @@
-import { Machine, assign, DoneInvokeEvent, Interpreter } from 'xstate';
+import {
+  Machine,
+  assign,
+  DoneInvokeEvent,
+  Interpreter,
+  spawn,
+  actions
+} from 'xstate';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
-import { Org, OrgsResponse } from 'shared/interfaces/Org';
+import { OrgsResponse } from 'shared/interfaces/Org';
 import { Project, ProjectsResponse } from 'shared/interfaces/Project';
+import {
+  CreateProjectService,
+  createProjectMachine
+} from './createProjectMachine';
 
 interface MachineContext {
   projects: Project[];
   errorMessage: string;
+  createProjectService: CreateProjectService;
 }
 
 export type ProjectsService = Interpreter<MachineContext>;
@@ -16,7 +28,8 @@ export const projectsMachine = Machine<MachineContext>(
     initial: 'fetchingProjects',
     context: {
       projects: [],
-      errorMessage: ''
+      errorMessage: '',
+      createProjectService: spawn(createProjectMachine)
     },
     states: {
       fetchingProjects: {
@@ -36,7 +49,12 @@ export const projectsMachine = Machine<MachineContext>(
         initial: 'idle',
         states: {
           idle: {
-            on: { CREATE_PROJECT: 'creatingProject' }
+            on: {
+              CREATE_PROJECT: {
+                target: 'creatingProject',
+                actions: 'spawnCreateProjectService'
+              }
+            }
           },
           creatingProject: {
             on: { CLOSE: 'idle' }
@@ -72,6 +90,11 @@ export const projectsMachine = Machine<MachineContext>(
 
         return {
           errorMessage: e.data.message
+        };
+      }),
+      spawnCreateProjectService: assign((context, event) => {
+        return {
+          createProjectService: spawn(createProjectMachine)
         };
       })
     }
