@@ -1,9 +1,3 @@
-export interface FormFields {
-  projectName: string;
-  key: string;
-  template: string;
-}
-
 export const nameErrors = {
   required: 'Your new project needs a name',
   tooShort: 'The project name is too short'
