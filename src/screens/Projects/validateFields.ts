@@ -16,7 +16,7 @@ export const nameErrors = {
   required: 'Your new project needs a name',
   tooShort: 'The project name is too short'
 };
-export const validateName = (name: string) => {
+export const validateName = (name?: string) => {
   if (!name) {
     return nameErrors.required;
   }
@@ -31,7 +31,7 @@ export const validateName = (name: string) => {
 export const keyError =
   'Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters.';
 
-export const validateKey = (key: string) => {
+export const validateKey = (key?: string) => {
   if (!key) {
     return keyError;
   }

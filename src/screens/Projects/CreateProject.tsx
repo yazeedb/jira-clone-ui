@@ -1,11 +1,12 @@
 import React, { FC, useState } from 'react';
 import Popup from '@atlaskit/popup';
 import Drawer from '@atlaskit/drawer';
-import Form, { Field } from '@atlaskit/form';
+import Form, { Field, ErrorMessage } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
 import InfoIcon from '@atlaskit/icon/glyph/info';
 import Button from '@atlaskit/button';
 import './CreateProject.scss';
+import { validateName, validateKey } from './validateFields';
 
 interface CreateProjectProps {
   onClose: () => void;
@@ -29,68 +30,81 @@ export const CreateProject: FC<CreateProjectProps> = ({ onClose, isOpen }) => {
                   defaultValue=""
                   label="Name"
                   isRequired
+                  validate={validateName}
                 >
-                  {({ fieldProps }) => (
-                    <TextField
-                      placeholder="Enter a project name"
-                      autoFocus
-                      {...fieldProps}
-                    />
+                  {({ fieldProps, error }) => (
+                    <>
+                      <TextField
+                        placeholder="Enter a project name"
+                        autoFocus
+                        {...fieldProps}
+                      />
+                      {error && <ErrorMessage>{error}</ErrorMessage>}
+                    </>
                   )}
                 </Field>
 
-                <Field name="projectKey" defaultValue="" label="Key" isRequired>
-                  {({ fieldProps }) => (
+                <Field
+                  name="projectKey"
+                  defaultValue=""
+                  label="Key"
+                  isRequired
+                  validate={validateKey}
+                >
+                  {({ fieldProps, error }) => (
                     // TODO: Generate projectKey based on projectName
-                    <div className="flex-wrapper">
-                      <TextField {...fieldProps} />
+                    <>
+                      <div className="flex-wrapper">
+                        <TextField {...fieldProps} />
 
-                      <Popup
-                        isOpen={popupOpen}
-                        placement="right"
-                        onClose={() => setPopupOpen(false)}
-                        content={() => {
-                          return (
-                            <div className="popup-wrapper">
-                              <p>
-                                The project key is used as the prefix of your
-                                project's issue keys (e.g. 'TEST-100'). Choose
-                                one that is descriptive and easy to type.
-                              </p>
+                        <Popup
+                          isOpen={popupOpen}
+                          placement="right"
+                          onClose={() => setPopupOpen(false)}
+                          content={() => {
+                            return (
+                              <div className="popup-wrapper">
+                                <p>
+                                  The project key is used as the prefix of your
+                                  project's issue keys (e.g. 'TEST-100'). Choose
+                                  one that is descriptive and easy to type.
+                                </p>
 
-                              <a
-                                href="https://support.atlassian.com/jira-core-cloud/docs/work-with-issues-in-jira-cloud/"
-                                target="_blank"
-                                rel="noreferrer noopener"
+                                <a
+                                  href="https://support.atlassian.com/jira-core-cloud/docs/work-with-issues-in-jira-cloud/"
+                                  target="_blank"
+                                  rel="noreferrer noopener"
+                                >
+                                  Learn more
+                                </a>
+                              </div>
+                            );
+                          }}
+                          trigger={(triggerProps) => {
+                            return (
+                              <Button
+                                className="popup-trigger"
+                                style={{
+                                  marginLeft: '10px',
+                                  cursor: 'pointer',
+                                  background: 'none'
+                                }}
+                                onClick={() => setPopupOpen((v) => !v)}
+                                {...triggerProps}
                               >
-                                Learn more
-                              </a>
-                            </div>
-                          );
-                        }}
-                        trigger={(triggerProps) => {
-                          return (
-                            <Button
-                              className="popup-trigger"
-                              style={{
-                                marginLeft: '10px',
-                                cursor: 'pointer',
-                                background: 'none'
-                              }}
-                              onClick={() => setPopupOpen((v) => !v)}
-                              {...triggerProps}
-                            >
-                              <InfoIcon
-                                label="More info"
-                                primaryColor="rgb(101, 84, 192)"
-                                size="medium"
-                              />
-                            </Button>
-                          );
-                        }}
-                        zIndex={999} // Otherwise it won't show above the Drawer -_-"
-                      />
-                    </div>
+                                <InfoIcon
+                                  label="More info"
+                                  primaryColor="rgb(101, 84, 192)"
+                                  size="medium"
+                                />
+                              </Button>
+                            );
+                          }}
+                          zIndex={999} // Otherwise it won't show above the Drawer -_-"
+                        />
+                      </div>
+                      {error && <ErrorMessage>{error}</ErrorMessage>}
+                    </>
                   )}
                 </Field>
 
@@ -114,7 +128,8 @@ export const CreateProject: FC<CreateProjectProps> = ({ onClose, isOpen }) => {
                   type="submit"
                   appearance="primary"
                   shouldFitContainer
-                  isDisabled={!dirty || submitting}
+                  isDisabled={!dirty}
+                  isLoading={submitting}
                 >
                   Create
                 </Button>
