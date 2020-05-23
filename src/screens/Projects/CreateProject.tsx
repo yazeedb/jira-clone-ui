@@ -6,7 +6,6 @@ import TextField from '@atlaskit/textfield';
 import InfoIcon from '@atlaskit/icon/glyph/info';
 import Button from '@atlaskit/button';
 import './CreateProject.scss';
-import { Optional } from 'shared/interfaces/Optional';
 
 interface CreateProjectProps {
   onClose: () => void;
