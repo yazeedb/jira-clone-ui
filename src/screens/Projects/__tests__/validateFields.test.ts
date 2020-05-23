@@ -2,7 +2,7 @@ import {
   validateKey,
   validateName,
   nameErrors,
-  keyError
+  keyErrors
 } from '../validateFields';
 
 describe('validateName', () => {
@@ -54,9 +54,9 @@ describe('validateKey', () => {
       undefined,
       undefined,
 
-      keyError,
-      keyError,
-      keyError
+      keyErrors.required,
+      keyErrors.general,
+      keyErrors.general
     ]);
   });
 
@@ -81,12 +81,36 @@ describe('validateKey', () => {
       undefined,
       undefined,
 
-      keyError,
-      keyError,
-      keyError,
-      keyError,
-      keyError,
-      keyError
+      keyErrors.general,
+      keyErrors.general,
+      keyErrors.general,
+      keyErrors.general,
+      keyErrors.general,
+      keyErrors.general
+    ]);
+  });
+
+  it('is a max of 10 characters in length', () => {
+    const output = [
+      // Good
+      'AA',
+      'B1',
+      'D4asdad',
+      ''.padStart(9, 'A1C'),
+      ''.padEnd(10, 'A6g'),
+
+      // Bad
+      ''.padEnd(11, 'A1B')
+    ].map(validateKey);
+
+    expect(output).toEqual([
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+
+      keyErrors.tooLong
     ]);
   });
 });
