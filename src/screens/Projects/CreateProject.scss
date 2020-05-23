@@ -1,0 +1,57 @@
+@import '../../theme.scss';
+
+.create-projects {
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  form {
+    width: 350px;
+    margin: 0 auto;
+  }
+
+  .title {
+    font-weight: normal;
+    margin-bottom: 20px;
+  }
+
+  .flex-wrapper {
+    display: flex;
+    align-content: row;
+    align-items: center;
+    width: 180px;
+  }
+
+  .popup-trigger {
+    margin-left: 10px;
+    background: none;
+  }
+
+  .template-wrapper {
+    display: flex;
+    justify-content: space-between;
+
+    img {
+      width: 150px;
+      margin-right: 10px;
+    }
+
+    p {
+      color: $purple-2;
+    }
+  }
+
+  button[type='submit'] {
+    margin-top: 25px;
+    height: 40px;
+  }
+}
+
+.popup-wrapper {
+  width: 300px;
+  padding: 16px 24px;
+
+  p {
+    margin-bottom: 10px;
+  }
+}
