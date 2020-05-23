@@ -41,6 +41,7 @@ export const CreateProject: FC<CreateProjectProps> = ({ onClose, isOpen }) => {
 
                 <Field name="projectKey" defaultValue="" label="Key" isRequired>
                   {({ fieldProps }) => (
+                    // TODO: Generate projectKey based on projectName
                     <div className="flex-wrapper">
                       <TextField {...fieldProps} />
 
