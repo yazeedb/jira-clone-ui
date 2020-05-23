@@ -37,12 +37,12 @@ export const createProjectMachine = Machine<MachineContext>(
           onDone: [
             {
               target: 'editing',
-              actions: 'setNameAvailability',
+              actions: 'makeNameAvailable',
               cond: 'nameIsAvailable'
             },
             {
               target: 'editing',
-              actions: 'setNameAvailability',
+              actions: 'makeNameUnavailable',
               cond: 'nameNotAvailable'
             }
           ],

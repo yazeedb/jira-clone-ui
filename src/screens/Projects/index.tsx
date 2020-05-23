@@ -8,7 +8,9 @@ import { ImpossibleStateNotice } from 'shared/components/ImpossibleStateNotice';
 import { CreateProject } from './CreateProject';
 
 export const Projects = () => {
-  const [current, send] = useMachine(projectsMachine);
+  const [current, send] = useMachine(projectsMachine, {
+    devTools: true
+  });
 
   console.log('Projects current:', current);
 
