@@ -1,5 +1,4 @@
 import {
-  validateFields,
   validateKey,
   validateName,
   nameErrors,

@@ -1,16 +1,8 @@
-import { Optional } from 'shared/interfaces/Optional';
-
 export interface FormFields {
   projectName: string;
   key: string;
   template: string;
 }
-
-export const validateFields = (fields: FormFields): Optional<FormFields> => {
-  return {
-    projectName: validateName(fields.projectName)
-  };
-};
 
 export const nameErrors = {
   required: 'Your new project needs a name',
