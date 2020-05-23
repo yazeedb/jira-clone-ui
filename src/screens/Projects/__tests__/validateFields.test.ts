@@ -6,27 +6,31 @@ import {
 } from '../validateFields';
 
 describe('validateName', () => {
-  it('value must be 3 or more characters', () => {
+  it('value must be between 3 and 80 characters', () => {
     const output = [
       // Good
       'abc',
       '123',
       '@@@',
+      ''.padEnd(80, 'hello'),
 
       // Bad
       '',
       'a',
-      'ab'
+      'ab',
+      ''.padEnd(83, 'hello'),
     ].map(validateName);
 
     expect(output).toEqual([
       undefined,
       undefined,
       undefined,
+      undefined,
 
       nameErrors.required,
       nameErrors.tooShort,
-      nameErrors.tooShort
+      nameErrors.tooShort,
+      nameErrors.tooLong
     ]);
   });
 });

@@ -1,7 +1,9 @@
 export const nameErrors = {
   required: 'Your new project needs a name',
-  tooShort: 'The project name is too short'
+  tooShort: 'The project name is too short',
+  tooLong: 'The project name is too long'
 };
+
 export const validateName = (name?: string) => {
   if (!name) {
     return nameErrors.required;
@@ -9,6 +11,10 @@ export const validateName = (name?: string) => {
 
   if (name.length < 3) {
     return nameErrors.tooShort;
+  }
+
+  if (name.length > 80) {
+    return nameErrors.tooLong;
   }
 
   return undefined;
