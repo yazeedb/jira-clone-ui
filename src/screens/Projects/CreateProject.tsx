@@ -26,7 +26,7 @@ export const CreateProject: FC<CreateProjectProps> = ({
     <Drawer width="full" onClose={() => send('CLOSE')} isOpen={isOpen}>
       <div className="create-projects">
         <Form onSubmit={(data) => console.log('form data', data)}>
-          {({ formProps, dirty, submitting }) => {
+          {({ formProps, dirty, submitting, getValues }) => {
             return (
               <form {...formProps}>
                 <h1 className="title">Create project</h1>
@@ -44,6 +44,20 @@ export const CreateProject: FC<CreateProjectProps> = ({
                         placeholder="Enter a project name"
                         autoFocus
                         {...fieldProps}
+
+                        // PICKUP_HERE:
+                        // How to safely access form.projectName
+                        // and pass to CreateProjectMachine?
+
+                        /*
+                          When user updates textboxes,
+                          if value is valid -- validate via API
+                          Make sure name isn't taken
+
+                          Properly handle exceptions, offline errors, etc.
+
+                          Do the same for Project Key
+                        */
                       />
                       {error && <ErrorMessage>{error}</ErrorMessage>}
                     </>
