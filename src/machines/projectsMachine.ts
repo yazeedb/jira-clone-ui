@@ -1,11 +1,4 @@
-import {
-  Machine,
-  assign,
-  DoneInvokeEvent,
-  Interpreter,
-  spawn,
-  actions
-} from 'xstate';
+import { Machine, assign, DoneInvokeEvent, Interpreter, spawn } from 'xstate';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { OrgsResponse } from 'shared/interfaces/Org';

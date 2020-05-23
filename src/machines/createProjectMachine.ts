@@ -3,8 +3,7 @@ import {
   sendParent,
   Interpreter,
   assign,
-  DoneInvokeEvent,
-  AnyEventObject
+  DoneInvokeEvent
 } from 'xstate';
 import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
