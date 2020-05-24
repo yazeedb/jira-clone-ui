@@ -25,7 +25,7 @@ export const CreateProject: FC<CreateProjectProps> = ({
   return (
     <Drawer width="full" onClose={() => send('CLOSE')} isOpen={isOpen}>
       <div className="create-projects">
-        <Form onSubmit={(data) => console.log('form data', data)}>
+        <Form<FormFields> onSubmit={(data) => console.log('form data', data)}>
           {({ formProps, dirty, submitting, getValues }) => {
             return (
               <form {...formProps}>
@@ -47,7 +47,7 @@ export const CreateProject: FC<CreateProjectProps> = ({
                         onChange={(event) => {
                           fieldProps.onChange(event);
 
-                          const { projectName } = getValues() as FormFields;
+                          const { projectName } = getValues();
 
                           const validName =
                             validateName(projectName) === undefined;
