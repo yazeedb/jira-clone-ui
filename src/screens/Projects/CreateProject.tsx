@@ -44,6 +44,20 @@ export const CreateProject: FC<CreateProjectProps> = ({
                         placeholder="Enter a project name"
                         autoFocus
                         {...fieldProps}
+                        onChange={(event) => {
+                          fieldProps.onChange(event);
+
+                          const { projectName } = getValues() as FormFields;
+
+                          const validName =
+                            validateName(projectName) === undefined;
+
+                          if (validName) {
+                            send('CHECK_NAME_TAKEN', {
+                              projectName
+                            });
+                          }
+                        }}
 
                         // PICKUP_HERE:
                         // How to safely access form.projectName
@@ -161,3 +175,8 @@ export const CreateProject: FC<CreateProjectProps> = ({
     </Drawer>
   );
 };
+
+interface FormFields {
+  projectName: string;
+  projectKey: string;
+}
