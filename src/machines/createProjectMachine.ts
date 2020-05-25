@@ -9,83 +9,101 @@ import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { OrgsResponse } from 'shared/interfaces/Org';
 import { ProjectNameAvailableResponse } from 'shared/interfaces/Project';
+import { validateName } from 'screens/Projects/validateFields';
 
 interface MachineContext {
-  projectNameAvailable: boolean;
+  projectName: string;
   errorMessage: string;
 }
 
 export type CreateProjectService = Interpreter<MachineContext>;
 export const createProjectMachine = Machine<MachineContext>(
   {
-    initial: 'editing',
+    initial: 'idle',
     context: {
-      projectNameAvailable: false,
+      projectName: '',
       errorMessage: ''
     },
     on: {
+      CHECK_NAME_TAKEN: { target: 'debounceNameCheck' },
       CLOSE: { actions: sendParent('CLOSE') }
     },
     states: {
-      editing: {
-        on: { CHECK_NAME_TAKEN: 'checkingNameTaken' }
+      idle: {},
+      debounceNameCheck: {
+        entry: 'setProjectName',
+        after: {
+          300: {
+            target: 'checkingNameTaken',
+            cond: 'isValidName'
+          }
+        }
       },
       checkingNameTaken: {
-        entry: 'makeNameUnavailable',
         invoke: {
           src: 'checkNameTaken',
           onDone: [
             {
-              target: 'editing',
-              actions: 'makeNameAvailable',
+              target: 'nameAvailable',
               cond: 'nameIsAvailable'
             },
             {
-              target: 'editing',
-              actions: 'makeNameUnavailable',
+              target: 'nameNotAvailable',
               cond: 'nameNotAvailable'
             }
           ],
           onError: {
-            target: 'editing',
+            target: 'checkFailed',
             actions: 'setErrorMessage'
           }
         }
+      },
+      nameAvailable: {},
+      nameNotAvailable: {},
+      checkFailed: {
+        after: { 3000: 'idle' },
+        on: { CLEAR: 'idle' }
       }
     }
   },
   {
+    actions: {
+      setProjectName: assign((context, event) => {
+        return {
+          projectName: event.projectName
+        };
+      }),
+      setErrorMessage: assign((context, event) => {
+        const e = event as DoneInvokeEvent<Error>;
+
+        return {
+          errorMessage: e.data.message
+        };
+      })
+    },
     services: {
       checkNameTaken: (context, event) =>
         fetcher.get<OrgsResponse>(apiRoutes.orgs).then((response) => {
           // TODO: Support multiple orgs?
           // We're hardcoding the first one for now.
           const [firstOrg] = response.data.orgs;
-          const { projectName } = event;
+          const { projectName } = context;
 
           return fetcher(
             apiRoutes.validateProjectName(firstOrg.id, projectName)
           );
         })
     },
-    actions: {
-      makeNameAvailable: setNameAvailability(true),
-      makeNameUnavailable: setNameAvailability(false)
-    },
     guards: {
       nameIsAvailable: createNameCheck(true),
-      nameNotAvailable: createNameCheck(false)
+
+      nameNotAvailable: createNameCheck(false),
+
+      isValidName: (context: MachineContext, event: any) =>
+        validateName(context.projectName) === undefined
     }
   }
 );
-
-function setNameAvailability(available: boolean) {
-  return assign((context: MachineContext, event: any) => {
-    return {
-      projectNameAvailable: available
-    };
-  });
-}
 
 function createNameCheck(available: boolean) {
   return (context: MachineContext, event: any) => {
@@ -93,6 +111,6 @@ function createNameCheck(available: boolean) {
       FetcherResponse<ProjectNameAvailableResponse>
     >;
 
-    return e.data.data.available === false;
+    return e.data.data.available === available;
   };
 }

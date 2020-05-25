@@ -56,10 +56,16 @@ export const Projects = () => {
         <h2 className="title">Projects</h2>
         {renderContent()}
 
-        <CreateProject
-          isOpen={current.matches('viewingProjects.creatingProject')}
-          createProjectService={createProjectService}
-        />
+        {current.matches('viewingProjects.creatingProject') && (
+          <CreateProject
+            isOpen={current.matches('viewingProjects.creatingProject')}
+            createProjectService={createProjectService}
+          />
+        )}
+
+        <Button onClick={() => send('CREATE_PROJECT')} appearance="primary">
+          Create project
+        </Button>
       </section>
     );
   }

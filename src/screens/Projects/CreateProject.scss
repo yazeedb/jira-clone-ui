@@ -15,9 +15,17 @@
     margin-bottom: 20px;
   }
 
+  .name-wrapper {
+    display: flex;
+    align-items: center;
+
+    .after-input-wrapper {
+      margin-right: 10px;
+    }
+  }
+
   .flex-wrapper {
     display: flex;
-    align-content: row;
     align-items: center;
     width: 180px;
   }
