@@ -241,14 +241,8 @@ app
       const { projectName } = req.query;
       const existingProject = org.projects.find((p) => p.name === projectName);
 
-      if (existingProject) {
-        return res.json({
-          available: false
-        });
-      }
-
       return res.json({
-        available: true
+        available: !!existingProject
       });
     }, 800);
   })
