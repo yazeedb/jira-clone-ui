@@ -242,7 +242,7 @@ app
       const existingProject = org.projects.find((p) => p.name === projectName);
 
       return res.json({
-        available: !!existingProject
+        available: !!existingProject === false
       });
     }, 800);
   })
