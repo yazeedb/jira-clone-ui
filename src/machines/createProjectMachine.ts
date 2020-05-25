@@ -12,6 +12,7 @@ import { ProjectNameAvailableResponse } from 'shared/interfaces/Project';
 import { validateName } from 'screens/Projects/validateFields';
 
 interface MachineContext {
+  projectName: string;
   errorMessage: string;
 }
 
@@ -20,21 +21,23 @@ export const createProjectMachine = Machine<MachineContext>(
   {
     initial: 'idle',
     context: {
+      projectName: '',
       errorMessage: ''
     },
     on: {
-      CHECK_NAME_TAKEN: {
-        target: 'debounceNameCheck',
-        cond: 'isValidName'
-      },
+      CHECK_NAME_TAKEN: { target: 'debounceNameCheck' },
       CLOSE: { actions: sendParent('CLOSE') }
     },
     states: {
       idle: {},
       debounceNameCheck: {
-        // PICK UP HERE:
-        // Debounced transition swallows user input
-        // Either forward input, used setTimeout, etc?
+        entry: 'setProjectName',
+        after: {
+          300: {
+            target: 'checkingNameTaken',
+            cond: 'isValidName'
+          }
+        }
       },
       checkingNameTaken: {
         invoke: {
@@ -50,25 +53,41 @@ export const createProjectMachine = Machine<MachineContext>(
             }
           ],
           onError: {
-            target: 'idle',
+            target: 'checkFailed',
             actions: 'setErrorMessage'
           }
         }
       },
       nameAvailable: {},
-      nameNotAvailable: {}
+      nameNotAvailable: {},
+      checkFailed: {
+        after: { 3000: 'idle' },
+        on: { CLEAR: 'idle' }
+      }
     }
   },
   {
+    actions: {
+      setProjectName: assign((context, event) => {
+        return {
+          projectName: event.projectName
+        };
+      }),
+      setErrorMessage: assign((context, event) => {
+        const e = event as DoneInvokeEvent<Error>;
+
+        return {
+          errorMessage: e.data.message
+        };
+      })
+    },
     services: {
       checkNameTaken: (context, event) =>
         fetcher.get<OrgsResponse>(apiRoutes.orgs).then((response) => {
           // TODO: Support multiple orgs?
           // We're hardcoding the first one for now.
           const [firstOrg] = response.data.orgs;
-          const { projectName } = event;
-
-          debugger;
+          const { projectName } = context;
 
           return fetcher(
             apiRoutes.validateProjectName(firstOrg.id, projectName)
@@ -81,7 +100,7 @@ export const createProjectMachine = Machine<MachineContext>(
       nameNotAvailable: createNameCheck(false),
 
       isValidName: (context: MachineContext, event: any) =>
-        validateName(event.projectName) === undefined
+        validateName(context.projectName) === undefined
     }
   }
 );

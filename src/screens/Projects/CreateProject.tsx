@@ -1,7 +1,8 @@
 import React, { FC, useState } from 'react';
 import Popup from '@atlaskit/popup';
 import Drawer from '@atlaskit/drawer';
-import Form, { Field, ErrorMessage } from '@atlaskit/form';
+import Form, { Field, ErrorMessage, ValidMessage } from '@atlaskit/form';
+import { colors } from '@atlaskit/theme';
 import TextField from '@atlaskit/textfield';
 import InfoIcon from '@atlaskit/icon/glyph/info';
 import WarningIcon from '@atlaskit/icon/glyph/warning';
@@ -11,6 +12,7 @@ import { validateName, validateKey } from './validateFields';
 import { CreateProjectService } from 'machines/createProjectMachine';
 import { useService } from '@xstate/react';
 import Spinner from '@atlaskit/spinner';
+import { Notification } from 'shared/components/Notification';
 
 interface CreateProjectProps {
   isOpen: boolean;
@@ -22,6 +24,7 @@ export const CreateProject: FC<CreateProjectProps> = ({
   createProjectService
 }) => {
   const [current, send] = useService(createProjectService);
+  const { errorMessage } = current.context;
 
   const [popupOpen, setPopupOpen] = useState(false);
 
@@ -67,16 +70,16 @@ export const CreateProject: FC<CreateProjectProps> = ({
                             });
                           }}
                           elemAfterInput={
-                            <div className="spinner-wrapper">
-                              <Spinner
-                                size="medium"
-                                isCompleting={
-                                  !current.matches('checkingNameTaken')
-                                }
-                              />
-
+                            <div className="after-input-wrapper">
                               {current.matches('nameNotAvailable') && (
-                                <WarningIcon label="warning" />
+                                <WarningIcon
+                                  primaryColor={colors.red()}
+                                  label="warning"
+                                />
+                              )}
+
+                              {current.matches('checkingNameTaken') && (
+                                <Spinner size="medium" />
                               )}
                             </div>
                           }
@@ -84,8 +87,13 @@ export const CreateProject: FC<CreateProjectProps> = ({
                       </div>
 
                       {error && <ErrorMessage>{error}</ErrorMessage>}
+
                       {current.matches('nameNotAvailable') && (
                         <ErrorMessage>That name is taken</ErrorMessage>
+                      )}
+
+                      {current.matches('nameAvailable') && (
+                        <ValidMessage>Project name available!</ValidMessage>
                       )}
                     </>
                   )}
@@ -185,6 +193,14 @@ export const CreateProject: FC<CreateProjectProps> = ({
           }}
         </Form>
       </div>
+
+      <Notification
+        type="error"
+        primaryMessage={errorMessage}
+        handleClose={() => send('CLEAR')}
+        secondaryMessage="Please try again"
+        show={current.matches('checkFailed')}
+      />
     </Drawer>
   );
 };
