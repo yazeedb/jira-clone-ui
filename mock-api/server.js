@@ -246,6 +246,31 @@ app
       });
     }, 800);
   })
+  .get('/api/orgs/:orgId/validateProjectKey', (req, res) => {
+    setTimeout(() => {
+      // Find associated user
+      const { user } = req[env.sessionName];
+      const db = dbTools.getDb();
+      const existingUser = db.users.find((u) => u.sub === user.sub);
+
+      // Find associated org
+      const { orgId } = req.params;
+      const org = existingUser.orgs.find((o) => o.id === orgId);
+
+      if (!org) {
+        return res.status(404).json({
+          message: 'Org not found'
+        });
+      }
+
+      const { projectKey } = req.query;
+      const existingKey = org.projects.find((p) => p.key === projectKey);
+
+      return res.json({
+        available: !!existingKey === false
+      });
+    }, 800);
+  })
 
   .all('*', (req, res, next) => {
     // res.cookie(env.csrfCookieName, req.csrfToken());
