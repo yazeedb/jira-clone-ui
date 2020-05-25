@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 import { Login } from './screens/Login';
-import { BrowserRouter, Route, Switch, useHistory } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Route,
+  Switch,
+  useHistory,
+  Redirect
+} from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { CompleteSignup } from './screens/CompleteSignup';
 import { Notification } from 'shared/components/Notification';
@@ -41,6 +47,7 @@ const AuthShell = () => {
     case current.matches('authenticating'):
       return (
         <>
+          <Redirect to="/login" />
           <Login loading={current.matches('authenticating')} send={send} />
 
           <Notification
@@ -55,18 +62,24 @@ const AuthShell = () => {
 
     case current.matches('awaitingSignup'):
       return (
-        <CompleteSignup
-          user={current.context.user}
-          signupService={current.context.signupService}
-        />
+        <>
+          <Redirect to="/completeSignup" />
+          <CompleteSignup
+            user={current.context.user}
+            signupService={current.context.signupService}
+          />
+        </>
       );
 
     case current.matches('awaitingOrgConfirmation'):
       return (
-        <ConfirmOrg
-          confirmOrgService={current.context.confirmOrgService}
-          user={current.context.user}
-        />
+        <>
+          <Redirect to="/confirmOrg" />
+          <ConfirmOrg
+            confirmOrgService={current.context.confirmOrgService}
+            user={current.context.user}
+          />
+        </>
       );
 
     case current.matches('appUsable'):

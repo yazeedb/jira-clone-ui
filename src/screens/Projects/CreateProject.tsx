@@ -5,7 +5,7 @@ import Form, { Field, ErrorMessage, ValidMessage } from '@atlaskit/form';
 import { colors } from '@atlaskit/theme';
 import TextField from '@atlaskit/textfield';
 import InfoIcon from '@atlaskit/icon/glyph/info';
-import WarningIcon from '@atlaskit/icon/glyph/warning';
+import ErrorIcon from '@atlaskit/icon/glyph/error';
 import Button from '@atlaskit/button';
 import './CreateProject.scss';
 import { validateName, validateKey } from './validateFields';
@@ -72,7 +72,7 @@ export const CreateProject: FC<CreateProjectProps> = ({
                           elemAfterInput={
                             <div className="after-input-wrapper">
                               {current.matches('nameNotAvailable') && (
-                                <WarningIcon
+                                <ErrorIcon
                                   primaryColor={colors.red()}
                                   label="warning"
                                 />
