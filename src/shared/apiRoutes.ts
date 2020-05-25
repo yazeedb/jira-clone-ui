@@ -9,6 +9,10 @@ export const apiRoutes = {
   completeSignup: `${apiBase}/completeSignup`,
   orgs: `${apiBase}/orgs`,
   getProjectsByOrg: (orgId: string) => `${apiBase}/orgs/${orgId}/projects`,
+
   validateProjectName: (orgId: string, projectName: string) =>
-    `${apiBase}/orgs/${orgId}/validateProjectName?projectName=${projectName}`
+    `${apiBase}/orgs/${orgId}/validateProjectName?name=${projectName}`,
+
+  validateProjectKey: (orgId: string, projectKey: string) =>
+    `${apiBase}/orgs/${orgId}/validateProjectKey?key=${projectKey}`
 };

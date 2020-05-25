@@ -221,31 +221,7 @@ app
       res.json({ project: newProject });
     }
   })
-  .get('/api/orgs/:orgId/validateProjectName', (req, res) => {
-    setTimeout(() => {
-      // Find associated user
-      const { user } = req[env.sessionName];
-      const db = dbTools.getDb();
-      const existingUser = db.users.find((u) => u.sub === user.sub);
-
-      // Find associated org
-      const { orgId } = req.params;
-      const org = existingUser.orgs.find((o) => o.id === orgId);
-
-      if (!org) {
-        return res.status(404).json({
-          message: 'Org not found'
-        });
-      }
-
-      const { projectName } = req.query;
-      const existingProject = org.projects.find((p) => p.name === projectName);
-
-      return res.json({
-        available: !!existingProject === false
-      });
-    }, 800);
-  })
+  .get('/api/orgs/:orgId/validateProjectName', createProjectValidator('name'))
 
   .all('*', (req, res, next) => {
     // res.cookie(env.csrfCookieName, req.csrfToken());
@@ -264,6 +240,44 @@ if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
     console.log('Listening on port', port);
   });
+}
+
+/**
+ *
+ * @param {'name' | 'key'} prop
+ */
+function createProjectValidator(prop) {
+  return (req, res) => {
+    setTimeout(() => {
+      // Find associated user
+      const { user } = req[env.sessionName];
+      const db = dbTools.getDb();
+      const existingUser = db.users.find((u) => u.sub === user.sub);
+
+      // Find associated org
+      const { orgId } = req.params;
+      const org = existingUser.orgs.find((o) => o.id === orgId);
+
+      if (!org) {
+        return res.status(404).json({
+          message: 'Org not found'
+        });
+      }
+
+      const valueToCompare = req.query[prop];
+      const existingProject = org.projects.find(
+        (p) => p[prop].toLowerCase() === valueToCompare.toLowerCase()
+      );
+
+      return res.json({
+        available: !!existingProject === false,
+        message:
+          prop === 'name'
+            ? 'That name is taken'
+            : `Project ${existingProject.name} uses this project key`
+      });
+    }, 800);
+  };
 }
 
 // Allow tests to import Express app
