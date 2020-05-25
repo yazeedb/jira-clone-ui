@@ -5,4 +5,6 @@ const db = {
   users: []
 };
 
-fs.writeFileSync(dbTools.dbPath, JSON.stringify(db, null, 2));
+if (!fs.existsSync(dbTools.dbPath)) {
+  fs.writeFileSync(dbTools.dbPath, JSON.stringify(db, null, 2));
+}

@@ -60,6 +60,10 @@ export const Projects = () => {
           isOpen={current.matches('viewingProjects.creatingProject')}
           createProjectService={createProjectService}
         />
+
+        <Button onClick={() => send('CREATE_PROJECT')} appearance="primary">
+          Create project
+        </Button>
       </section>
     );
   }

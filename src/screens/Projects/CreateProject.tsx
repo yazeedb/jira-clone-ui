@@ -4,11 +4,13 @@ import Drawer from '@atlaskit/drawer';
 import Form, { Field, ErrorMessage } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
 import InfoIcon from '@atlaskit/icon/glyph/info';
+import WarningIcon from '@atlaskit/icon/glyph/warning';
 import Button from '@atlaskit/button';
 import './CreateProject.scss';
 import { validateName, validateKey } from './validateFields';
 import { CreateProjectService } from 'machines/createProjectMachine';
 import { useService } from '@xstate/react';
+import Spinner from '@atlaskit/spinner';
 
 interface CreateProjectProps {
   isOpen: boolean;
@@ -20,12 +22,22 @@ export const CreateProject: FC<CreateProjectProps> = ({
   createProjectService
 }) => {
   const [current, send] = useService(createProjectService);
+
   const [popupOpen, setPopupOpen] = useState(false);
+
+  console.log('createProjectService:', current);
 
   return (
     <Drawer width="full" onClose={() => send('CLOSE')} isOpen={isOpen}>
       <div className="create-projects">
-        <Form<FormFields> onSubmit={(data) => console.log('form data', data)}>
+        <Form<FormFields>
+          onSubmit={(data) =>
+            send('SUBMIT', {
+              projectName: data.projectName,
+              projectKey: data.projectKey
+            })
+          }
+        >
           {({ formProps, dirty, submitting, getValues }) => {
             return (
               <form {...formProps}>
@@ -40,40 +52,41 @@ export const CreateProject: FC<CreateProjectProps> = ({
                 >
                   {({ fieldProps, error }) => (
                     <>
-                      <TextField
-                        placeholder="Enter a project name"
-                        autoFocus
-                        {...fieldProps}
-                        onChange={(event) => {
-                          fieldProps.onChange(event);
+                      <div className="name-wrapper">
+                        <TextField
+                          placeholder="Enter a project name"
+                          autoFocus
+                          autoComplete="off"
+                          className="name-input"
+                          {...fieldProps}
+                          onChange={(event) => {
+                            fieldProps.onChange(event);
 
-                          const { projectName } = getValues();
-
-                          const validName =
-                            validateName(projectName) === undefined;
-
-                          if (validName) {
                             send('CHECK_NAME_TAKEN', {
-                              projectName
+                              projectName: getValues().projectName
                             });
+                          }}
+                          elemAfterInput={
+                            <div className="spinner-wrapper">
+                              <Spinner
+                                size="medium"
+                                isCompleting={
+                                  !current.matches('checkingNameTaken')
+                                }
+                              />
+
+                              {current.matches('nameNotAvailable') && (
+                                <WarningIcon label="warning" />
+                              )}
+                            </div>
                           }
-                        }}
+                        />
+                      </div>
 
-                        // PICKUP_HERE:
-                        // How to safely access form.projectName
-                        // and pass to CreateProjectMachine?
-
-                        /*
-                          When user updates textboxes,
-                          if value is valid -- validate via API
-                          Make sure name isn't taken
-
-                          Properly handle exceptions, offline errors, etc.
-
-                          Do the same for Project Key
-                        */
-                      />
                       {error && <ErrorMessage>{error}</ErrorMessage>}
+                      {current.matches('nameNotAvailable') && (
+                        <ErrorMessage>That name is taken</ErrorMessage>
+                      )}
                     </>
                   )}
                 </Field>
