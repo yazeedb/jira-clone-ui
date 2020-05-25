@@ -264,10 +264,17 @@ app
       }
 
       const { projectKey } = req.query;
-      const existingKey = org.projects.find((p) => p.key === projectKey);
+      const projectWithThisKey = org.projects.find((p) => p.key === projectKey);
+
+      if (projectWithThisKey) {
+        return res.json({
+          available: false,
+          message: `Project ${projectWithThisKey.name} uses this project key.`
+        });
+      }
 
       return res.json({
-        available: !!existingKey === false
+        available: true
       });
     }, 800);
   })
