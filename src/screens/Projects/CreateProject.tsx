@@ -9,7 +9,10 @@ import ErrorIcon from '@atlaskit/icon/glyph/error';
 import Button from '@atlaskit/button';
 import './CreateProject.scss';
 import { validateName, validateKey } from './validateFields';
-import { CreateProjectService } from 'machines/createProjectMachine';
+import {
+  CreateProjectService,
+  validateEvents
+} from 'machines/createProjectMachine';
 import { useService } from '@xstate/react';
 import Spinner from '@atlaskit/spinner';
 import { Notification } from 'shared/components/Notification';
@@ -24,7 +27,7 @@ export const CreateProject: FC<CreateProjectProps> = ({
   createProjectService
 }) => {
   const [current, send] = useService(createProjectService);
-  const { errorMessage } = current.context;
+  const { nameValidationService, keyValidationService } = current.context;
 
   const [popupOpen, setPopupOpen] = useState(false);
 
@@ -53,50 +56,55 @@ export const CreateProject: FC<CreateProjectProps> = ({
                   isRequired
                   validate={validateName}
                 >
-                  {({ fieldProps, error }) => (
-                    <>
-                      <div className="name-wrapper">
-                        <TextField
-                          placeholder="Enter a project name"
-                          autoFocus
-                          autoComplete="off"
-                          className="name-input"
-                          {...fieldProps}
-                          onChange={(event) => {
-                            fieldProps.onChange(event);
+                  {({ fieldProps, error }) => {
+                    const { state } = nameValidationService;
+                    const { value, errorMessage } = state.context;
 
-                            send('CHECK_NAME_TAKEN', {
-                              projectName: getValues().projectName
-                            });
-                          }}
-                          elemAfterInput={
-                            <div className="after-input-wrapper">
-                              {current.matches('nameNotAvailable') && (
-                                <ErrorIcon
-                                  primaryColor={colors.red()}
-                                  label="warning"
-                                />
-                              )}
+                    return (
+                      <>
+                        <div className="name-wrapper">
+                          <TextField
+                            placeholder="Enter a project name"
+                            autoFocus
+                            autoComplete="off"
+                            className="name-input"
+                            {...fieldProps}
+                            onChange={(event) => {
+                              fieldProps.onChange(event);
 
-                              {current.matches('checkingNameTaken') && (
-                                <Spinner size="medium" />
-                              )}
-                            </div>
-                          }
-                        />
-                      </div>
+                              send(validateEvents.name, {
+                                value: getValues().projectName
+                              });
+                            }}
+                            elemAfterInput={
+                              <div className="after-input-wrapper">
+                                {state.matches('notAvailable') && (
+                                  <ErrorIcon
+                                    primaryColor={colors.red()}
+                                    label="warning"
+                                  />
+                                )}
 
-                      {error && <ErrorMessage>{error}</ErrorMessage>}
+                                {state.matches('validating') && (
+                                  <Spinner size="medium" />
+                                )}
+                              </div>
+                            }
+                          />
+                        </div>
 
-                      {current.matches('nameNotAvailable') && (
-                        <ErrorMessage>That name is taken</ErrorMessage>
-                      )}
+                        {error && <ErrorMessage>{error}</ErrorMessage>}
 
-                      {current.matches('nameAvailable') && (
-                        <ValidMessage>Project name available!</ValidMessage>
-                      )}
-                    </>
-                  )}
+                        {state.matches('notAvailable') && (
+                          <ErrorMessage>That name is taken</ErrorMessage>
+                        )}
+
+                        {state.matches('available') && (
+                          <ValidMessage>Project name available!</ValidMessage>
+                        )}
+                      </>
+                    );
+                  }}
                 </Field>
 
                 <Field
@@ -106,61 +114,100 @@ export const CreateProject: FC<CreateProjectProps> = ({
                   isRequired
                   validate={validateKey}
                 >
-                  {({ fieldProps, error }) => (
-                    // TODO: Generate projectKey based on projectName
-                    <>
-                      <div className="flex-wrapper">
-                        <TextField {...fieldProps} />
+                  {({ fieldProps, error }) => {
+                    const { state } = keyValidationService;
+                    const { value, errorMessage } = state.context;
 
-                        <Popup
-                          isOpen={popupOpen}
-                          placement="right"
-                          onClose={() => setPopupOpen(false)}
-                          content={() => {
-                            return (
-                              <div className="popup-wrapper">
-                                <p>
-                                  The project key is used as the prefix of your
-                                  project's issue keys (e.g. 'TEST-100'). Choose
-                                  one that is descriptive and easy to type.
-                                </p>
+                    return (
+                      // TODO: Generate projectKey based on projectName
+                      <>
+                        <div className="flex-wrapper">
+                          <TextField
+                            autoComplete="off"
+                            {...fieldProps}
+                            onChange={(event) => {
+                              fieldProps.onChange(event);
 
-                                <a
-                                  href="https://support.atlassian.com/jira-core-cloud/docs/work-with-issues-in-jira-cloud/"
-                                  target="_blank"
-                                  rel="noreferrer noopener"
-                                >
-                                  Learn more
-                                </a>
+                              send(validateEvents.key, {
+                                value: getValues().projectKey
+                              });
+                            }}
+                            elemAfterInput={
+                              <div className="after-input-wrapper">
+                                {state.matches('notAvailable') && (
+                                  <ErrorIcon
+                                    primaryColor={colors.red()}
+                                    label="warning"
+                                  />
+                                )}
+
+                                {state.matches('validating') && (
+                                  <Spinner size="medium" />
+                                )}
                               </div>
-                            );
-                          }}
-                          trigger={(triggerProps) => {
-                            return (
-                              <Button
-                                className="popup-trigger"
-                                style={{
-                                  marginLeft: '10px',
-                                  cursor: 'pointer',
-                                  background: 'none'
-                                }}
-                                onClick={() => setPopupOpen((v) => !v)}
-                                {...triggerProps}
-                              >
-                                <InfoIcon
-                                  label="More info"
-                                  primaryColor="rgb(101, 84, 192)"
-                                  size="medium"
-                                />
-                              </Button>
-                            );
-                          }}
-                          zIndex={999} // Otherwise it won't show above the Drawer -_-"
-                        />
-                      </div>
-                      {error && <ErrorMessage>{error}</ErrorMessage>}
-                    </>
-                  )}
+                            }
+                          />
+
+                          <Popup
+                            isOpen={popupOpen}
+                            placement="right"
+                            onClose={() => setPopupOpen(false)}
+                            content={() => {
+                              return (
+                                <div className="popup-wrapper">
+                                  <p>
+                                    The project key is used as the prefix of
+                                    your project's issue keys (e.g. 'TEST-100').
+                                    Choose one that is descriptive and easy to
+                                    type.
+                                  </p>
+
+                                  <a
+                                    href="https://support.atlassian.com/jira-core-cloud/docs/work-with-issues-in-jira-cloud/"
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                  >
+                                    Learn more
+                                  </a>
+                                </div>
+                              );
+                            }}
+                            trigger={(triggerProps) => {
+                              return (
+                                <Button
+                                  className="popup-trigger"
+                                  style={{
+                                    marginLeft: '10px',
+                                    cursor: 'pointer',
+                                    background: 'none'
+                                  }}
+                                  onClick={() => setPopupOpen((v) => !v)}
+                                  {...triggerProps}
+                                >
+                                  <InfoIcon
+                                    label="More info"
+                                    primaryColor="rgb(101, 84, 192)"
+                                    size="medium"
+                                  />
+                                </Button>
+                              );
+                            }}
+                            zIndex={999} // Otherwise it won't show above the Drawer -_-"
+                          />
+                        </div>
+
+                        {error && <ErrorMessage>{error}</ErrorMessage>}
+
+                        {state.matches('notAvailable') && (
+                          <ErrorMessage>That name is taken</ErrorMessage>
+                        )}
+
+                        {state.matches('available') && (
+                          <ValidMessage>Project name available!</ValidMessage>
+                        )}
+                      </>
+                    );
+                  }}
                 </Field>
 
                 <Field name="template" defaultValue="kanban" label="Template">
@@ -196,10 +243,18 @@ export const CreateProject: FC<CreateProjectProps> = ({
 
       <Notification
         type="error"
-        primaryMessage={errorMessage}
+        primaryMessage={nameValidationService.state.context.errorMessage}
         handleClose={() => send('CLEAR')}
         secondaryMessage="Please try again"
-        show={current.matches('checkFailed')}
+        show={nameValidationService.state.matches('validationFailed')}
+      />
+
+      <Notification
+        type="error"
+        primaryMessage={keyValidationService.state.context.errorMessage}
+        handleClose={() => send('CLEAR')}
+        secondaryMessage="Please try again"
+        show={keyValidationService.state.matches('validationFailed')}
       />
     </Drawer>
   );
