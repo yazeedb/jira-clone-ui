@@ -67,7 +67,6 @@ export const CreateProject: FC<CreateProjectProps> = ({
                             placeholder="Enter a project name"
                             autoFocus
                             autoComplete="off"
-                            className="name-input"
                             {...fieldProps}
                             onChange={(event) => {
                               fieldProps.onChange(event);
