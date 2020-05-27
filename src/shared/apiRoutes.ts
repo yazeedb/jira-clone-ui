@@ -8,7 +8,7 @@ export const apiRoutes = {
   user: `${apiBase}/user`,
   completeSignup: `${apiBase}/completeSignup`,
   orgs: `${apiBase}/orgs`,
-  getProjectsByOrg: (orgId: string) => `${apiBase}/orgs/${orgId}/projects`,
+  projectsByOrg: (orgId: string) => `${apiBase}/orgs/${orgId}/projects`,
 
   validateProjectName: (orgId: string, projectName: string) =>
     `${apiBase}/orgs/${orgId}/validateProjectName?name=${projectName}`,

@@ -11,7 +11,8 @@ import './CreateProject.scss';
 import { validateName, validateKey } from './validateFields';
 import {
   CreateProjectService,
-  validateEvents
+  validateEvents,
+  formIsValid
 } from 'machines/createProjectMachine';
 import { useService } from '@xstate/react';
 import Spinner from '@atlaskit/spinner';
@@ -227,8 +228,8 @@ export const CreateProject: FC<CreateProjectProps> = ({
                   type="submit"
                   appearance="primary"
                   shouldFitContainer
-                  isDisabled={!dirty}
-                  isLoading={submitting}
+                  isDisabled={!formIsValid(current.context)}
+                  isLoading={current.matches('submitting')}
                 >
                   Create
                 </Button>

@@ -1,4 +1,11 @@
-import { Machine, Interpreter, assign, DoneInvokeEvent, spawn } from 'xstate';
+import {
+  Machine,
+  Interpreter,
+  assign,
+  DoneInvokeEvent,
+  spawn,
+  sendParent
+} from 'xstate';
 import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { OrgsResponse } from 'shared/interfaces/Org';
@@ -65,6 +72,7 @@ const keyValidationMachine = validationMachineFactory({
 interface MachineContext {
   nameValidationService: Interpreter<MachineFactoryContext>;
   keyValidationService: Interpreter<MachineFactoryContext>;
+  formError: string;
 }
 export type CreateProjectService = Interpreter<MachineContext>;
 export const createProjectMachine = Machine<MachineContext>(
@@ -72,15 +80,33 @@ export const createProjectMachine = Machine<MachineContext>(
     initial: 'editing',
     context: {
       nameValidationService: spawn(nameValidationMachine),
-      keyValidationService: spawn(nameValidationMachine)
+      keyValidationService: spawn(nameValidationMachine),
+      formError: ''
     },
     states: {
       editing: {
-        entry: 'spawnValidationMachines'
+        entry: 'spawnValidationMachines',
+        on: {
+          SUBMIT: { target: 'submitting', cond: 'formIsValid' }
+        }
+      },
+      submitting: {
+        invoke: {
+          src: 'createProject',
+          onDone: {
+            target: 'editing',
+            actions: sendParent('SUBMIT_SUCCESS')
+          },
+          onError: {
+            target: 'editing',
+            actions: 'setFormError'
+          }
+        }
       }
     }
   },
   {
+    guards: { formIsValid },
     actions: {
       spawnValidationMachines: assign((context, event) => {
         return {
@@ -93,7 +119,36 @@ export const createProjectMachine = Machine<MachineContext>(
             name: 'keyValidation'
           })
         };
+      }),
+      setFormError: assign((context, event) => {
+        const e = event as DoneInvokeEvent<Error>;
+
+        return {
+          formError: e.data.message
+        };
       })
+    },
+    services: {
+      createProject: (context, event) =>
+        fetcher.get<OrgsResponse>(apiRoutes.orgs).then((response) => {
+          console.log(event);
+          // TODO: Support multiple orgs?
+          // We're hardcoding the first one for now.
+          const [firstOrg] = response.data.orgs;
+          const { projectName, projectKey } = event;
+
+          return fetcher.post(apiRoutes.projectsByOrg(firstOrg.id), {
+            projectName,
+            projectKey
+          });
+        })
     }
   }
 );
+
+export function formIsValid(context: MachineContext) {
+  return (
+    context.nameValidationService.state.matches('available') &&
+    context.keyValidationService.state.matches('available')
+  );
+}
