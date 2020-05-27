@@ -24,6 +24,7 @@ export const projectsMachine = Machine<MachineContext>(
       errorMessage: '',
       createProjectService: spawn(createProjectMachine)
     },
+    on: { SUBMIT_SUCCESS: 'fetchingProjects' },
     states: {
       fetchingProjects: {
         invoke: {
@@ -67,7 +68,7 @@ export const projectsMachine = Machine<MachineContext>(
           // We're hardcoding the first one for now.
           const [firstOrg] = response.data.orgs;
 
-          return fetcher(apiRoutes.getProjectsByOrg(firstOrg.id));
+          return fetcher(apiRoutes.projectsByOrg(firstOrg.id));
         })
     },
     actions: {
