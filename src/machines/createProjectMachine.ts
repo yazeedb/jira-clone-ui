@@ -87,7 +87,8 @@ export const createProjectMachine = Machine<MachineContext>(
       editing: {
         entry: 'spawnValidationMachines',
         on: {
-          SUBMIT: { target: 'submitting', cond: 'formIsValid' }
+          SUBMIT: { target: 'submitting', cond: 'formIsValid' },
+          CLOSE: { actions: sendParent('CLOSE') }
         }
       },
       submitting: {
