@@ -222,6 +222,7 @@ app
     }
   })
   .get('/api/orgs/:orgId/validateProjectName', createProjectValidator('name'))
+  .get('/api/orgs/:orgId/validateProjectKey', createProjectValidator('key'))
 
   .all('*', (req, res, next) => {
     // res.cookie(env.csrfCookieName, req.csrfToken());

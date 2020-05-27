@@ -1,116 +1,99 @@
-import {
-  Machine,
-  sendParent,
-  Interpreter,
-  assign,
-  DoneInvokeEvent
-} from 'xstate';
+import { Machine, Interpreter, assign, DoneInvokeEvent, spawn } from 'xstate';
 import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { OrgsResponse } from 'shared/interfaces/Org';
-import { ProjectNameAvailableResponse } from 'shared/interfaces/Project';
-import { validateName } from 'screens/Projects/validateFields';
+import { ProjectResponseAvailableResponse } from 'shared/interfaces/Project';
+import { validateName, validateKey } from 'screens/Projects/validateFields';
+import {
+  validationMachineFactory,
+  MachineFactoryContext
+} from './validationMachineFactory';
+
+export const validateEvents = {
+  name: 'VALIDATE_NAME',
+  key: 'VALIDATE_KEY'
+};
+
+const nameValidationMachine = validationMachineFactory({
+  inputGuard: (context) => validateName(context.value) === undefined,
+
+  serviceGuard: (context, event) => {
+    const e = event as DoneInvokeEvent<
+      FetcherResponse<ProjectResponseAvailableResponse>
+    >;
+
+    return e.data.data.available;
+  },
+
+  validationService: (context, event) =>
+    fetcher.get<OrgsResponse>(apiRoutes.orgs).then((response) => {
+      // TODO: Support multiple orgs?
+      // We're hardcoding the first one for now.
+      const [firstOrg] = response.data.orgs;
+      const { value } = context;
+
+      return fetcher(apiRoutes.validateProjectName(firstOrg.id, value));
+    }),
+
+  validateEvent: validateEvents.name
+});
+
+const keyValidationMachine = validationMachineFactory({
+  inputGuard: (context) => validateKey(context.value) === undefined,
+
+  serviceGuard: (context, event) => {
+    const e = event as DoneInvokeEvent<
+      FetcherResponse<ProjectResponseAvailableResponse>
+    >;
+
+    return e.data.data.available;
+  },
+
+  validationService: (context, event) =>
+    fetcher.get<OrgsResponse>(apiRoutes.orgs).then((response) => {
+      // TODO: Support multiple orgs?
+      // We're hardcoding the first one for now.
+      const [firstOrg] = response.data.orgs;
+      const { value } = context;
+
+      return fetcher(apiRoutes.validateProjectName(firstOrg.id, value));
+    }),
+
+  validateEvent: validateEvents.key
+});
 
 interface MachineContext {
-  projectName: string;
-  errorMessage: string;
+  nameValidationService: Interpreter<MachineFactoryContext>;
+  keyValidationService: Interpreter<MachineFactoryContext>;
 }
-
 export type CreateProjectService = Interpreter<MachineContext>;
 export const createProjectMachine = Machine<MachineContext>(
   {
-    initial: 'idle',
+    initial: 'editing',
     context: {
-      projectName: '',
-      errorMessage: ''
-    },
-    on: {
-      CHECK_NAME_TAKEN: { target: 'debounceNameCheck' },
-      CLOSE: { actions: sendParent('CLOSE') }
+      nameValidationService: spawn(nameValidationMachine),
+      keyValidationService: spawn(nameValidationMachine)
     },
     states: {
-      idle: {},
-      debounceNameCheck: {
-        entry: 'setProjectName',
-        after: {
-          300: {
-            target: 'checkingNameTaken',
-            cond: 'isValidName'
-          }
-        }
-      },
-      checkingNameTaken: {
-        invoke: {
-          src: 'checkNameTaken',
-          onDone: [
-            {
-              target: 'nameAvailable',
-              cond: 'nameIsAvailable'
-            },
-            {
-              target: 'nameNotAvailable',
-              cond: 'nameNotAvailable'
-            }
-          ],
-          onError: {
-            target: 'checkFailed',
-            actions: 'setErrorMessage'
-          }
-        }
-      },
-      nameAvailable: {},
-      nameNotAvailable: {},
-      checkFailed: {
-        after: { 3000: 'idle' },
-        on: { CLEAR: 'idle' }
+      editing: {
+        entry: 'spawnValidationMachines'
       }
     }
   },
   {
     actions: {
-      setProjectName: assign((context, event) => {
+      spawnValidationMachines: assign((context, event) => {
         return {
-          projectName: event.projectName
-        };
-      }),
-      setErrorMessage: assign((context, event) => {
-        const e = event as DoneInvokeEvent<Error>;
-
-        return {
-          errorMessage: e.data.message
+          nameValidationService: spawn(nameValidationMachine, {
+            autoForward: true,
+            name: 'nameValidation'
+          }),
+          keyValidationService: spawn(keyValidationMachine, {
+            autoForward: true,
+            name: 'keyValidation'
+          })
         };
       })
-    },
-    services: {
-      checkNameTaken: (context, event) =>
-        fetcher.get<OrgsResponse>(apiRoutes.orgs).then((response) => {
-          // TODO: Support multiple orgs?
-          // We're hardcoding the first one for now.
-          const [firstOrg] = response.data.orgs;
-          const { projectName } = context;
-
-          return fetcher(
-            apiRoutes.validateProjectName(firstOrg.id, projectName)
-          );
-        })
-    },
-    guards: {
-      nameIsAvailable: createNameCheck(true),
-
-      nameNotAvailable: createNameCheck(false),
-
-      isValidName: (context: MachineContext, event: any) =>
-        validateName(context.projectName) === undefined
     }
   }
 );
-
-function createNameCheck(available: boolean) {
-  return (context: MachineContext, event: any) => {
-    const e = event as DoneInvokeEvent<
-      FetcherResponse<ProjectNameAvailableResponse>
-    >;
-
-    return e.data.data.available === available;
-  };
-}
