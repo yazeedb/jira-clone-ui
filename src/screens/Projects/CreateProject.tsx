@@ -197,7 +197,7 @@ export const CreateProject: FC<CreateProjectProps> = ({
                         {error && <ErrorMessage>{error}</ErrorMessage>}
 
                         {state.matches('notAvailable') && (
-                          <ErrorMessage>That name is taken</ErrorMessage>
+                          <ErrorMessage>That key is taken</ErrorMessage>
                         )}
 
                         {state.matches('available') && (

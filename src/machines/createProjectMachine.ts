@@ -63,7 +63,7 @@ const keyValidationMachine = validationMachineFactory({
       const [firstOrg] = response.data.orgs;
       const { value } = context;
 
-      return fetcher(apiRoutes.validateProjectName(firstOrg.id, value));
+      return fetcher(apiRoutes.validateProjectKey(firstOrg.id, value));
     }),
 
   validateEvent: validateEvents.key
