@@ -32,7 +32,7 @@ export function validationMachineFactory({
       on: {
         [validateEvent]: {
           target: 'debounceValidation',
-          actions: ['setValue', sendUpdate()]
+          actions: ['setValue', 'clearErrorMessage', sendUpdate()]
         }
       },
       states: {
@@ -69,17 +69,13 @@ export function validationMachineFactory({
               }
             ],
             onError: {
-              target: 'validationFailed',
+              target: 'editing',
               actions: ['setErrorMessage', sendUpdate()]
             }
           }
         },
         available: {},
-        notAvailable: {},
-        validationFailed: {
-          after: { 3000: 'editing' },
-          on: { CLEAR: 'editing' }
-        }
+        notAvailable: {}
       }
     },
     {
@@ -88,7 +84,10 @@ export function validationMachineFactory({
           value: (context, event) => event.value
         }),
         setErrorMessage: assign({
-          errorMessage: (context, event) => event.message
+          errorMessage: (context, event) => event.data.message
+        }),
+        clearErrorMessage: assign({
+          errorMessage: (context, event) => ''
         })
       },
       services: { validationService },

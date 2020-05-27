@@ -101,6 +101,12 @@ export const CreateProject: FC<CreateProjectProps> = ({
                         {state.matches('available') && (
                           <ValidMessage>Project name available!</ValidMessage>
                         )}
+
+                        {state.context.errorMessage && (
+                          <ErrorMessage>
+                            {state.context.errorMessage}
+                          </ErrorMessage>
+                        )}
                       </>
                     );
                   }}
@@ -203,6 +209,12 @@ export const CreateProject: FC<CreateProjectProps> = ({
                         {state.matches('available') && (
                           <ValidMessage>Project name available!</ValidMessage>
                         )}
+
+                        {state.context.errorMessage && (
+                          <ErrorMessage>
+                            {state.context.errorMessage}
+                          </ErrorMessage>
+                        )}
                       </>
                     );
                   }}
@@ -238,22 +250,6 @@ export const CreateProject: FC<CreateProjectProps> = ({
           }}
         </Form>
       </div>
-
-      <Notification
-        type="error"
-        primaryMessage={nameValidationService.state.context.errorMessage}
-        handleClose={() => send('CLEAR')}
-        secondaryMessage="Please try again"
-        show={nameValidationService.state.matches('validationFailed')}
-      />
-
-      <Notification
-        type="error"
-        primaryMessage={keyValidationService.state.context.errorMessage}
-        handleClose={() => send('CLEAR')}
-        secondaryMessage="Please try again"
-        show={keyValidationService.state.matches('validationFailed')}
-      />
     </Drawer>
   );
 };
