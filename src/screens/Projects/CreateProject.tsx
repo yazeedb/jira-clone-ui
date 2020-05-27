@@ -58,7 +58,6 @@ export const CreateProject: FC<CreateProjectProps> = ({
                 >
                   {({ fieldProps, error }) => {
                     const { state } = nameValidationService;
-                    const { value, errorMessage } = state.context;
 
                     return (
                       <>
@@ -115,7 +114,6 @@ export const CreateProject: FC<CreateProjectProps> = ({
                 >
                   {({ fieldProps, error }) => {
                     const { state } = keyValidationService;
-                    const { value, errorMessage } = state.context;
 
                     return (
                       // TODO: Generate projectKey based on projectName

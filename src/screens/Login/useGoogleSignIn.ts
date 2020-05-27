@@ -22,7 +22,7 @@ export const useGoogleSignIn = (
 
     const script = document.createElement('script');
 
-    script.src = 'https://apis.google.com/js/platform.js';
+    script.src = googleApiSrc;
     script.async = true;
     script.defer = true;
 

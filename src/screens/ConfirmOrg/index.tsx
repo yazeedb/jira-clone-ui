@@ -18,7 +18,7 @@ export const ConfirmOrg: FC<ConfirmOrgProps> = ({
   user,
   confirmOrgService
 }) => {
-  const [current, send] = useService(confirmOrgService);
+  const [current] = useService(confirmOrgService);
 
   console.log('ConfirmOrg', current);
 

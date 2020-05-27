@@ -38,7 +38,7 @@ export const Projects = () => {
       if (projects.length === 0) {
         return (
           <section className="no-projects">
-            <img src="empty-folder.svg" alt="Empty folder image" />
+            <img src="empty-folder.svg" alt="Empty folder" />
             <h3>You currently have no projects</h3>
             <p>Let's create your first project in Jira</p>
             <Button onClick={() => send('CREATE_PROJECT')} appearance="primary">

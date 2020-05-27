@@ -78,6 +78,7 @@ export const GlobalNav: FC = () => {
             <Tooltip position="right" title="Your profile and settings">
               <img
                 src={mockProfilePicture}
+                alt="Your profile"
                 style={{
                   width: '24px',
                   height: '24px',
