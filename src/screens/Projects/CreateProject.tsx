@@ -16,7 +16,6 @@ import {
 } from 'machines/createProjectMachine';
 import { useService } from '@xstate/react';
 import Spinner from '@atlaskit/spinner';
-import { Notification } from 'shared/components/Notification';
 
 interface CreateProjectProps {
   isOpen: boolean;
