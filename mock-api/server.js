@@ -270,12 +270,18 @@ function createProjectValidator(prop) {
         (p) => p[prop].toLowerCase() === valueToCompare.toLowerCase()
       );
 
+      if (existingProject) {
+        return res.json({
+          available: false,
+          message:
+            prop === 'name'
+              ? 'That name is taken'
+              : `Project ${existingProject.name} uses this project key`
+        });
+      }
+
       return res.json({
-        available: !!existingProject === false,
-        message:
-          prop === 'name'
-            ? 'That name is taken'
-            : `Project ${existingProject.name} uses this project key`
+        available: true
       });
     }, 800);
   };

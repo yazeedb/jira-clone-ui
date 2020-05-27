@@ -70,7 +70,7 @@ export function validationMachineFactory({
             ],
             onError: {
               target: 'validationFailed',
-              actions: ['updateErrorMessage', sendUpdate()]
+              actions: ['setErrorMessage', sendUpdate()]
             }
           }
         },

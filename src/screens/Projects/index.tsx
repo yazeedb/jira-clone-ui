@@ -62,10 +62,6 @@ export const Projects = () => {
             createProjectService={createProjectService}
           />
         )}
-
-        <Button onClick={() => send('CREATE_PROJECT')} appearance="primary">
-          Create project
-        </Button>
       </section>
     );
   }
