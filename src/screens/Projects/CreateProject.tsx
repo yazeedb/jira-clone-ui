@@ -62,7 +62,7 @@ export const CreateProject: FC<CreateProjectProps> = ({
 
                     return (
                       <>
-                        <div className="name-wrapper">
+                        <div className="input-wrapper">
                           <TextField
                             placeholder="Enter a project name"
                             autoFocus
@@ -120,7 +120,7 @@ export const CreateProject: FC<CreateProjectProps> = ({
                     return (
                       // TODO: Generate projectKey based on projectName
                       <>
-                        <div className="flex-wrapper">
+                        <div className="flex-wrapper input-wrapper">
                           <TextField
                             autoComplete="off"
                             {...fieldProps}
