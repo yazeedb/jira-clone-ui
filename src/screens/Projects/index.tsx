@@ -57,7 +57,7 @@ export const Projects = () => {
 
       return (
         <>
-          <div style={{ margin: '20px 0' }}>
+          <div style={{ marginTop: '20px', marginBottom: '10px' }}>
             <TextField
               width="small"
               isCompact
