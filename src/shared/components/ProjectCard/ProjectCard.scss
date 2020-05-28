@@ -1,0 +1,39 @@
+@import '../../../theme.scss';
+
+.project-card {
+  max-width: 260px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 3px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px,
+    rgba(9, 30, 66, 0.31) 0px 0px 1px;
+
+  header {
+    display: flex;
+    flex-direction: row;
+    padding: 30px 18px;
+    background-color: $light-blue;
+  }
+
+  .project-avatar {
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+    border-radius: 3px;
+  }
+
+  .project-type {
+    margin: 0;
+  }
+
+  footer {
+    display: flex;
+    align-items: center;
+    padding: 10px 18px;
+  }
+
+  .project-key {
+    margin: 0;
+    margin-left: 5px;
+  }
+}
