@@ -10,6 +10,7 @@ import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 import { ImpossibleStateNotice } from 'shared/components/ImpossibleStateNotice';
 import { CreateProject } from './CreateProject';
 import { NoResultsSvg } from 'shared/components/NoResultsSvg';
+import { ProjectCard } from 'shared/components/ProjectCard';
 
 export const Projects = () => {
   const [current, send] = useMachine(projectsMachine, {
@@ -57,6 +58,11 @@ export const Projects = () => {
 
       return (
         <>
+          <div style={{ margin: '20px 0' }}>
+            <p style={{ marginBottom: '5px' }}>Recents</p>
+            <ProjectCard project={projects[0]} />
+          </div>
+
           <div style={{ marginTop: '20px', marginBottom: '10px' }}>
             <TextField
               width="small"
