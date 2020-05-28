@@ -8,31 +8,31 @@
   td {
     padding: 10px !important;
   }
-}
 
-.no-projects {
-  text-align: center;
-  max-width: 304px;
-  margin: 48px auto;
+  .no-projects {
+    text-align: center;
+    max-width: 304px;
+    margin: 48px auto;
 
-  img {
-    max-width: 160px;
-  }
+    img {
+      max-width: 160px;
+    }
 
-  h3 {
-    margin-top: 15px;
-  }
+    h3 {
+      margin-top: 15px;
+    }
 
-  p {
-    margin-bottom: 24px;
+    p {
+      margin-bottom: 24px;
+    }
   }
 }
 
 .something-went-wrong {
-  max-width: 400px;
-  margin: 0;
+  width: 400px;
+  margin: 0 auto;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -70%);
+  transform: translate(-20%, -70%);
 }
