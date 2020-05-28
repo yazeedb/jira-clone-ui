@@ -1,19 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Login } from './screens/Login';
-import {
-  BrowserRouter,
-  Route,
-  Switch,
-  useHistory,
-  Redirect
-} from 'react-router-dom';
+import { BrowserRouter, Route, Switch, useHistory } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { CompleteSignup } from './screens/CompleteSignup';
 import { Notification } from 'shared/components/Notification';
 import { authMachine } from 'machines/authMachine';
-import { Dashboard } from 'screens/Dashboard';
 import { ConfirmOrg } from 'screens/ConfirmOrg';
 import { GlobalNav } from 'shared/components/GlobalNav';
+import { NotFoundSvg } from 'shared/components/NotFoundSvg';
+import { Projects } from 'screens/Projects';
 
 export const App = () => {
   return (
@@ -32,12 +27,10 @@ const AuthShell = () => {
   }, [send]);
 
   const history = useHistory();
+  const [intendedRoute] = useState(window.location.pathname);
   useEffect(() => {
-    if (current.value === 'appUsable') {
-      history.push('/projects');
-      // TODO: What if user's trying to go somewhere else?
-      // Recall that URL, and send them there instead.
-      // Don't just blindly send to /projects
+    if (current.matches('appUsable')) {
+      history.push(intendedRoute);
     }
   }, [current.value, history]);
 
@@ -47,7 +40,6 @@ const AuthShell = () => {
     case current.matches('authenticating'):
       return (
         <>
-          <Redirect to="/login" />
           <Login loading={current.matches('authenticating')} send={send} />
 
           <Notification
@@ -62,24 +54,18 @@ const AuthShell = () => {
 
     case current.matches('awaitingSignup'):
       return (
-        <>
-          <Redirect to="/completeSignup" />
-          <CompleteSignup
-            user={current.context.user}
-            signupService={current.context.signupService}
-          />
-        </>
+        <CompleteSignup
+          user={current.context.user}
+          signupService={current.context.signupService}
+        />
       );
 
     case current.matches('awaitingOrgConfirmation'):
       return (
-        <>
-          <Redirect to="/confirmOrg" />
-          <ConfirmOrg
-            confirmOrgService={current.context.confirmOrgService}
-            user={current.context.user}
-          />
-        </>
+        <ConfirmOrg
+          confirmOrgService={current.context.confirmOrgService}
+          user={current.context.user}
+        />
       );
 
     case current.matches('appUsable'):
@@ -94,14 +80,28 @@ const AuthShell = () => {
 const AuthenticatedApp = () => {
   return (
     <div className="authenticated-app">
+      <GlobalNav />
       <Switch>
-        <Route path="/">
-          <GlobalNav />
-          <Dashboard />
+        <Route exact path="/projects">
+          <Projects />
+        </Route>
+
+        <Route exact path="/people">
+          <h1>TODO: Create people page</h1>
         </Route>
 
         <Route path="*">
-          <h1>TODO: Add 404 page</h1>
+          <div
+            style={{
+              width: '400px',
+              margin: '100px auto',
+              textAlign: 'center'
+            }}
+          >
+            <NotFoundSvg />
+            <h1>Oops!</h1>
+            <h2>404 - Not found</h2>
+          </div>
         </Route>
       </Switch>
     </div>
