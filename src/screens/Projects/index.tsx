@@ -58,10 +58,13 @@ export const Projects = () => {
 
       return (
         <>
+          {/* 
+          
+          TODO: This is shown when LocalStorage has recently visited projects
           <div style={{ margin: '20px 0' }}>
             <p style={{ marginBottom: '5px' }}>Recents</p>
             <ProjectCard project={projects[0]} />
-          </div>
+          </div> */}
 
           <div style={{ marginTop: '20px', marginBottom: '10px' }}>
             <TextField
