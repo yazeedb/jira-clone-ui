@@ -11,6 +11,7 @@ import { ImpossibleStateNotice } from 'shared/components/ImpossibleStateNotice';
 import { CreateProject } from './CreateProject';
 import { NoResultsSvg } from 'shared/components/NoResultsSvg';
 import { ProjectCard } from 'shared/components/ProjectCard';
+import './Projects.scss';
 
 export const Projects = () => {
   const [current, send] = useMachine(projectsMachine, {
