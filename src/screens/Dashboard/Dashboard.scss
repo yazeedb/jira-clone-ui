@@ -5,8 +5,9 @@
   .view-projects {
     padding: 0 40px;
 
-    .title {
-      margin-top: 24px;
+    th,
+    td {
+      padding: 10px !important;
     }
   }
 

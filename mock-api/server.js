@@ -189,7 +189,7 @@ app
         message: 'Org not found'
       });
     } else {
-      const { projectName, key } = req.body;
+      const { projectName, projectKey } = req.body;
 
       const existingProject = org.projects.find((p) => p.name === projectName);
 
@@ -200,16 +200,21 @@ app
         });
       }
 
+      const { sub, email, firstName, lastName } = user;
+
       const newProject = {
         id: uniqId(),
         name: projectName,
-        key,
-        uiSequence: ['TO DO', 'IN PROGRESS', 'DONE'],
+        key: projectKey,
+        lead: { sub, email, firstName, lastName },
+        dateCreated: new Date().toUTCString(),
         columns: [
           { name: 'TO DO', tasks: [], taskLimit: null },
           { name: 'IN PROGRESS', tasks: [], taskLimit: null },
           { name: 'DONE', tasks: [], taskLimit: null }
-        ]
+        ],
+        uiSequence: ['TO DO', 'IN PROGRESS', 'DONE'],
+        type: 'Next-gen software'
       };
 
       console.log(newProject);

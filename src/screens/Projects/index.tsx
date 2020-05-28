@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { projectsMachine } from 'machines/projectsMachine';
 import { useMachine } from '@xstate/react';
 import Button from '@atlaskit/button';
 import ProgressBar from '@atlaskit/progress-bar';
+import DynamicTable from '@atlaskit/dynamic-table';
+import TextField from '@atlaskit/textfield';
+import EditorSearchIcon from '@atlaskit/icon/glyph/editor/search';
 import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 import { ImpossibleStateNotice } from 'shared/components/ImpossibleStateNotice';
 import { CreateProject } from './CreateProject';
+import { NoResultsSvg } from 'shared/components/NoResultsSvg';
 
 export const Projects = () => {
   const [current, send] = useMachine(projectsMachine, {
@@ -31,6 +35,7 @@ export const Projects = () => {
 
   function ViewProjects() {
     const { projects, createProjectService } = current.context;
+    const [filter, setFilter] = useState('');
 
     console.log('ViewProjects current:', current);
 
@@ -48,12 +53,118 @@ export const Projects = () => {
         );
       }
 
-      return projects.map((p) => JSON.stringify(p));
+      const filteredProjects = projects.filter((p) => p.name.includes(filter));
+
+      return (
+        <>
+          <div style={{ margin: '20px 0' }}>
+            <TextField
+              width="small"
+              isCompact
+              elemAfterInput={
+                <div style={{ marginRight: '5px' }}>
+                  <EditorSearchIcon label="Find project" />
+                </div>
+              }
+              value={filter}
+              onChange={(event) => {
+                setFilter(event.currentTarget.value.trim());
+              }}
+            />
+          </div>
+
+          <DynamicTable
+            head={{
+              cells: [
+                { content: 'Name', key: 'name' },
+                { content: 'Key', key: 'key' },
+                { content: 'Type', key: 'type' },
+                { content: 'Lead', key: 'lead' }
+              ]
+            }}
+            rows={filteredProjects.map((p) => {
+              const leadFullName = `${p.lead.firstName} ${p.lead.lastName}`;
+
+              return {
+                cells: [
+                  {
+                    content: (
+                      <span
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <img
+                          src="mockProjectAvatar.svg"
+                          alt={p.name}
+                          style={{
+                            width: '24px',
+                            borderRadius: '3px',
+                            marginRight: '8px'
+                          }}
+                        />
+                        <a href="#">{p.name}</a>
+                      </span>
+                    )
+                  },
+                  { content: p.key },
+                  { content: p.type },
+                  {
+                    content: (
+                      <span
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <img
+                          src="mockProfilePicture.png"
+                          alt={leadFullName}
+                          style={{
+                            width: '24px',
+                            borderRadius: '50%',
+                            marginRight: '8px'
+                          }}
+                        />
+                        <a href="#">{leadFullName}</a>
+                      </span>
+                    )
+                  }
+                ]
+              };
+            })}
+            loadingSpinnerSize="large"
+            defaultSortKey="name"
+            defaultSortOrder="ASC"
+          />
+
+          {filteredProjects.length === 0 && (
+            <div style={{ textAlign: 'center', marginTop: '50px' }}>
+              <NoResultsSvg />
+              <h3>No projects were found that match your search</h3>
+            </div>
+          )}
+        </>
+      );
     };
 
     return (
       <section className="view-projects">
-        <h2 className="title">Projects</h2>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: '24px'
+          }}
+        >
+          <h2 className="title">Projects</h2>
+
+          <Button onClick={() => send('CREATE_PROJECT')} appearance="primary">
+            Create project
+          </Button>
+        </div>
+
         {renderContent()}
 
         {current.matches('viewingProjects.creatingProject') && (

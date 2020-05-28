@@ -1,7 +1,11 @@
+import { User } from './User';
+
 export interface Project {
   id: string;
   orgId: string;
   key: string;
+  type: string;
+  lead: User;
   name: string;
   icon: string;
   dateCreated: string;
