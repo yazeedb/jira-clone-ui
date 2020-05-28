@@ -34,7 +34,35 @@ export const CreateProject: FC<CreateProjectProps> = ({
   console.log('createProjectService:', current);
 
   return (
-    <Drawer width="full" onClose={() => send('CLOSE')} isOpen={isOpen}>
+    <Drawer
+      width="full"
+      onClose={() => send('CLOSE')}
+      isOpen={isOpen}
+      overrides={{
+        /*
+          By Yazeed Bzadough - For some reason, a gray-ish bar appears behind the Drawer
+          ONLY on my main computer screen. Using another screen or changing the window's
+          dimensions hides the issue.
+
+          No idea why...but this little hack fixed it.
+
+          TODO: Find a better solution...?
+        */
+
+        Sidebar: {
+          cssFn: (defaultStyles) => ({
+            ...defaultStyles,
+            backgroundColor: 'white'
+          })
+        },
+        Content: {
+          cssFn: (defaultStyles) => ({
+            ...defaultStyles,
+            backgroundColor: 'white'
+          })
+        }
+      }}
+    >
       <div className="create-projects">
         <Form<FormFields>
           onSubmit={(data) =>
