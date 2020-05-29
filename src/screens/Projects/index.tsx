@@ -55,7 +55,9 @@ export const Projects = () => {
         );
       }
 
-      const filteredProjects = projects.filter((p) => p.name.includes(filter));
+      const filteredProjects = projects.filter((p) =>
+        p.name.toLowerCase().includes(filter.toLowerCase())
+      );
 
       return (
         <>
