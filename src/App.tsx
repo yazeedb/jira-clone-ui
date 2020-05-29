@@ -38,7 +38,7 @@ const AuthShell = () => {
     if (current.matches('appUsable')) {
       history.push(intendedRoute);
     }
-  }, [current.value, history]);
+  }, [current.value, history, intendedRoute, current]);
 
   switch (true) {
     case current.matches('notSignedIn'):
