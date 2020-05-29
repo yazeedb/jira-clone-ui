@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Login } from './screens/Login';
-import { BrowserRouter, Route, Switch, useHistory } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Route,
+  Switch,
+  useHistory,
+  Redirect
+} from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { CompleteSignup } from './screens/CompleteSignup';
 import { Notification } from 'shared/components/Notification';
@@ -81,6 +87,9 @@ const AuthenticatedApp = () => {
   return (
     <div className="authenticated-app">
       <GlobalNav />
+
+      <Route exact path="/" component={() => <Redirect to="/projects" />} />
+
       <Switch>
         <Route exact path="/projects">
           <Projects />
