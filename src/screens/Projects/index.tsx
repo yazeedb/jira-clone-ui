@@ -176,9 +176,11 @@ export const Projects = () => {
         >
           <h2 className="title">Projects</h2>
 
-          <Button onClick={() => send('CREATE_PROJECT')} appearance="primary">
-            Create project
-          </Button>
+          {projects.length > 0 && (
+            <Button onClick={() => send('CREATE_PROJECT')} appearance="primary">
+              Create project
+            </Button>
+          )}
         </div>
 
         {renderContent()}
