@@ -96,7 +96,7 @@ const AuthenticatedApp = () => {
           <Projects />
         </Route>
 
-        <Route exact path="/projects/:orgId/:projectKey">
+        <Route exact path="/board/:orgId/:projectKey">
           <Board />
         </Route>
 

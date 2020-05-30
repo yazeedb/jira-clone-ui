@@ -117,9 +117,7 @@ export const Projects = () => {
                             marginRight: '8px'
                           }}
                         />
-                        <Link to={`/projects/${p.orgId}/${p.key}`}>
-                          {p.name}
-                        </Link>
+                        <Link to={`/board/${p.orgId}/${p.key}`}>{p.name}</Link>
                       </span>
                     )
                   },
