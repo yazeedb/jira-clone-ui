@@ -4,6 +4,7 @@ import { useMachine } from '@xstate/react';
 import { boardMachine, initialContext } from 'machines/boardMachine';
 import ProgressBar from '@atlaskit/progress-bar';
 import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
+import './Board.scss';
 
 type UrlParams = { orgId: string; projectKey: string };
 
