@@ -166,7 +166,7 @@ app
 
     if (!org) {
       res.status(404).json({
-        message: 'No projects found!'
+        message: 'Org not found!'
       });
     } else {
       res.json({
@@ -186,7 +186,7 @@ app
 
     if (!org) {
       res.status(404).json({
-        message: 'Org not found'
+        message: 'Org not found!'
       });
     } else {
       const { projectName, projectKey } = req.body;
@@ -230,6 +230,34 @@ app
   .get('/api/orgs/:orgId/validateProjectName', createProjectValidator('name'))
   .get('/api/orgs/:orgId/validateProjectKey', createProjectValidator('key'))
 
+  .get('/api/orgs/:orgId/projects/:projectId', (req, res) => {
+    // Find associated user
+    const { user } = req[env.sessionName];
+    const db = dbTools.getDb();
+    const existingUser = db.users.find((u) => u.sub === user.sub);
+
+    // Find associated org
+    const { orgId, projectId } = req.params;
+    const org = existingUser.orgs.find((o) => o.id === orgId);
+
+    if (!org) {
+      return res.status(404).json({
+        message: 'Org not found!'
+      });
+    }
+
+    // Find associated project
+    const project = org.projects.find((p) => p.id === projectId);
+
+    if (!project) {
+      return res.status(404).json({
+        message: 'Project not found!'
+      });
+    }
+
+    res.json({ project });
+  })
+
   .all('*', (req, res, next) => {
     // res.cookie(env.csrfCookieName, req.csrfToken());
 
@@ -267,7 +295,7 @@ function createProjectValidator(prop) {
 
       if (!org) {
         return res.status(404).json({
-          message: 'Org not found'
+          message: 'Org not found!'
         });
       }
 

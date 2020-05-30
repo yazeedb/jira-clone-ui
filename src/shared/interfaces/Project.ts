@@ -1,4 +1,4 @@
-import { User } from './User';
+import { User, createEmptyUser } from './User';
 
 export interface Project {
   id: string;
@@ -11,6 +11,20 @@ export interface Project {
   dateCreated: string;
   columns: Column[];
 }
+
+export const createEmptyProject = (): Project => {
+  return {
+    id: '',
+    orgId: '',
+    key: '',
+    type: '',
+    lead: createEmptyUser(),
+    name: '',
+    icon: '',
+    dateCreated: '',
+    columns: []
+  };
+};
 
 export interface ProjectsResponse {
   data: {
