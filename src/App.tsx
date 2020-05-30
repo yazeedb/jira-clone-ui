@@ -16,6 +16,7 @@ import { GlobalNav } from './shared/components/GlobalNav';
 import { NotFoundSvg } from './shared/components/NotFoundSvg';
 import { Projects } from './screens/Projects';
 import { Board } from './screens/Board';
+import { appRoutes } from 'shared/appRoutes';
 
 export const App = () => {
   return (
@@ -89,18 +90,22 @@ const AuthenticatedApp = () => {
     <div className="authenticated-app">
       <GlobalNav />
 
-      <Route exact path="/" component={() => <Redirect to="/projects" />} />
+      <Route
+        exact
+        path={appRoutes.index}
+        component={() => <Redirect to="/projects" />}
+      />
 
       <Switch>
-        <Route exact path="/projects">
+        <Route exact path={appRoutes.projects}>
           <Projects />
         </Route>
 
-        <Route exact path="/board/:orgId/:projectKey">
+        <Route exact path={appRoutes.board}>
           <Board />
         </Route>
 
-        <Route exact path="/people">
+        <Route exact path={appRoutes.people}>
           <h1>TODO: Create people page</h1>
         </Route>
 

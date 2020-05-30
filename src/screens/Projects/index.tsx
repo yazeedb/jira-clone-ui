@@ -13,6 +13,7 @@ import { NoResultsSvg } from 'shared/components/NoResultsSvg';
 import { ProjectCard } from 'shared/components/ProjectCard';
 import './Projects.scss';
 import { Link } from 'react-router-dom';
+import { createBoardRoute } from 'shared/appRoutes';
 
 export const Projects = () => {
   const [current, send] = useMachine(projectsMachine, {
@@ -117,7 +118,9 @@ export const Projects = () => {
                             marginRight: '8px'
                           }}
                         />
-                        <Link to={`/board/${p.orgId}/${p.key}`}>{p.name}</Link>
+                        <Link to={createBoardRoute(p.orgId, p.key)}>
+                          {p.name}
+                        </Link>
                       </span>
                     )
                   },
