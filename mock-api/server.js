@@ -208,6 +208,7 @@ app
         key: projectKey,
         lead: { sub, email, firstName, lastName },
         orgId: org.id,
+        orgName: org.name,
         dateCreated: new Date().toUTCString(),
         columns: [
           { name: 'TO DO', tasks: [], taskLimit: null },
@@ -230,15 +231,15 @@ app
   .get('/api/orgs/:orgId/validateProjectName', createProjectValidator('name'))
   .get('/api/orgs/:orgId/validateProjectKey', createProjectValidator('key'))
 
-  .get('/api/orgs/:orgId/projects/:projectKey', (req, res) => {
+  .get('/api/orgs/:orgName/projects/:projectKey', (req, res) => {
     // Find associated user
     const { user } = req[env.sessionName];
     const db = dbTools.getDb();
     const existingUser = db.users.find((u) => u.sub === user.sub);
 
     // Find associated org
-    const { orgId, projectKey } = req.params;
-    const org = existingUser.orgs.find((o) => o.id === orgId);
+    const { orgName, projectKey } = req.params;
+    const org = existingUser.orgs.find((o) => o.name === orgName);
 
     if (!org) {
       return res.status(404).json({

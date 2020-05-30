@@ -9,15 +9,15 @@ import EditorSearchIcon from '@atlaskit/icon/glyph/editor/search';
 import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 import './Board.scss';
 
-type UrlParams = { orgId: string; projectKey: string };
+type UrlParams = { orgName: string; projectKey: string };
 
 export const Board = () => {
-  const { orgId, projectKey } = useParams<UrlParams>();
+  const { orgName, projectKey } = useParams<UrlParams>();
 
   const [current, send] = useMachine(
     boardMachine.withContext({
       ...initialContext,
-      orgId,
+      orgName,
       projectKey
     })
   );

@@ -2,7 +2,7 @@ import { User, createEmptyUser } from './User';
 
 export interface Project {
   id: string;
-  orgId: string;
+  orgName: string;
   key: string;
   type: string;
   lead: User;
@@ -15,7 +15,7 @@ export interface Project {
 export const createEmptyProject = (): Project => {
   return {
     id: '',
-    orgId: '',
+    orgName: '',
     key: '',
     type: '',
     lead: createEmptyUser(),
@@ -48,7 +48,7 @@ export interface Column {
 
 export interface Task {
   id: string;
-  orgId: string;
+  orgName: string;
   projectId: string;
   assigneeId: string;
   columnId: string;
