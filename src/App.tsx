@@ -93,7 +93,7 @@ const AuthenticatedApp = () => {
       <Route
         exact
         path={appRoutes.index}
-        component={() => <Redirect to="/projects" />}
+        component={() => <Redirect to={appRoutes.projects} />}
       />
 
       <Switch>
