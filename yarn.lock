@@ -30,6 +30,17 @@
     "@atlaskit/theme" "^9.5.1"
     tslib "^1.9.3"
 
+"@atlaskit/breadcrumbs@^9.2.10":
+  version "9.2.10"
+  resolved "https://registry.yarnpkg.com/@atlaskit/breadcrumbs/-/breadcrumbs-9.2.10.tgz#103877be4f3b6a92864399be26fdb31bae5972df"
+  integrity sha512-KoepyBxaewblBnhlPGwAlHUE/dwHzywJ9CGxALJ0iPqTxXse6beTLUulj1XkJqxeAyB/cfnjmwdUgf+htQViug==
+  dependencies:
+    "@atlaskit/analytics-next" "^6.3.5"
+    "@atlaskit/button" "^13.3.12"
+    "@atlaskit/theme" "^9.5.1"
+    "@atlaskit/tooltip" "^15.2.7"
+    tslib "^1.9.3"
+
 "@atlaskit/button@^13.3.12", "@atlaskit/button@^13.3.7":
   version "13.3.12"
   resolved "https://registry.yarnpkg.com/@atlaskit/button/-/button-13.3.12.tgz#6ba37e481e0de8c33169812feee5bf97b48c8ddc"
