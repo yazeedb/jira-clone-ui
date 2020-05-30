@@ -32,6 +32,10 @@ export interface ProjectsResponse {
   };
 }
 
+export interface ProjectResponse {
+  project: Project;
+}
+
 export interface Column {
   id: string;
   projectId: string;

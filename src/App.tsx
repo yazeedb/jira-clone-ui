@@ -9,12 +9,13 @@ import {
 } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { CompleteSignup } from './screens/CompleteSignup';
-import { Notification } from 'shared/components/Notification';
-import { authMachine } from 'machines/authMachine';
-import { ConfirmOrg } from 'screens/ConfirmOrg';
-import { GlobalNav } from 'shared/components/GlobalNav';
-import { NotFoundSvg } from 'shared/components/NotFoundSvg';
-import { Projects } from 'screens/Projects';
+import { Notification } from './shared/components/Notification';
+import { authMachine } from './machines/authMachine';
+import { ConfirmOrg } from './screens/ConfirmOrg';
+import { GlobalNav } from './shared/components/GlobalNav';
+import { NotFoundSvg } from './shared/components/NotFoundSvg';
+import { Projects } from './screens/Projects';
+import { Board } from './screens/Board';
 
 export const App = () => {
   return (
@@ -95,8 +96,8 @@ const AuthenticatedApp = () => {
           <Projects />
         </Route>
 
-        <Route exact path="/projects/:orgId/:projectName">
-          <h1>TODO: Create project page</h1>
+        <Route exact path="/projects/:orgId/:projectKey">
+          <Board />
         </Route>
 
         <Route exact path="/people">

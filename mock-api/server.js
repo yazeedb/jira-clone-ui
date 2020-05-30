@@ -230,14 +230,14 @@ app
   .get('/api/orgs/:orgId/validateProjectName', createProjectValidator('name'))
   .get('/api/orgs/:orgId/validateProjectKey', createProjectValidator('key'))
 
-  .get('/api/orgs/:orgId/projects/:projectId', (req, res) => {
+  .get('/api/orgs/:orgId/projects/:projectKey', (req, res) => {
     // Find associated user
     const { user } = req[env.sessionName];
     const db = dbTools.getDb();
     const existingUser = db.users.find((u) => u.sub === user.sub);
 
     // Find associated org
-    const { orgId, projectId } = req.params;
+    const { orgId, projectKey } = req.params;
     const org = existingUser.orgs.find((o) => o.id === orgId);
 
     if (!org) {
@@ -247,7 +247,7 @@ app
     }
 
     // Find associated project
-    const project = org.projects.find((p) => p.id === projectId);
+    const project = org.projects.find((p) => p.key === projectKey);
 
     if (!project) {
       return res.status(404).json({
