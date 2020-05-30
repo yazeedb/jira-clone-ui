@@ -95,6 +95,10 @@ const AuthenticatedApp = () => {
           <Projects />
         </Route>
 
+        <Route exact path="/projects/:orgId/:projectName">
+          <h1>TODO: Create project page</h1>
+        </Route>
+
         <Route exact path="/people">
           <h1>TODO: Create people page</h1>
         </Route>
