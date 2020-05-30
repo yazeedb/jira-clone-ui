@@ -9,12 +9,13 @@ import {
 } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { CompleteSignup } from './screens/CompleteSignup';
-import { Notification } from 'shared/components/Notification';
-import { authMachine } from 'machines/authMachine';
-import { ConfirmOrg } from 'screens/ConfirmOrg';
-import { GlobalNav } from 'shared/components/GlobalNav';
-import { NotFoundSvg } from 'shared/components/NotFoundSvg';
-import { Projects } from 'screens/Projects';
+import { Notification } from './shared/components/Notification';
+import { authMachine } from './machines/authMachine';
+import { ConfirmOrg } from './screens/ConfirmOrg';
+import { GlobalNav } from './shared/components/GlobalNav';
+import { NotFoundSvg } from './shared/components/NotFoundSvg';
+import { Projects } from './screens/Projects';
+import { Board } from './screens/Board';
 
 export const App = () => {
   return (
@@ -38,7 +39,7 @@ const AuthShell = () => {
     if (current.matches('appUsable')) {
       history.push(intendedRoute);
     }
-  }, [current.value, history]);
+  }, [current.value, history, intendedRoute, current]);
 
   switch (true) {
     case current.matches('notSignedIn'):
@@ -93,6 +94,10 @@ const AuthenticatedApp = () => {
       <Switch>
         <Route exact path="/projects">
           <Projects />
+        </Route>
+
+        <Route exact path="/projects/:orgId/:projectKey">
+          <Board />
         </Route>
 
         <Route exact path="/people">

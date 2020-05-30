@@ -10,6 +10,9 @@ export const apiRoutes = {
   orgs: `${apiBase}/orgs`,
   projectsByOrg: (orgId: string) => `${apiBase}/orgs/${orgId}/projects`,
 
+  findOneProject: (orgId: string, projectKey: string) =>
+    `${apiBase}/orgs/${orgId}/projects/${projectKey}`,
+
   validateProjectName: (orgId: string, projectName: string) =>
     `${apiBase}/orgs/${orgId}/validateProjectName?name=${projectName}`,
 

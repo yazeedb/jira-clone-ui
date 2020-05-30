@@ -12,6 +12,7 @@ import { CreateProject } from './CreateProject';
 import { NoResultsSvg } from 'shared/components/NoResultsSvg';
 import { ProjectCard } from 'shared/components/ProjectCard';
 import './Projects.scss';
+import { Link } from 'react-router-dom';
 
 export const Projects = () => {
   const [current, send] = useMachine(projectsMachine, {
@@ -116,7 +117,9 @@ export const Projects = () => {
                             marginRight: '8px'
                           }}
                         />
-                        <a href="#">{p.name}</a>
+                        <Link to={`/projects/${p.orgId}/${p.key}`}>
+                          {p.name}
+                        </Link>
                       </span>
                     )
                   },
