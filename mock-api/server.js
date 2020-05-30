@@ -207,6 +207,7 @@ app
         name: projectName,
         key: projectKey,
         lead: { sub, email, firstName, lastName },
+        orgId: org.id,
         dateCreated: new Date().toUTCString(),
         columns: [
           { name: 'TO DO', tasks: [], taskLimit: null },
