@@ -1,9 +1,9 @@
 export const appRoutes = {
   index: '/',
   projects: '/projects',
-  board: '/board/:orgId/:projectKey',
+  board: '/board/:orgName/:projectKey',
   people: '/people'
 };
 
-export const createBoardRoute = (orgId: string, projectKey: string) =>
-  `/board/${orgId}/${projectKey}`;
+export const createBoardRoute = (orgName: string, projectKey: string) =>
+  `/board/${orgName}/${projectKey}`;

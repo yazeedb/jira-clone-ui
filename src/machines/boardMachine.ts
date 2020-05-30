@@ -8,14 +8,14 @@ import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 
 interface MachineContext {
-  orgId: string;
+  orgName: string;
   projectKey: string;
   project: Project;
   error: string;
 }
 
 export const initialContext: MachineContext = {
-  orgId: '',
+  orgName: '',
   projectKey: '',
   project: createEmptyProject(),
   error: ''
@@ -45,9 +45,9 @@ export const boardMachine = Machine<MachineContext>(
   },
   {
     services: {
-      fetchProject: ({ orgId, projectKey }) =>
+      fetchProject: ({ orgName, projectKey }) =>
         fetcher.get<ProjectResponse>(
-          apiRoutes.findOneProject(orgId, projectKey)
+          apiRoutes.findOneProject(orgName, projectKey)
         )
     },
     actions: {
