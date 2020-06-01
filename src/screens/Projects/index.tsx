@@ -118,7 +118,12 @@ export const Projects = () => {
                             marginRight: '8px'
                           }}
                         />
-                        <Link to={createBoardRoute(p.orgName, p.key)}>
+                        <Link
+                          to={createBoardRoute({
+                            orgName: p.orgName,
+                            projectKey: p.key
+                          })}
+                        >
                           {p.name}
                         </Link>
                       </span>

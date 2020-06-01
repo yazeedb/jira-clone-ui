@@ -1,12 +1,15 @@
 import { User, createEmptyUser } from './User';
+import { OrgName } from './Org';
+
+type ProjectKey = string;
 
 export interface Project {
   id: string;
-  orgName: string;
-  key: string;
+  name: string;
+  orgName: OrgName;
+  key: ProjectKey;
   type: string;
   lead: User;
-  name: string;
   icon: string;
   dateCreated: string;
   columns: Column[];
@@ -60,4 +63,9 @@ export interface Task {
 
 export interface ProjectAvailableResponse {
   available: boolean;
+}
+
+export interface FindOneProjectParams {
+  orgName: OrgName;
+  projectKey: ProjectKey;
 }

@@ -8,17 +8,15 @@ import TextField from '@atlaskit/textfield';
 import EditorSearchIcon from '@atlaskit/icon/glyph/editor/search';
 import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 import './Board.scss';
-
-type UrlParams = { orgName: string; projectKey: string };
+import { FindOneProjectParams } from 'shared/interfaces/Project';
 
 export const Board = () => {
-  const { orgName, projectKey } = useParams<UrlParams>();
+  const projectParams = useParams<FindOneProjectParams>();
 
   const [current, send] = useMachine(
     boardMachine.withContext({
       ...initialContext,
-      orgName,
-      projectKey
+      projectParams
     })
   );
 

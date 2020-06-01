@@ -1,7 +1,9 @@
+export type OrgName = string;
+
 export interface Org {
   id: string;
   ownerId: string;
-  name: string;
+  name: OrgName;
   dateCreated: string;
 }
 

@@ -1,3 +1,5 @@
+import { FindOneProjectParams } from './interfaces/Project';
+
 export const appRoutes = {
   index: '/',
   projects: '/projects',
@@ -5,5 +7,7 @@ export const appRoutes = {
   people: '/people'
 };
 
-export const createBoardRoute = (orgName: string, projectKey: string) =>
-  `/board/${orgName}/${projectKey}`;
+export const createBoardRoute = ({
+  orgName,
+  projectKey
+}: FindOneProjectParams) => `/board/${orgName}/${projectKey}`;

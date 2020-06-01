@@ -2,21 +2,23 @@ import { Machine, assign, DoneInvokeEvent } from 'xstate';
 import {
   Project,
   createEmptyProject,
-  ProjectResponse
+  ProjectResponse,
+  FindOneProjectParams
 } from 'shared/interfaces/Project';
 import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 
 interface MachineContext {
-  orgName: string;
-  projectKey: string;
+  projectParams: FindOneProjectParams;
   project: Project;
   error: string;
 }
 
 export const initialContext: MachineContext = {
-  orgName: '',
-  projectKey: '',
+  projectParams: {
+    orgName: '',
+    projectKey: ''
+  },
   project: createEmptyProject(),
   error: ''
 };
@@ -45,10 +47,8 @@ export const boardMachine = Machine<MachineContext>(
   },
   {
     services: {
-      fetchProject: ({ orgName, projectKey }) =>
-        fetcher.get<ProjectResponse>(
-          apiRoutes.findOneProject(orgName, projectKey)
-        )
+      fetchProject: ({ projectParams }) =>
+        fetcher.get<ProjectResponse>(apiRoutes.findOneProject(projectParams))
     },
     actions: {
       setProject: assign({
