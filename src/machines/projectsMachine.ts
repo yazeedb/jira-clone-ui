@@ -1,5 +1,5 @@
 import { Machine, assign, DoneInvokeEvent, Interpreter, spawn } from 'xstate';
-import { fetcher } from 'fetcher';
+import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { OrgsResponse } from 'shared/interfaces/Org';
 import { Project, ProjectsResponse } from 'shared/interfaces/Project';
@@ -73,7 +73,7 @@ export const projectsMachine = Machine<MachineContext>(
     },
     actions: {
       setProjects: assign((context, event) => {
-        const e = event as DoneInvokeEvent<ProjectsResponse>;
+        const e = event as DoneInvokeEvent<FetcherResponse<ProjectsResponse>>;
 
         return {
           projects: e.data.data.projects

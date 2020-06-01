@@ -27,9 +27,7 @@ export const createEmptyProject = (): Project => {
 };
 
 export interface ProjectsResponse {
-  data: {
-    projects: Project[];
-  };
+  projects: Project[];
 }
 
 export interface ProjectResponse {
