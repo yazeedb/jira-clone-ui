@@ -9,7 +9,7 @@ import {
 import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { OrgsResponse } from 'shared/interfaces/Org';
-import { ProjectResponseAvailableResponse } from 'shared/interfaces/Project';
+import { ProjectAvailableResponse } from 'shared/interfaces/Project';
 import { validateName, validateKey } from 'screens/Projects/validateFields';
 import {
   validationMachineFactory,
@@ -26,7 +26,7 @@ const nameValidationMachine = validationMachineFactory({
 
   serviceGuard: (context, event) => {
     const e = event as DoneInvokeEvent<
-      FetcherResponse<ProjectResponseAvailableResponse>
+      FetcherResponse<ProjectAvailableResponse>
     >;
 
     return e.data.data.available;
@@ -50,7 +50,7 @@ const keyValidationMachine = validationMachineFactory({
 
   serviceGuard: (context, event) => {
     const e = event as DoneInvokeEvent<
-      FetcherResponse<ProjectResponseAvailableResponse>
+      FetcherResponse<ProjectAvailableResponse>
     >;
 
     return e.data.data.available;

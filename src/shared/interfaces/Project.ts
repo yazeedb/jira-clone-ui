@@ -60,6 +60,6 @@ export interface Task {
   description: string;
 }
 
-export interface ProjectResponseAvailableResponse {
+export interface ProjectAvailableResponse {
   available: boolean;
 }
