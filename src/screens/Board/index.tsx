@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, forwardRef } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { boardMachine, initialContext } from 'machines/boardMachine';
 import ProgressBar from '@atlaskit/progress-bar';
@@ -9,6 +9,7 @@ import EditorSearchIcon from '@atlaskit/icon/glyph/editor/search';
 import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 import './Board.scss';
 import { FindOneProjectParams } from 'shared/interfaces/Project';
+import { appRoutes } from 'shared/appRoutes';
 
 export const Board = () => {
   const projectParams = useParams<FindOneProjectParams>();
@@ -33,8 +34,15 @@ export const Board = () => {
         return (
           <>
             <Breadcrumbs>
-              <BreadcrumbsItem text="Projects" />
-              <BreadcrumbsItem text={project.name} />
+              <BreadcrumbsItem
+                href={appRoutes.projects}
+                text="Projects"
+                component={forwardRef(({ href, ...otherProps }: any, ref) => (
+                  <Link to={href} ref={ref} {...otherProps} />
+                ))}
+              />
+
+              <BreadcrumbsItem href="" text={project.name} />
             </Breadcrumbs>
 
             <h1 className="title">{project.key} board</h1>
