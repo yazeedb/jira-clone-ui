@@ -10,19 +10,21 @@ import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 import './Board.scss';
 import { FindOneProjectParams } from 'shared/interfaces/Project';
 import { appRoutes } from 'shared/appRoutes';
+import { parseQuery } from 'shared/utils/parseQuery';
 
 export const Board = () => {
   const projectParams = useParams<FindOneProjectParams>();
-  const { search } = useLocation();
-
-  console.warn(search);
+  const { selectedIssue } = parseQuery(useLocation().search);
 
   const [current, send] = useMachine(
     boardMachine.withContext({
       ...initialContext,
-      projectParams
+      projectParams,
+      selectedIssue
     })
   );
+
+  console.log('Board machine:', current);
 
   const [filter, setFilter] = useState('');
 

@@ -12,7 +12,35 @@ interface MachineContext {
   projectParams: FindOneProjectParams;
   project: Project;
   error: string;
+  selectedIssue?: string;
 }
+
+/*
+  ======== Inside component ========
+  const { selectedIssue } = parseQuery(useLocation().search)
+  
+  useMachine(boardMachine.withContext(selectedIssue))
+
+  ======== Inside boardMachine ========
+  fetching
+    onDone: hasSelectedIssue ? 'fetchingIssue' : 'viewingProject'
+    onError: failed
+
+  viewingProject
+    notSureYet
+
+  fetchingIssue
+    onDone: 'viewingIssue'
+    onError: fetchIssueFail
+
+  Multiple selected issues?
+  1. Take first one
+  2. Take last one
+
+  ===== Enhancement? =====
+  3. Tell user they picked 2+ tasks
+    3.1 Have them pick one
+*/
 
 export const initialContext: MachineContext = {
   projectParams: {
@@ -20,7 +48,8 @@ export const initialContext: MachineContext = {
     projectKey: ''
   },
   project: createEmptyProject(),
-  error: ''
+  error: '',
+  selectedIssue: undefined
 };
 
 export const boardMachine = Machine<MachineContext>(
@@ -31,10 +60,17 @@ export const boardMachine = Machine<MachineContext>(
       fetching: {
         invoke: {
           src: 'fetchProject',
-          onDone: {
-            target: 'viewingProject',
-            actions: 'setProject'
-          },
+          onDone: [
+            {
+              target: 'viewingProject.idle',
+              actions: 'setProject',
+              cond: 'noSelectedIssue'
+            },
+            {
+              target: 'viewingProject.fetchingIssue',
+              cond: 'hasSelectedIssue'
+            }
+          ],
           onError: {
             target: 'failed',
             actions: 'setError'
@@ -42,9 +78,14 @@ export const boardMachine = Machine<MachineContext>(
         }
       },
       viewingProject: {
+        initial: 'idle',
+        states: {
+          idle: {},
+          fetchingIssue: {}
+        }
         /*
           Init websocket now??
-          
+
           User's FIRST issue must be made in FIRST column.
           The last column has a green checkmark
 
@@ -70,6 +111,10 @@ export const boardMachine = Machine<MachineContext>(
     services: {
       fetchProject: ({ projectParams }) =>
         fetcher.get<ProjectResponse>(apiRoutes.findOneProject(projectParams))
+    },
+    guards: {
+      hasSelectedIssue: (context) => !!context.selectedIssue === true,
+      noSelectedIssue: (context) => !!context.selectedIssue === false
     },
     actions: {
       setProject: assign({
