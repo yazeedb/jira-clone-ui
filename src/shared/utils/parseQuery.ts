@@ -11,8 +11,6 @@ export const parseQuery = (queryString?: QueryString): QueryObject => {
 
   const sanitizedString = queryString.trim().replace(/^[?#&]/, '');
 
-  const queryObject = {} as QueryObject;
-
   return sanitizedString
     .split('&')
     .map((pair) => pair.split('='))
@@ -20,7 +18,7 @@ export const parseQuery = (queryString?: QueryString): QueryObject => {
       acc[key] = value;
 
       return acc;
-    }, queryObject);
+    }, {} as QueryObject);
 };
 
 // Credit: https://stackoverflow.com/a/23959662/5924051
