@@ -1,5 +1,5 @@
 import React, { useState, forwardRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { boardMachine, initialContext } from 'machines/boardMachine';
 import ProgressBar from '@atlaskit/progress-bar';
@@ -13,6 +13,9 @@ import { appRoutes } from 'shared/appRoutes';
 
 export const Board = () => {
   const projectParams = useParams<FindOneProjectParams>();
+  const { search } = useLocation();
+
+  console.warn(search);
 
   const [current, send] = useMachine(
     boardMachine.withContext({
@@ -48,9 +51,8 @@ export const Board = () => {
             <h1 className="title">{project.key} board</h1>
 
             <TextField
-              width="small"
               className="filter"
-              isCompact
+              placeholder="Filter issues"
               elemAfterInput={
                 <div style={{ marginRight: '5px' }}>
                   <EditorSearchIcon label="Find project" />
