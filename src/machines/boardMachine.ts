@@ -68,6 +68,7 @@ export const boardMachine = Machine<MachineContext>(
             },
             {
               target: 'viewingProject.fetchingIssue',
+              actions: 'setProject',
               cond: 'hasSelectedIssue'
             }
           ],
