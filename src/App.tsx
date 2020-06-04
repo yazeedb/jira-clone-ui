@@ -5,7 +5,8 @@ import {
   Route,
   Switch,
   useHistory,
-  Redirect
+  Redirect,
+  useLocation
 } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import { CompleteSignup } from './screens/CompleteSignup';
@@ -35,7 +36,9 @@ const AuthShell = () => {
   }, [send]);
 
   const history = useHistory();
-  const [intendedRoute] = useState(window.location.pathname);
+  const { pathname, search } = useLocation();
+  const [intendedRoute] = useState(pathname + search);
+
   useEffect(() => {
     if (current.matches('appUsable')) {
       history.push(intendedRoute);
