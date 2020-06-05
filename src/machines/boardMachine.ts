@@ -86,6 +86,32 @@ export const boardMachine = Machine<MachineContext>(
         }
         /*
           Init websocket now??
+          WS Events --
+            Board-level events
+              Client1 ====> updateBoard({ id: 1, newName: 'Jenkins' })
+
+              Server ====> notifyAllClients({
+                type: 'BOARD_UPDATED',
+                id: 1,
+                diff: {
+                  newName: 'Jenkins',
+                  newOrder: 2,
+                  newOwner: 'Afroze'
+                }
+              })
+              
+              Client2 ====> getBoard({id: 1 })
+              
+              Column-level events
+              Server ====> { type: 'COLUMN_UPDATED', id: 1 }
+              Client ====> getColumn({id: 1 })
+              
+              Task-level events
+              Server ====> { type: 'TASK_UPDATED', id: 1 }
+              Client ====> getTask({id: 1 })
+
+          Are we missing any WS gotchas?
+          Try building a small real-time piece as a PoC.
 
           User's FIRST issue must be made in FIRST column.
           The last column has a green checkmark
