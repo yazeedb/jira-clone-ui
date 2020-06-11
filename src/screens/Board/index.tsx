@@ -90,7 +90,7 @@ export const Board = () => {
 
               <Button
                 appearance="default"
-                iconBefore={<AddIcon label="Create project" />}
+                iconBefore={<AddIcon label="Add column" />}
                 className="add-column"
               />
             </section>
