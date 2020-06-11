@@ -11,6 +11,9 @@ import './Board.scss';
 import { FindOneProjectParams } from 'shared/interfaces/Project';
 import { appRoutes } from 'shared/appRoutes';
 import { parseQuery } from 'shared/utils/parseQuery';
+import AddIcon from '@atlaskit/icon/glyph/add';
+import EditorAddIcon from '@atlaskit/icon/glyph/editor/add';
+import Button from '@atlaskit/button';
 
 export const Board = () => {
   const projectParams = useParams<FindOneProjectParams>();
@@ -52,19 +55,45 @@ export const Board = () => {
 
             <h1 className="title">{project.key} board</h1>
 
-            <TextField
-              className="filter"
-              placeholder="Filter issues"
-              elemAfterInput={
-                <div style={{ marginRight: '5px' }}>
-                  <EditorSearchIcon label="Find project" />
-                </div>
-              }
-              value={filter}
-              onChange={(event) => {
-                setFilter(event.currentTarget.value.trim());
-              }}
-            />
+            <div className="filter-container">
+              <TextField
+                className="filter"
+                placeholder="Filter issues"
+                elemAfterInput={
+                  <div style={{ marginRight: '5px' }}>
+                    <EditorSearchIcon label="Find project" />
+                  </div>
+                }
+                value={filter}
+                onChange={(event) => {
+                  setFilter(event.currentTarget.value.trim());
+                }}
+              />
+            </div>
+
+            <section className="columns">
+              {project.columns.map((c) => {
+                return (
+                  <div key={c.id} className="column">
+                    <h6 className="title">{c.name}</h6>
+
+                    <Button
+                      appearance="subtle"
+                      iconBefore={<EditorAddIcon label="Create project" />}
+                      className="create-project-button"
+                    >
+                      Create issue
+                    </Button>
+                  </div>
+                );
+              })}
+
+              <Button
+                appearance="default"
+                iconBefore={<AddIcon label="Create project" />}
+                className="add-column"
+              />
+            </section>
           </>
         );
       }

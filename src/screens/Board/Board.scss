@@ -1,8 +1,52 @@
+@import '../../theme.scss';
+
 .board {
   padding: 20px 40px;
 
   .title {
     margin-top: 10px;
     margin-bottom: 20px;
+  }
+
+  .filter-container {
+    max-width: 200px;
+  }
+
+  .columns {
+    display: flex;
+    align-items: baseline;
+    margin-top: 10px;
+  }
+
+  .column {
+    background-color: $code-block;
+    border-radius: 6px;
+
+    min-width: 300px;
+    max-width: 300px;
+    min-height: 100px;
+
+    margin-top: 20px;
+    margin-right: 20px;
+
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 20px;
+  }
+
+  .create-project-button {
+    margin-left: -5px;
+    padding: 0;
+    width: 100%;
+  }
+
+  .column .title {
+    color: $subtle-heading;
+    text-transform: uppercase;
+  }
+
+  .add-column {
+    padding: 10px;
   }
 }
