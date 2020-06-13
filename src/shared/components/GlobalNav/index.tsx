@@ -17,6 +17,8 @@ import './GlobalNav.scss';
 const mockProfilePicture =
   'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5ac56eefa05a8d1c98846c61/fe6f2859-d1ac-4e9e-a982-29214fd34c37/128?size=48&s=48';
 
+const notAvailableYet = 'Not available yet';
+
 export const GlobalNav: FC = () => {
   const [secondNavOpen, setSecondNavOpen] = useState(true);
 
@@ -25,13 +27,15 @@ export const GlobalNav: FC = () => {
       <div className="first-nav">
         <div className="icon-row">
           <div className="icon-wrapper jira-logo-wrapper">
-            <Tooltip position="right" title="Jira Software">
+            {/* <Tooltip position="right" title="Jira Software"> */}
+            <Tooltip position="right" title={notAvailableYet}>
               <JiraSoftwareIcon label="Jira Software" iconColor="inherit" />
             </Tooltip>
           </div>
 
           <div className="icon-wrapper">
-            <Tooltip position="right" title="Starred and recent">
+            {/* <Tooltip position="right" title="Starred and recent"> */}
+            <Tooltip position="right" title={notAvailableYet}>
               <StarLargeIcon
                 label="Starred and recent"
                 secondaryColor="inherit"
@@ -40,13 +44,15 @@ export const GlobalNav: FC = () => {
           </div>
 
           <div className="icon-wrapper">
-            <Tooltip position="right" title="Search">
+            {/* <Tooltip position="right" title="Search"> */}
+            <Tooltip position="right" title={notAvailableYet}>
               <SearchIcon label="Search" secondaryColor="inherit" />
             </Tooltip>
           </div>
 
           <div className="icon-wrapper">
-            <Tooltip position="right" title="Create">
+            {/* <Tooltip position="right" title="Create"> */}
+            <Tooltip position="right" title={notAvailableYet}>
               <AddIcon label="Create" secondaryColor="inherit" />
             </Tooltip>
           </div>
@@ -54,7 +60,8 @@ export const GlobalNav: FC = () => {
 
         <div className="icon-row">
           <div className="icon-wrapper">
-            <Tooltip position="right" title="Notifications">
+            {/* <Tooltip position="right" title="Notifications"> */}
+            <Tooltip position="right" title={notAvailableYet}>
               <NotificationIcon
                 label="Notifications"
                 secondaryColor="inherit"
@@ -63,19 +70,22 @@ export const GlobalNav: FC = () => {
           </div>
 
           <div className="icon-wrapper">
-            <Tooltip position="right" title="Switch to">
+            {/* <Tooltip position="right" title="Switch to"> */}
+            <Tooltip position="right" title={notAvailableYet}>
               <AppSwitcherIcon label="Switch to" secondaryColor="inherit" />
             </Tooltip>
           </div>
 
           <div className="icon-wrapper">
-            <Tooltip position="right" title="Help">
+            {/* <Tooltip position="right" title="Help"> */}
+            <Tooltip position="right" title={notAvailableYet}>
               <QuestionCircleIcon label="Help" secondaryColor="inherit" />
             </Tooltip>
           </div>
 
           <div className="icon-wrapper">
-            <Tooltip position="right" title="Your profile and settings">
+            {/* <Tooltip position="right" title="Your profile and settings"> */}
+            <Tooltip position="right" title={notAvailableYet}>
               <img
                 src={mockProfilePicture}
                 alt="Your profile"
