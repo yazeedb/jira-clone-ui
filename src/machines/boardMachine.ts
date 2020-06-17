@@ -3,7 +3,8 @@ import {
   Project,
   createEmptyProject,
   ProjectResponse,
-  FindOneProjectParams
+  FindOneProjectParams,
+  Column
 } from 'shared/interfaces/Project';
 import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
@@ -81,7 +82,16 @@ export const boardMachine = Machine<MachineContext>(
       viewingProject: {
         initial: 'idle',
         states: {
-          idle: {},
+          idle: {
+            on: {
+              CREATE_FIRST_ISSUE: {
+                cond: 'hasNoExistingIssues'
+              },
+              CREATE_ANOTHER_ISSUE: {
+                cond: 'hasExistingIssues'
+              }
+            }
+          },
           fetchingIssue: {}
         }
         /*
@@ -141,7 +151,13 @@ export const boardMachine = Machine<MachineContext>(
     },
     guards: {
       hasSelectedIssue: (context) => !!context.selectedIssue === true,
-      noSelectedIssue: (context) => !!context.selectedIssue === false
+      noSelectedIssue: (context) => !!context.selectedIssue === false,
+
+      hasExistingIssues: (context) =>
+        getTotalIssues(context.project.columns) > 0,
+
+      hasNoExistingIssues: (context) =>
+        getTotalIssues(context.project.columns) === 0
     },
     actions: {
       setProject: assign({
@@ -161,3 +177,6 @@ export const boardMachine = Machine<MachineContext>(
     }
   }
 );
+
+export const getTotalIssues = (columns: Column[]) =>
+  columns.reduce((total, c) => total + c.tasks.length, 0);

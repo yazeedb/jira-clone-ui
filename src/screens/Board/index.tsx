@@ -1,7 +1,11 @@
 import React, { useState, forwardRef } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
-import { boardMachine, initialContext } from 'machines/boardMachine';
+import {
+  boardMachine,
+  initialContext,
+  getTotalIssues
+} from 'machines/boardMachine';
 import ProgressBar from '@atlaskit/progress-bar';
 import Breadcrumbs, { BreadcrumbsItem } from '@atlaskit/breadcrumbs';
 import TextField from '@atlaskit/textfield';
@@ -14,6 +18,7 @@ import { parseQuery } from 'shared/utils/parseQuery';
 import AddIcon from '@atlaskit/icon/glyph/add';
 import EditorAddIcon from '@atlaskit/icon/glyph/editor/add';
 import Button from '@atlaskit/button';
+import CheckIcon from '@atlaskit/icon/glyph/check';
 
 export const Board = () => {
   const projectParams = useParams<FindOneProjectParams>();
@@ -38,6 +43,7 @@ export const Board = () => {
 
       case current.matches('viewingProject'): {
         const { project } = current.context;
+        const hasNoIssues = getTotalIssues(project.columns) === 0;
 
         return (
           <>
@@ -53,7 +59,7 @@ export const Board = () => {
               <BreadcrumbsItem href="" text={project.name} />
             </Breadcrumbs>
 
-            <h1 className="title">{project.key} board</h1>
+            <h1 className="board-title">{project.key} board</h1>
 
             <div className="filter-container">
               <TextField
@@ -72,18 +78,30 @@ export const Board = () => {
             </div>
 
             <section className="columns">
-              {project.columns.map((c) => {
+              {project.columns.map((c, index) => {
+                const isFirstColumn = index === 0;
+                const isLastColumn = index === project.columns.length - 1;
+
                 return (
                   <div key={c.id} className="column">
-                    <h6 className="title">{c.name}</h6>
+                    <header>
+                      <h6 className="title">{c.name}</h6>
+                      {isLastColumn && (
+                        <span className="icon-wrapper">
+                          <CheckIcon label="check" />
+                        </span>
+                      )}
+                    </header>
 
-                    <Button
-                      appearance="subtle"
-                      iconBefore={<EditorAddIcon label="Create project" />}
-                      className="create-project-button"
-                    >
-                      Create issue
-                    </Button>
+                    {!isFirstColumn && hasNoIssues ? null : (
+                      <Button
+                        appearance="subtle"
+                        iconBefore={<EditorAddIcon label="Create project" />}
+                        className="create-project-button"
+                      >
+                        Create issue
+                      </Button>
+                    )}
                   </div>
                 );
               })}

@@ -3,7 +3,7 @@
 .board {
   padding: 20px 40px;
 
-  .title {
+  .board-title {
     margin-top: 10px;
     margin-bottom: 20px;
   }
@@ -33,17 +33,29 @@
     padding-left: 15px;
     padding-right: 15px;
     padding-bottom: 20px;
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 35px;
+    }
+
+    .title {
+      color: $subtle-heading;
+      text-transform: uppercase;
+    }
+
+    .icon-wrapper {
+      color: $green;
+    }
   }
 
   .create-project-button {
     margin-left: -5px;
+    margin-top: 10px;
     padding: 0;
     width: 100%;
-  }
-
-  .column .title {
-    color: $subtle-heading;
-    text-transform: uppercase;
   }
 
   .add-column {
