@@ -82,17 +82,7 @@ export const boardMachine = Machine<MachineContext>(
       viewingProject: {
         initial: 'idle',
         states: {
-          idle: {
-            on: {
-              CREATE_FIRST_ISSUE: {
-                cond: 'hasNoExistingIssues'
-              },
-              CREATE_ANOTHER_ISSUE: {
-                cond: 'hasExistingIssues'
-              }
-            }
-          },
-          fetchingIssue: {}
+          idle: {}
         }
         /*
           Init websocket now??
@@ -151,13 +141,7 @@ export const boardMachine = Machine<MachineContext>(
     },
     guards: {
       hasSelectedIssue: (context) => !!context.selectedIssue === true,
-      noSelectedIssue: (context) => !!context.selectedIssue === false,
-
-      hasExistingIssues: (context) =>
-        getTotalIssues(context.project.columns) > 0,
-
-      hasNoExistingIssues: (context) =>
-        getTotalIssues(context.project.columns) === 0
+      noSelectedIssue: (context) => !!context.selectedIssue === false
     },
     actions: {
       setProject: assign({
