@@ -7,6 +7,7 @@ import {
   getTotalIssues
 } from 'machines/boardMachine';
 import ProgressBar from '@atlaskit/progress-bar';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Breadcrumbs, { BreadcrumbsItem } from '@atlaskit/breadcrumbs';
 import TextField from '@atlaskit/textfield';
 import EditorSearchIcon from '@atlaskit/icon/glyph/editor/search';
@@ -77,41 +78,86 @@ export const Board = () => {
               />
             </div>
 
-            <section className="columns">
-              {project.columns.map((c, index) => {
-                const isFirstColumn = index === 0;
-                const isLastColumn = index === project.columns.length - 1;
+            <DragDropContext
+              onDragEnd={(result) => {
+                if (!result.destination) {
+                  return;
+                }
 
-                return (
-                  <div key={c.id} className="column">
-                    <header>
-                      <h6 className="title">{c.name}</h6>
-                      {isLastColumn && (
-                        <span className="icon-wrapper">
-                          <CheckIcon label="check" />
-                        </span>
-                      )}
-                    </header>
-
-                    {!isFirstColumn && hasNoIssues ? null : (
-                      <Button
-                        appearance="subtle"
-                        iconBefore={<EditorAddIcon label="Create project" />}
-                        className="create-project-button"
+                send({
+                  type: 'COLUMN_ORDER_UPDATED',
+                  startIndex: result.source.index,
+                  endIndex: result.destination.index
+                });
+              }}
+            >
+              <section className="columns-wrapper">
+                <Droppable droppableId="droppableId" direction="horizontal">
+                  {(provided, snapshot) => {
+                    return (
+                      <section
+                        className="columns"
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
                       >
-                        Create issue
-                      </Button>
-                    )}
-                  </div>
-                );
-              })}
+                        {project.columns.map((c, index) => {
+                          const isFirstColumn = index === 0;
+                          const isLastColumn =
+                            index === project.columns.length - 1;
 
-              <Button
-                appearance="default"
-                iconBefore={<AddIcon label="Add column" />}
-                className="add-column"
-              />
-            </section>
+                          // TODO: Have a column.id property (update server logic)
+                          return (
+                            <Draggable
+                              index={index}
+                              draggableId={c.name}
+                              key={c.name}
+                            >
+                              {(provided, snapshot) => (
+                                <div
+                                  className="column"
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <header>
+                                    <h6 className="title">{c.name}</h6>
+                                    {isLastColumn && (
+                                      <span className="icon-wrapper">
+                                        <CheckIcon label="check" />
+                                      </span>
+                                    )}
+                                  </header>
+
+                                  {!isFirstColumn && hasNoIssues ? null : (
+                                    <Button
+                                      appearance="subtle"
+                                      iconBefore={
+                                        <EditorAddIcon label="Create project" />
+                                      }
+                                      className="create-project-button"
+                                    >
+                                      Create issue
+                                    </Button>
+                                  )}
+                                </div>
+                              )}
+                            </Draggable>
+                          );
+                        })}
+
+                        {provided.placeholder}
+                      </section>
+                    );
+                  }}
+                </Droppable>
+
+                <Button
+                  appearance="default"
+                  iconBefore={<AddIcon label="Add column" />}
+                  className="add-column"
+                />
+              </section>
+            </DragDropContext>
           </>
         );
       }

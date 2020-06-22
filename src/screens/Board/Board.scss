@@ -12,9 +12,13 @@
     max-width: 200px;
   }
 
-  .columns {
+  .columns-wrapper {
     display: flex;
     align-items: baseline;
+  }
+
+  .columns {
+    display: flex;
     margin-top: 10px;
   }
 
@@ -39,7 +43,7 @@
       justify-content: flex-start;
       align-items: center;
       min-height: 35px;
-      cursor: grab;
+      // cursor: grab;
     }
 
     .title {

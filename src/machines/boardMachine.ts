@@ -82,7 +82,12 @@ export const boardMachine = Machine<MachineContext>(
       viewingProject: {
         initial: 'idle',
         states: {
-          idle: {}
+          idle: {
+            on: {
+              COLUMN_ORDER_UPDATED: { actions: 'reorderColumns' }
+            }
+          },
+          fetchingIssue: {}
         }
         /*
           Init websocket now??
@@ -156,6 +161,21 @@ export const boardMachine = Machine<MachineContext>(
           const e = event as DoneInvokeEvent<Error>;
 
           return e.data.message;
+        }
+      }),
+      reorderColumns: assign({
+        project: (context, event) => {
+          const { startIndex, endIndex } = event;
+          const { columns } = context.project;
+
+          const result = [...columns];
+          const [removed] = result.splice(startIndex, 1);
+          result.splice(endIndex, 0, removed);
+
+          return {
+            ...context.project,
+            columns: result
+          };
         }
       })
     }
