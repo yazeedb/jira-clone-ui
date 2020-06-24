@@ -40,24 +40,39 @@
 
     header {
       display: flex;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: center;
       min-height: 35px;
-      // cursor: grab;
-    }
 
-    .title {
-      color: $subtle-heading;
-      text-transform: uppercase;
-      padding: 10px;
-
-      &:hover {
-        background-color: $skeleton;
+      .more-icon {
+        display: none;
       }
-    }
 
-    .icon-wrapper {
-      color: $green;
+      &:hover .more-icon {
+        display: initial;
+      }
+
+      .title {
+        color: $subtle-heading;
+        text-transform: uppercase;
+        padding: 10px;
+      }
+
+      .title-wrapper {
+        display: flex;
+        align-items: center;
+      }
+
+      .check-icon {
+        color: $green;
+      }
+
+      .title,
+      .more-icon {
+        &:hover {
+          background-color: $skeleton;
+        }
+      }
     }
   }
 
