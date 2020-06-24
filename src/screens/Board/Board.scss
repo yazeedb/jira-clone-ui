@@ -74,6 +74,16 @@
           background-color: $skeleton;
         }
       }
+
+      .edit-column-name {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+
+        .form-controls {
+          text-align: right;
+        }
+      }
     }
   }
 

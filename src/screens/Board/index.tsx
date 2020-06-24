@@ -122,6 +122,14 @@ export const Board = () => {
                                   <ColumnHeader
                                     column={c}
                                     showCheckmark={isLastColumn}
+                                    onChange={(newName) =>
+                                      send({
+                                        type: 'RENAME_COLUMN',
+                                        id: c.id,
+                                        newName
+                                      })
+                                    }
+                                    onChangeCancel={console.warn}
                                   />
 
                                   {!isFirstColumn && hasNoIssues ? null : (

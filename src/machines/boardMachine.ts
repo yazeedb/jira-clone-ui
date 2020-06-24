@@ -84,7 +84,8 @@ export const boardMachine = Machine<MachineContext>(
         states: {
           idle: {
             on: {
-              COLUMN_ORDER_UPDATED: { actions: 'reorderColumns' }
+              COLUMN_ORDER_UPDATED: { actions: 'reorderColumns' },
+              RENAME_COLUMN: { actions: 'renameColumn' }
             }
           },
           fetchingIssue: {}
@@ -175,6 +176,23 @@ export const boardMachine = Machine<MachineContext>(
           return {
             ...context.project,
             columns: result
+          };
+        }
+      }),
+      renameColumn: assign({
+        project: (context, event) => {
+          const { project } = context;
+          const { id, newName } = event;
+
+          return {
+            ...project,
+            columns: project.columns.map((c) => {
+              if (c.id === id) {
+                return { ...c, name: newName };
+              }
+
+              return c;
+            })
           };
         }
       })
