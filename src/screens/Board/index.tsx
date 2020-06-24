@@ -19,7 +19,7 @@ import { parseQuery } from 'shared/utils/parseQuery';
 import AddIcon from '@atlaskit/icon/glyph/add';
 import EditorAddIcon from '@atlaskit/icon/glyph/editor/add';
 import Button from '@atlaskit/button';
-import { BoardHeader } from './BoardHeader';
+import { ColumnHeader } from './ColumnHeader';
 
 export const Board = () => {
   const projectParams = useParams<FindOneProjectParams>();
@@ -119,7 +119,7 @@ export const Board = () => {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                 >
-                                  <BoardHeader
+                                  <ColumnHeader
                                     column={c}
                                     showCheckmark={isLastColumn}
                                   />

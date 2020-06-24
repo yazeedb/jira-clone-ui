@@ -6,12 +6,12 @@ import MoreIcon from '@atlaskit/icon/glyph/editor/more';
 import Popup from '@atlaskit/popup';
 import Button from '@atlaskit/button';
 
-interface BoardHeaderProps {
+interface ColumnHeaderProps {
   column: Column;
   showCheckmark: boolean;
 }
 
-export const BoardHeader: FC<BoardHeaderProps> = ({
+export const ColumnHeader: FC<ColumnHeaderProps> = ({
   column,
   showCheckmark
 }) => {
