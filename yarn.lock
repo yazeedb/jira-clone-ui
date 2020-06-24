@@ -148,6 +148,15 @@
     react-uid "^2.2.0"
     tslib "^1.9.3"
 
+"@atlaskit/menu@^0.4.7":
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/@atlaskit/menu/-/menu-0.4.7.tgz#6fb7c5e896dec7d66ce01c2bd8f18d3be4e8b9fc"
+  integrity sha512-o1cbaaRPu+I5ZiC+0Ulg8YrcAkr4EEKxZTyYrIBeL0gLo4z8UUmYS0DCKl0pEJDWCQ6IcUCuEMfeNY31Jl7a+w==
+  dependencies:
+    "@atlaskit/theme" "^9.5.3"
+    "@emotion/core" "^10.0.9"
+    tslib "^1.9.3"
+
 "@atlaskit/pagination@^12.0.19":
   version "12.0.20"
   resolved "https://registry.yarnpkg.com/@atlaskit/pagination/-/pagination-12.0.20.tgz#672e3e7f0195999f01fdccd66475dfbe6b87378b"

@@ -48,7 +48,8 @@
         display: none;
       }
 
-      &:hover .more-icon {
+      &:hover .more-icon,
+      .more-icon.show {
         display: initial;
       }
 

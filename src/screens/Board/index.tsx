@@ -18,9 +18,8 @@ import { appRoutes } from 'shared/appRoutes';
 import { parseQuery } from 'shared/utils/parseQuery';
 import AddIcon from '@atlaskit/icon/glyph/add';
 import EditorAddIcon from '@atlaskit/icon/glyph/editor/add';
-import MoreIcon from '@atlaskit/icon/glyph/editor/more';
 import Button from '@atlaskit/button';
-import CheckIcon from '@atlaskit/icon/glyph/check';
+import { BoardHeader } from './BoardHeader';
 
 export const Board = () => {
   const projectParams = useParams<FindOneProjectParams>();
@@ -120,21 +119,10 @@ export const Board = () => {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                 >
-                                  <header>
-                                    <div className="title-wrapper">
-                                      <h6 className="title">{c.name}</h6>
-
-                                      {isLastColumn && (
-                                        <span className="check-icon">
-                                          <CheckIcon label="check" />
-                                        </span>
-                                      )}
-                                    </div>
-
-                                    <div className="more-icon">
-                                      <MoreIcon size="large" label="More" />
-                                    </div>
-                                  </header>
+                                  <BoardHeader
+                                    column={c}
+                                    showCheckmark={isLastColumn}
+                                  />
 
                                   {!isFirstColumn && hasNoIssues ? null : (
                                     <Button
