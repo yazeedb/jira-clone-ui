@@ -54,9 +54,7 @@
       }
 
       .title {
-        color: $subtle-heading;
         text-transform: uppercase;
-        padding: 10px;
       }
 
       .title-wrapper {
@@ -82,6 +80,11 @@
 
         .form-controls {
           text-align: right;
+
+          button {
+            margin-top: 5px;
+            margin-left: 5px;
+          }
         }
       }
     }
