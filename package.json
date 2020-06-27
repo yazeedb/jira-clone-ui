@@ -11,6 +11,7 @@
     "@atlaskit/dynamic-table": "^13.7.5",
     "@atlaskit/form": "^7.2.2",
     "@atlaskit/icon": "^20.1.1",
+    "@atlaskit/inline-edit": "^10.0.33",
     "@atlaskit/logo": "^12.3.4",
     "@atlaskit/menu": "^0.4.7",
     "@atlaskit/popup": "^0.4.1",

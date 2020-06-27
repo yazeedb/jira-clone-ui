@@ -33,18 +33,19 @@
     margin-top: 20px;
     margin-right: 20px;
 
-    padding-top: 5px;
+    padding-top: 0px;
     padding-left: 5px;
     padding-right: 5px;
     padding-bottom: 20px;
 
     header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
       min-height: 35px;
+      padding: 5px 10px;
 
       .more-icon {
+        margin-left: auto;
         display: none;
       }
 
@@ -55,37 +56,19 @@
 
       .title {
         text-transform: uppercase;
-      }
-
-      .title-wrapper {
-        display: flex;
-        align-items: center;
+        color: $subtle-heading;
+        margin-right: 5px;
+        padding: 5px;
       }
 
       .check-icon {
         color: $green;
       }
 
-      .title,
-      .more-icon {
-        &:hover {
-          background-color: $skeleton;
-        }
-      }
-
-      .edit-column-name {
-        display: flex;
-        width: 100%;
-        flex-direction: column;
-
-        .form-controls {
-          text-align: right;
-
-          button {
-            margin-top: 5px;
-            margin-left: 5px;
-          }
-        }
+      // HACK: @atlaskit's InlineEdit ships with margin-top
+      // Not sure how else to remove it...
+      div {
+        margin-top: 0;
       }
     }
   }
