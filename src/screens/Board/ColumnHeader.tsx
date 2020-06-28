@@ -34,7 +34,7 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
 
       {showCheckmark && (
         <span className="check-icon">
-          <CheckIcon label="check" />
+          <CheckIcon label="check" size="small" />
         </span>
       )}
 
