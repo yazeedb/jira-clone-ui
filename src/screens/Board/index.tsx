@@ -20,6 +20,7 @@ import AddIcon from '@atlaskit/icon/glyph/add';
 import EditorAddIcon from '@atlaskit/icon/glyph/editor/add';
 import Button from '@atlaskit/button';
 import { ColumnHeader } from './ColumnHeader';
+import InlineEdit from '@atlaskit/inline-edit';
 
 export const Board = () => {
   const projectParams = useParams<FindOneProjectParams>();
@@ -155,10 +156,19 @@ export const Board = () => {
                   }}
                 </Droppable>
 
-                <Button
-                  appearance="default"
-                  iconBefore={<AddIcon label="Add column" />}
-                  className="add-column"
+                <InlineEdit
+                  defaultValue=""
+                  onConfirm={console.log}
+                  editView={(fieldProps) => (
+                    <TextField {...fieldProps} autoFocus />
+                  )}
+                  readView={() => (
+                    <Button
+                      appearance="default"
+                      iconBefore={<AddIcon label="Add column" />}
+                      className="add-column"
+                    />
+                  )}
                 />
               </section>
             </DragDropContext>
