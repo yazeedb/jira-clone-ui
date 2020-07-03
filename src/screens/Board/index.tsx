@@ -7,7 +7,7 @@ import {
   getTotalIssues
 } from 'machines/boardMachine';
 import ProgressBar from '@atlaskit/progress-bar';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+
 import Breadcrumbs, { BreadcrumbsItem } from '@atlaskit/breadcrumbs';
 import TextField from '@atlaskit/textfield';
 import EditorSearchIcon from '@atlaskit/icon/glyph/editor/search';
@@ -79,104 +79,62 @@ export const Board = () => {
               />
             </div>
 
-            <DragDropContext
-              onDragEnd={(result) => {
-                if (!result.destination) {
-                  return;
-                }
+            <section className="columns-wrapper">
+              <section className="columns">
+                {project.columns.map((c, index) => {
+                  const isFirstColumn = index === 0;
+                  const isLastColumn = index === project.columns.length - 1;
 
-                send({
-                  type: 'COLUMN_ORDER_UPDATED',
-                  startIndex: result.source.index,
-                  endIndex: result.destination.index
-                });
-              }}
-            >
-              <section className="columns-wrapper">
-                <Droppable droppableId="droppableId" direction="horizontal">
-                  {(provided, snapshot) => {
-                    return (
-                      <section
-                        className="columns"
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                      >
-                        {project.columns.map((c, index) => {
-                          const isFirstColumn = index === 0;
-                          const isLastColumn =
-                            index === project.columns.length - 1;
+                  // TODO: Have a column.id property (update server logic)
+                  return (
+                    <div className="column">
+                      <ColumnHeader
+                        column={c}
+                        showCheckmark={isLastColumn}
+                        onChange={(newName) =>
+                          send({
+                            type: 'RENAME_COLUMN',
+                            id: c.id,
+                            newName
+                          })
+                        }
+                        onChangeCancel={console.warn}
+                      />
 
-                          // TODO: Have a column.id property (update server logic)
-                          return (
-                            <Draggable
-                              index={index}
-                              draggableId={c.name}
-                              key={c.name}
-                            >
-                              {(provided, snapshot) => (
-                                <div
-                                  className="column"
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <ColumnHeader
-                                    column={c}
-                                    showCheckmark={isLastColumn}
-                                    onChange={(newName) =>
-                                      send({
-                                        type: 'RENAME_COLUMN',
-                                        id: c.id,
-                                        newName
-                                      })
-                                    }
-                                    onChangeCancel={console.warn}
-                                  />
-
-                                  {!isFirstColumn && hasNoIssues ? null : (
-                                    <Button
-                                      appearance="subtle"
-                                      iconBefore={
-                                        <EditorAddIcon label="Create project" />
-                                      }
-                                      className="create-project-button"
-                                    >
-                                      Create issue
-                                    </Button>
-                                  )}
-                                </div>
-                              )}
-                            </Draggable>
-                          );
-                        })}
-
-                        {provided.placeholder}
-                      </section>
-                    );
-                  }}
-                </Droppable>
-
-                <InlineEdit
-                  defaultValue=""
-                  isRequired
-                  onConfirm={console.log}
-                  editView={(fieldProps) => (
-                    <TextField
-                      {...fieldProps}
-                      autoFocus
-                      className="create-column-input"
-                    />
-                  )}
-                  readView={() => (
-                    <Button
-                      appearance="default"
-                      iconBefore={<AddIcon label="Add column" />}
-                      className="add-column"
-                    />
-                  )}
-                />
+                      {!isFirstColumn && hasNoIssues ? null : (
+                        <Button
+                          appearance="subtle"
+                          iconBefore={<EditorAddIcon label="Create project" />}
+                          className="create-project-button"
+                        >
+                          Create issue
+                        </Button>
+                      )}
+                    </div>
+                  );
+                })}
               </section>
-            </DragDropContext>
+
+              <InlineEdit
+                defaultValue=""
+                isRequired
+                onConfirm={console.log}
+                editView={(fieldProps) => (
+                  <TextField
+                    {...fieldProps}
+                    autoFocus
+                    className="create-column-input"
+                  />
+                )}
+                readView={() => (
+                  <Button
+                    appearance="default"
+                    iconBefore={<AddIcon label="Add column" />}
+                    className="add-column"
+                  />
+                )}
+              />
+            </section>
           </>
         );
       }
