@@ -14,12 +14,23 @@
 
   .columns-wrapper {
     display: flex;
-    align-items: baseline;
+    margin-top: 30px;
+
+    // HACK: @atlaskit's InlineEdit ships with margin-top
+    // Not sure how else to remove it...
+    form,
+    div {
+      margin-top: 0;
+    }
   }
 
   .columns {
     display: flex;
-    margin-top: 10px;
+  }
+
+  .column,
+  .create-column-input {
+    min-width: 300px;
   }
 
   .column {
@@ -30,7 +41,6 @@
     max-width: 300px;
     min-height: 120px;
 
-    margin-top: 20px;
     margin-right: 20px;
 
     padding-top: 0px;
@@ -65,18 +75,11 @@
       .check-icon {
         color: $green;
       }
-
-      // HACK: @atlaskit's InlineEdit ships with margin-top
-      // Not sure how else to remove it...
-      div {
-        margin-top: 0;
-      }
     }
   }
 
   .create-project-button {
     margin-left: -5px;
-    margin-top: 10px;
     width: 100%;
     padding: 20px 10px;
   }

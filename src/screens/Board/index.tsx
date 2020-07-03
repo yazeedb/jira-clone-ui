@@ -158,9 +158,14 @@ export const Board = () => {
 
                 <InlineEdit
                   defaultValue=""
+                  isRequired
                   onConfirm={console.log}
                   editView={(fieldProps) => (
-                    <TextField {...fieldProps} autoFocus />
+                    <TextField
+                      {...fieldProps}
+                      autoFocus
+                      className="create-column-input"
+                    />
                   )}
                   readView={() => (
                     <Button
