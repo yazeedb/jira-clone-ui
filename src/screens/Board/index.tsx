@@ -87,7 +87,11 @@ export const Board = () => {
 
                   // TODO: Have a column.id property (update server logic)
                   return (
-                    <div className="column">
+                    <div
+                      className="column"
+                      // TODO: Make this c.id when the backend is ready
+                      key={c.name}
+                    >
                       <ColumnHeader
                         column={c}
                         showCheckmark={isLastColumn}
@@ -102,13 +106,46 @@ export const Board = () => {
                       />
 
                       {!isFirstColumn && hasNoIssues ? null : (
-                        <Button
-                          appearance="subtle"
-                          iconBefore={<EditorAddIcon label="Create project" />}
-                          className="create-project-button"
-                        >
-                          Create issue
-                        </Button>
+                        <InlineEdit
+                          defaultValue=""
+                          onConfirm={console.log}
+                          readViewFitContainerWidth
+                          hideActionButtons
+                          isRequired
+                          readView={() => (
+                            <Button
+                              appearance="subtle"
+                              iconBefore={
+                                <EditorAddIcon label="Create project" />
+                              }
+                              className="create-project-button"
+                            >
+                              Create issue
+                            </Button>
+                          )}
+                          editView={() => (
+                            <TextField
+                              autoFocus
+                              placeholder="What needs to be done?"
+                              style={{
+                                paddingTop: '20px',
+                                paddingBottom: '70px',
+                                paddingLeft: '15px'
+                              }}
+                              elemBeforeInput={
+                                <img
+                                  src="/task-icon.svg"
+                                  alt="Task icon"
+                                  style={{
+                                    position: 'absolute',
+                                    bottom: '10px',
+                                    left: '17px'
+                                  }}
+                                />
+                              }
+                            />
+                          )}
+                        />
                       )}
                     </div>
                   );
