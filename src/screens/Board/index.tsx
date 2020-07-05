@@ -165,7 +165,6 @@ export const Board = () => {
                 )}
                 readView={() => (
                   <Button
-                    appearance="default"
                     iconBefore={<AddIcon label="Add column" />}
                     className="add-column"
                   />
