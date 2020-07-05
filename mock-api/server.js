@@ -211,11 +211,11 @@ app
         orgName: org.name,
         dateCreated: new Date().toUTCString(),
         columns: [
-          { name: 'TO DO', tasks: [], taskLimit: null },
+          { name: 'TODO', tasks: [], taskLimit: null },
           { name: 'IN PROGRESS', tasks: [], taskLimit: null },
           { name: 'DONE', tasks: [], taskLimit: null }
         ],
-        uiSequence: ['TO DO', 'IN PROGRESS', 'DONE'],
+        uiSequence: ['TODO', 'IN PROGRESS', 'DONE'],
         type: 'Next-gen software'
       };
 
