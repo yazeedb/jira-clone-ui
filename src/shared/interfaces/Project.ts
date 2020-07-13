@@ -47,6 +47,10 @@ export interface Column {
   tasks: Task[];
 }
 
+export interface ColumnsResponse {
+  columns: Column[];
+}
+
 export interface Task {
   id: string;
   orgName: string;
@@ -68,4 +72,8 @@ export interface ProjectAvailableResponse {
 export interface FindOneProjectParams {
   orgName: OrgName;
   projectKey: ProjectKey;
+}
+
+export interface FindOneColumnParams extends FindOneProjectParams {
+  columnId: string;
 }

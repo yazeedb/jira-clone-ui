@@ -1,4 +1,7 @@
-import { FindOneProjectParams } from './interfaces/Project';
+import {
+  FindOneProjectParams,
+  FindOneColumnParams
+} from './interfaces/Project';
 
 const apiBase = '/api';
 
@@ -19,5 +22,8 @@ export const apiRoutes = {
     `${apiBase}/orgs/${orgId}/validateProjectName?name=${projectName}`,
 
   validateProjectKey: (orgId: string, projectKey: string) =>
-    `${apiBase}/orgs/${orgId}/validateProjectKey?key=${projectKey}`
+    `${apiBase}/orgs/${orgId}/validateProjectKey?key=${projectKey}`,
+
+  findOneColumn: ({ orgName, projectKey, columnId }: FindOneColumnParams) =>
+    `${apiBase}/orgs/${orgName}/projects/${projectKey}/columns/${columnId}`
 };

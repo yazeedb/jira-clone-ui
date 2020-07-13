@@ -211,9 +211,9 @@ app
         orgName: org.name,
         dateCreated: new Date().toUTCString(),
         columns: [
-          { name: 'TODO', tasks: [], taskLimit: null },
-          { name: 'IN PROGRESS', tasks: [], taskLimit: null },
-          { name: 'DONE', tasks: [], taskLimit: null }
+          { id: uniqId(), name: 'TODO', tasks: [], taskLimit: null },
+          { id: uniqId(), name: 'IN PROGRESS', tasks: [], taskLimit: null },
+          { id: uniqId(), name: 'DONE', tasks: [], taskLimit: null }
         ],
         uiSequence: ['TODO', 'IN PROGRESS', 'DONE'],
         type: 'Next-gen software'
@@ -258,6 +258,79 @@ app
 
     res.json({ project });
   })
+  .get('/api/orgs/:orgName/projects/:projectKey', (req, res) => {
+    // Find associated user
+    const { user } = req[env.sessionName];
+    const db = dbTools.getDb();
+    const existingUser = db.users.find((u) => u.sub === user.sub);
+
+    // Find associated org
+    const { orgName, projectKey } = req.params;
+    const org = existingUser.orgs.find((o) => o.name === orgName);
+
+    if (!org) {
+      return res.status(404).json({
+        message: 'Org not found!'
+      });
+    }
+
+    // Find associated project
+    const project = org.projects.find((p) => p.key === projectKey);
+
+    if (!project) {
+      return res.status(404).json({
+        message: 'Project not found!'
+      });
+    }
+
+    res.json({ project });
+  })
+  .put(
+    '/api/orgs/:orgName/projects/:projectKey/columns/:columnId',
+    (req, res) => {
+      // Find associated user
+      const { user } = req[env.sessionName];
+      const db = dbTools.getDb();
+      const existingUser = db.users.find((u) => u.sub === user.sub);
+
+      // Find associated org
+      const { orgName, projectKey } = req.params;
+      const org = existingUser.orgs.find((o) => o.name === orgName);
+
+      if (!org) {
+        return res.status(404).json({
+          message: 'Org not found!'
+        });
+      }
+
+      // Find associated project
+      const project = org.projects.find((p) => p.key === projectKey);
+
+      if (!project) {
+        return res.status(404).json({
+          message: 'Project not found!'
+        });
+      }
+
+      const { columnId } = req.params;
+
+      const column = project.columns.find((c) => c.id === columnId);
+
+      if (!column) {
+        return res.status(404).json({
+          message: 'Not found!'
+        });
+      }
+
+      const { newName } = req.body;
+
+      column.name = newName;
+
+      dbTools.replaceDb(db);
+
+      res.json({ columns: project.columns });
+    }
+  )
 
   .all('*', (req, res, next) => {
     // res.cookie(env.csrfCookieName, req.csrfToken());

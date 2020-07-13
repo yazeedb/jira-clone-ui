@@ -31,7 +31,8 @@ export const Board = () => {
       ...initialContext,
       projectParams,
       selectedIssue
-    })
+    }),
+    { devTools: true }
   );
 
   console.log('Board machine:', current);
@@ -85,21 +86,18 @@ export const Board = () => {
                   const isFirstColumn = index === 0;
                   const isLastColumn = index === project.columns.length - 1;
 
-                  // TODO: Have a column.id property (update server logic)
                   return (
-                    <div
-                      className="column"
-                      // TODO: Make this c.id when the backend is ready
-                      key={c.name}
-                    >
+                    <div className="column" key={c.id}>
                       <ColumnHeader
                         column={c}
                         showCheckmark={isLastColumn}
                         onChange={(newName) =>
                           send({
-                            type: 'RENAME_COLUMN',
+                            type: 'CHANGE_COLUMN_NAME',
                             id: c.id,
-                            newName
+                            newName,
+                            projectKey: project.key,
+                            orgName: project.orgName
                           })
                         }
                         onChangeCancel={console.warn}

@@ -4,7 +4,9 @@ import {
   createEmptyProject,
   ProjectResponse,
   FindOneProjectParams,
-  Column
+  Column,
+  ProjectsResponse,
+  ColumnsResponse
 } from 'shared/interfaces/Project';
 import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
@@ -66,12 +68,12 @@ export const boardMachine = Machine<MachineContext>(
               target: 'viewingProject.idle',
               actions: 'setProject',
               cond: 'noSelectedIssue'
-            },
-            {
-              target: 'viewingProject.fetchingIssue',
-              actions: 'setProject',
-              cond: 'hasSelectedIssue'
             }
+            // {
+            //   target: 'viewingProject.fetchingIssue',
+            //   actions: 'setProject',
+            //   cond: 'hasSelectedIssue'
+            // }
           ],
           onError: {
             target: 'failed',
@@ -79,18 +81,247 @@ export const boardMachine = Machine<MachineContext>(
           }
         }
       },
+      failed: {},
       viewingProject: {
         initial: 'idle',
         states: {
           idle: {
             on: {
-              COLUMN_ORDER_UPDATED: { actions: 'reorderColumns' },
-              RENAME_COLUMN: { actions: 'renameColumn' }
+              CHANGE_COLUMN_NAME: 'changingColumnName',
+              CREATE_COLUMN: 'creatingColumn',
+              DELETE_COLUMN: 'deletingColumn',
+              MOVE_COLUMN: 'movingColumn',
+              SET_COLUMN_LIMIT: 'settingColumnLimit',
+              CREATE_TASK: 'creatingTask',
+
+              // Task actor events
+              DELETE_TASK: 'pendingDeleteTask',
+              RENAME_TASK: {
+                target: 'idle',
+                actions: 'spawnRenameTaskActor'
+              },
+              MOVE_TASK: {
+                target: 'idle',
+                actions: 'spawnMoveTaskActor'
+              }
             }
           },
-          fetchingIssue: {}
+          pendingDeleteTask: {
+            on: {
+              CANCEL: 'idle',
+              CONFIRM: {
+                target: 'idle',
+                actions: 'spawnDeleteTaskActor'
+              }
+            }
+          },
+          creatingTask: {
+            initial: 'creating',
+            onDone: 'idle',
+            states: {
+              creating: {
+                invoke: {
+                  src: 'createTask',
+                  onDone: {
+                    target: 'done',
+                    actions: ['setColumns', 'spawnTaskActor']
+                  },
+                  onError: {
+                    target: 'done',
+                    actions: 'flashError'
+                  }
+                }
+              },
+              done: { type: 'final' }
+            }
+          },
+          changingColumnName: {
+            initial: 'saving',
+            onDone: 'idle',
+            states: {
+              saving: {
+                invoke: {
+                  src: 'changeColumnName',
+                  onDone: {
+                    target: 'done',
+                    actions: 'setColumns'
+                  },
+                  onError: {
+                    target: 'done',
+                    actions: 'flashError'
+                  }
+                }
+              },
+              done: { type: 'final' }
+            }
+          },
+          creatingColumn: {
+            initial: 'saving',
+            onDone: 'idle',
+            states: {
+              saving: {
+                invoke: {
+                  src: 'createColumn',
+                  onDone: {
+                    target: 'done',
+                    actions: 'setColumns'
+                  },
+                  onError: {
+                    target: 'done',
+                    actions: 'flashError'
+                  }
+                }
+              },
+              done: { type: 'final' }
+            }
+          },
+          deletingColumn: {
+            initial: 'awaiting',
+            onDone: 'idle',
+            states: {
+              awaiting: {
+                on: {
+                  CLOSE_DELETE_COLUMN: 'done',
+                  CONFIRM_DELETE_COLUMN: 'saving'
+                }
+              },
+              saving: {
+                invoke: {
+                  src: 'deleteColumn',
+                  onDone: {
+                    target: 'done',
+                    actions: 'setColumns'
+                  },
+                  onError: {
+                    target: 'done',
+                    actions: 'flashError'
+                  }
+                }
+              },
+              done: { type: 'final' }
+            }
+          },
+          movingColumn: {
+            initial: 'saving',
+            onDone: 'idle',
+            states: {
+              saving: {
+                invoke: {
+                  src: 'moveColumn',
+                  onDone: {
+                    target: 'done',
+                    actions: 'setColumns'
+                  },
+                  onError: {
+                    target: 'done',
+                    actions: 'flashError'
+                  }
+                }
+              },
+              done: { type: 'final' }
+            }
+          },
+          settingColumnLimit: {
+            initial: 'awaiting',
+            onDone: 'idle',
+            states: {
+              awaiting: {
+                on: {
+                  CLOSE_COLUMN_LIMIT: 'done',
+                  SUBMIT_COLUMN_LIMIT: {
+                    target: 'saving',
+                    cond: 'isValidColumnLimit'
+                  }
+                }
+              },
+              saving: {
+                invoke: {
+                  src: 'setColumnLimit',
+                  onDone: {
+                    target: 'done',
+                    actions: 'setColumns'
+                  },
+                  onError: {
+                    target: 'done',
+                    actions: 'flashError'
+                  }
+                }
+              },
+              done: { type: 'final' }
+            }
+          }
         }
-        /*
+      }
+    }
+  },
+  {
+    services: {
+      fetchProject: ({ projectParams }) =>
+        fetcher.get<ProjectResponse>(apiRoutes.findOneProject(projectParams)),
+
+      changeColumnName: (context, event) => {
+        const { id, newName, projectKey, orgName } = event;
+        const url = apiRoutes.findOneColumn({
+          orgName,
+          projectKey,
+          columnId: id
+        });
+
+        return fetcher.put<ColumnsResponse>(url, { newName });
+      }
+    },
+    guards: {
+      hasSelectedIssue: (context) => !!context.selectedIssue === true,
+      noSelectedIssue: (context) => !!context.selectedIssue === false
+    },
+    actions: {
+      setProject: assign({
+        project: (context, event) => {
+          const e = event as DoneInvokeEvent<FetcherResponse<ProjectResponse>>;
+
+          return e.data.data.project;
+        }
+      }),
+      setError: assign({
+        error: (context, event) => {
+          const e = event as DoneInvokeEvent<Error>;
+
+          return e.data.message;
+        }
+      }),
+      reorderColumns: assign({
+        project: (context, event) => {
+          const { startIndex, endIndex } = event;
+          const { columns } = context.project;
+
+          const result = [...columns];
+          const [removed] = result.splice(startIndex, 1);
+          result.splice(endIndex, 0, removed);
+
+          return {
+            ...context.project,
+            columns: result
+          };
+        }
+      }),
+      setColumns: assign({
+        project: ({ project }, event) => {
+          const e = event as DoneInvokeEvent<{ data: ColumnsResponse }>;
+
+          return {
+            ...project,
+            columns: e.data.data.columns
+          };
+        }
+      })
+    }
+  }
+);
+
+export const getTotalIssues = (columns: Column[]) =>
+  columns.reduce((total, c) => total + c.tasks.length, 0);
+
+/*
           Init websocket now??
           WS Events --
             Board-level events
@@ -136,69 +367,3 @@ export const boardMachine = Machine<MachineContext>(
                 Perhaps column map is worth it...
 
         */
-      },
-      failed: {}
-    }
-  },
-  {
-    services: {
-      fetchProject: ({ projectParams }) =>
-        fetcher.get<ProjectResponse>(apiRoutes.findOneProject(projectParams))
-    },
-    guards: {
-      hasSelectedIssue: (context) => !!context.selectedIssue === true,
-      noSelectedIssue: (context) => !!context.selectedIssue === false
-    },
-    actions: {
-      setProject: assign({
-        project: (context, event) => {
-          const e = event as DoneInvokeEvent<FetcherResponse<ProjectResponse>>;
-
-          return e.data.data.project;
-        }
-      }),
-      setError: assign({
-        error: (context, event) => {
-          const e = event as DoneInvokeEvent<Error>;
-
-          return e.data.message;
-        }
-      }),
-      reorderColumns: assign({
-        project: (context, event) => {
-          const { startIndex, endIndex } = event;
-          const { columns } = context.project;
-
-          const result = [...columns];
-          const [removed] = result.splice(startIndex, 1);
-          result.splice(endIndex, 0, removed);
-
-          return {
-            ...context.project,
-            columns: result
-          };
-        }
-      }),
-      renameColumn: assign({
-        project: (context, event) => {
-          const { project } = context;
-          const { id, newName } = event;
-
-          return {
-            ...project,
-            columns: project.columns.map((c) => {
-              if (c.id === id) {
-                return { ...c, name: newName };
-              }
-
-              return c;
-            })
-          };
-        }
-      })
-    }
-  }
-);
-
-export const getTotalIssues = (columns: Column[]) =>
-  columns.reduce((total, c) => total + c.tasks.length, 0);
