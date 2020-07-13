@@ -174,6 +174,7 @@ app
       });
     }
   })
+
   .post('/api/orgs/:orgId/projects', (req, res) => {
     // Find associated user
     const { user } = req[env.sessionName];
@@ -285,6 +286,59 @@ app
 
     res.json({ project });
   })
+
+  .post('/api/orgs/:orgName/projects/:projectKey/columns', (req, res) => {
+    // Find associated user
+    const { user } = req[env.sessionName];
+    const db = dbTools.getDb();
+    const existingUser = db.users.find((u) => u.sub === user.sub);
+
+    // Find associated org
+    const { orgName } = req.params;
+    const org = existingUser.orgs.find((o) => o.name === orgName);
+
+    if (!org) {
+      res.status(404).json({
+        message: 'Org not found!'
+      });
+    } else {
+      const { projectKey } = req.params;
+
+      // Find associated project
+      const project = org.projects.find((p) => p.key === projectKey);
+
+      if (!project) {
+        return res.status(404).json({
+          message: 'Project not found!'
+        });
+      }
+
+      const { name } = req.body;
+
+      const existingColumn = project.columns.find((c) => c.name === name);
+
+      if (existingColumn) {
+        console.log('existingColumn', existingColumn);
+        return res.status(400).json({
+          message: 'A column with that name already exists in the project'
+        });
+      }
+
+      const newColumn = {
+        id: uniqId(),
+        name: name,
+        tasks: [],
+        taskLimit: null
+      };
+
+      project.columns.push(newColumn);
+
+      dbTools.replaceDb(db);
+
+      res.json({ columns: project.columns });
+    }
+  })
+
   .put(
     '/api/orgs/:orgName/projects/:projectKey/columns/:columnId',
     (req, res) => {

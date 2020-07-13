@@ -153,7 +153,13 @@ export const Board = () => {
               <InlineEdit
                 defaultValue=""
                 isRequired
-                onConfirm={console.log}
+                onConfirm={(name) =>
+                  send({
+                    type: 'CREATE_COLUMN',
+                    name,
+                    projectKey: project.key,
+                    orgName: project.orgName
+                  })}
                 editView={(fieldProps) => (
                   <TextField
                     {...fieldProps}

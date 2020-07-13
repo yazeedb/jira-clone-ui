@@ -18,6 +18,9 @@ export const apiRoutes = {
   findOneProject: ({ orgName, projectKey }: FindOneProjectParams) =>
     `${apiBase}/orgs/${orgName}/projects/${projectKey}`,
 
+  columnsByProject: (params: FindOneProjectParams) =>
+    `${apiRoutes.findOneProject(params)}/columns`,
+
   validateProjectName: (orgId: string, projectName: string) =>
     `${apiBase}/orgs/${orgId}/validateProjectName?name=${projectName}`,
 

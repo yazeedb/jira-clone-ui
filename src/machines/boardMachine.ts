@@ -268,6 +268,21 @@ export const boardMachine = Machine<MachineContext>(
         });
 
         return fetcher.put<ColumnsResponse>(url, { newName });
+      },
+
+      createColumn: (context, event) => {
+        const { name, projectKey, orgName } = event;
+        const url = apiRoutes.columnsByProject({
+          projectKey,
+          orgName
+        });
+
+        // console.log({
+
+        // })
+        console.log({ url });
+
+        return fetcher.post<ColumnsResponse>(url, { name });
       }
     },
     guards: {
