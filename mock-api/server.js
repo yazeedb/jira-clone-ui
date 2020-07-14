@@ -375,11 +375,21 @@ app
           message: 'Not found!'
         });
       }
-
       const { newName } = req.body;
 
-      column.name = newName;
+      if (column.name === newName) {
+        return res.json({ message: "This is already the column's name" });
+      }
 
+      const nameTaken = project.columns.some((c) => c.name === newName);
+
+      if (nameTaken) {
+        return res.status(400).json({
+          message: 'Name already taken'
+        });
+      }
+
+      column.name = newName;
       dbTools.replaceDb(db);
 
       res.json({ columns: project.columns });
