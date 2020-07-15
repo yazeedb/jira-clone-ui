@@ -91,16 +91,17 @@ export const Board = () => {
                       <ColumnHeader
                         column={c}
                         showCheckmark={isLastColumn}
-                        onChange={(newName) =>
+                        onChangeCancel={() => {}}
+                        onChange={(newValue) => {
                           send({
                             type: 'CHANGE_COLUMN_NAME',
                             id: c.id,
-                            newName,
+                            oldValue: c.name,
+                            newValue,
                             projectKey: project.key,
                             orgName: project.orgName
-                          })
-                        }
-                        onChangeCancel={console.warn}
+                          });
+                        }}
                       />
 
                       {!isFirstColumn && hasNoIssues ? null : (
@@ -159,7 +160,8 @@ export const Board = () => {
                     name,
                     projectKey: project.key,
                     orgName: project.orgName
-                  })}
+                  })
+                }
                 editView={(fieldProps) => (
                   <TextField
                     {...fieldProps}

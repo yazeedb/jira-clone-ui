@@ -87,7 +87,10 @@ export const boardMachine = Machine<MachineContext>(
         states: {
           idle: {
             on: {
-              CHANGE_COLUMN_NAME: 'changingColumnName',
+              CHANGE_COLUMN_NAME: {
+                target: 'changingColumnName',
+                cond: 'isNewValue'
+              },
               CREATE_COLUMN: 'creatingColumn',
               DELETE_COLUMN: 'deletingColumn',
               MOVE_COLUMN: 'movingColumn',
@@ -260,14 +263,14 @@ export const boardMachine = Machine<MachineContext>(
         fetcher.get<ProjectResponse>(apiRoutes.findOneProject(projectParams)),
 
       changeColumnName: (context, event) => {
-        const { id, newName, projectKey, orgName } = event;
+        const { id, newValue, projectKey, orgName } = event;
         const url = apiRoutes.findOneColumn({
           orgName,
           projectKey,
           columnId: id
         });
 
-        return fetcher.put<ColumnsResponse>(url, { newName });
+        return fetcher.put<ColumnsResponse>(url, { newValue });
       },
 
       createColumn: (context, event) => {
@@ -287,7 +290,10 @@ export const boardMachine = Machine<MachineContext>(
     },
     guards: {
       hasSelectedIssue: (context) => !!context.selectedIssue === true,
-      noSelectedIssue: (context) => !!context.selectedIssue === false
+      noSelectedIssue: (context) => !!context.selectedIssue === false,
+
+      isNewValue: (context, { oldValue, newValue }) =>
+        oldValue.toLowerCase() !== newValue.toLowerCase()
     },
     actions: {
       setProject: assign({
@@ -340,13 +346,13 @@ export const getTotalIssues = (columns: Column[]) =>
           Init websocket now??
           WS Events --
             Board-level events
-              Client1 ====> updateBoard({ id: 1, newName: 'Jenkins' })
+              Client1 ====> updateBoard({ id: 1, newValue: 'Jenkins' })
 
               Server ====> notifyAllClients({
                 type: 'BOARD_UPDATED',
                 id: 1,
                 diff: {
-                  newName: 'Jenkins',
+                  newValue: 'Jenkins',
                   newOrder: 2,
                   newOwner: 'Afroze'
                 }

@@ -375,13 +375,15 @@ app
           message: 'Not found!'
         });
       }
-      const { newName } = req.body;
+      const { newValue } = req.body;
 
-      if (column.name === newName) {
-        return res.json({ message: "This is already the column's name" });
+      if (column.name === newValue) {
+        return res
+          .status(400)
+          .json({ message: "This is already the column's name" });
       }
 
-      const nameTaken = project.columns.some((c) => c.name === newName);
+      const nameTaken = project.columns.some((c) => c.name === newValue);
 
       if (nameTaken) {
         return res.status(400).json({
@@ -389,7 +391,7 @@ app
         });
       }
 
-      column.name = newName;
+      column.name = newValue;
       dbTools.replaceDb(db);
 
       res.json({ columns: project.columns });
