@@ -279,15 +279,12 @@ export const boardMachine = Machine<MachineContext>(
       },
 
       createColumn: (context, event) => {
-        const { name, projectKey, orgName } = event;
         const url = apiRoutes.columnsByProject({
-          projectKey,
-          orgName
+          projectKey: context.project.key,
+          orgName: context.project.orgName
         });
 
-        console.log({ url });
-
-        return fetcher.post<ColumnsResponse>(url, { name });
+        return fetcher.post<ColumnsResponse>(url, { name: event.name });
       },
       deleteColumn: (context, event) => {
         if (!context.pendingDeleteColumnId) {

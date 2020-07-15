@@ -163,9 +163,7 @@ export const Board = () => {
                 onConfirm={(name) =>
                   send({
                     type: 'CREATE_COLUMN',
-                    name,
-                    projectKey: project.key,
-                    orgName: project.orgName
+                    name
                   })
                 }
                 editView={(fieldProps) => (
