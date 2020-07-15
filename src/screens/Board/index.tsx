@@ -7,7 +7,7 @@ import {
   getTotalIssues
 } from 'machines/boardMachine';
 import ProgressBar from '@atlaskit/progress-bar';
-
+import Modal, { ModalTransition } from '@atlaskit/modal-dialog';
 import Breadcrumbs, { BreadcrumbsItem } from '@atlaskit/breadcrumbs';
 import TextField from '@atlaskit/textfield';
 import EditorSearchIcon from '@atlaskit/icon/glyph/editor/search';
@@ -102,6 +102,12 @@ export const Board = () => {
                             orgName: project.orgName
                           });
                         }}
+                        onDelete={() =>
+                          send({
+                            type: 'DELETE_COLUMN',
+                            id: c.id
+                          })
+                        }
                       />
 
                       {!isFirstColumn && hasNoIssues ? null : (
@@ -177,6 +183,28 @@ export const Board = () => {
                 )}
               />
             </section>
+
+            {current.matches('viewingProject.deletingColumn.awaiting') && (
+              <Modal
+                key="active-modal"
+                appearance="danger"
+                width="small"
+                actions={[
+                  {
+                    text: 'Delete',
+                    onClick: () => send({ type: 'CONFIRM_DELETE_COLUMN' })
+                  },
+                  {
+                    text: 'Cancel',
+                    onClick: () => send({ type: 'CLOSE_DELETE_COLUMN' })
+                  }
+                ]}
+                onClose={() => send({ type: 'CLOSE_DELETE_COLUMN' })}
+                heading="You're about to delete this column"
+              >
+                Are you sure you want to delete this column?
+              </Modal>
+            )}
           </>
         );
       }

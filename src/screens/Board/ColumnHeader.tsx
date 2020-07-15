@@ -12,13 +12,15 @@ interface ColumnHeaderProps {
   column: Column;
   showCheckmark: boolean;
   onChange: (value: string) => void;
+  onDelete: () => void;
   onChangeCancel: () => void;
 }
 
 export const ColumnHeader: FC<ColumnHeaderProps> = ({
   column,
   showCheckmark,
-  onChange
+  onChange,
+  onDelete
 }) => {
   const [showPopup, setShowPopup] = useState(false);
 
@@ -45,7 +47,7 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
         content={() => (
           <Section>
             <ButtonItem>Set column limit</ButtonItem>
-            <ButtonItem>Delete</ButtonItem>
+            <ButtonItem onClick={onDelete}>Delete</ButtonItem>
           </Section>
         )}
         trigger={(triggerProps) => (

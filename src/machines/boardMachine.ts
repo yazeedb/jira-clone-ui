@@ -16,6 +16,7 @@ interface MachineContext {
   project: Project;
   error: string;
   selectedIssue?: string;
+  pendingDeleteColumnId?: string;
 }
 
 /*
@@ -52,7 +53,8 @@ export const initialContext: MachineContext = {
   },
   project: createEmptyProject(),
   error: '',
-  selectedIssue: undefined
+  selectedIssue: undefined,
+  pendingDeleteColumnId: undefined
 };
 
 export const boardMachine = Machine<MachineContext>(
@@ -180,6 +182,9 @@ export const boardMachine = Machine<MachineContext>(
           },
           deletingColumn: {
             initial: 'awaiting',
+            entry: assign({
+              pendingDeleteColumnId: (context, event) => event.id
+            }),
             onDone: 'idle',
             states: {
               awaiting: {
@@ -280,12 +285,22 @@ export const boardMachine = Machine<MachineContext>(
           orgName
         });
 
-        // console.log({
-
-        // })
         console.log({ url });
 
         return fetcher.post<ColumnsResponse>(url, { name });
+      },
+      deleteColumn: (context, event) => {
+        if (!context.pendingDeleteColumnId) {
+          return Promise.reject();
+        }
+
+        const url = apiRoutes.findOneColumn({
+          projectKey: context.project.key,
+          orgName: context.project.orgName,
+          columnId: context.pendingDeleteColumnId
+        });
+
+        return fetcher.delete<ColumnsResponse>(url);
       }
     },
     guards: {
