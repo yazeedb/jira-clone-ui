@@ -186,6 +186,7 @@ export const Board = () => {
 
             {current.matches('viewingProject.deletingColumn.awaiting') && (
               <Modal
+                autoFocus
                 key="active-modal"
                 appearance="danger"
                 width="small"

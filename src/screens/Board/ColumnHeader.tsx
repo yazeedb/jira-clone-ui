@@ -28,9 +28,17 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
   disableDeleteMessage
 }) => {
   const [showPopup, setShowPopup] = useState(false);
+  const closePopup = () => setShowPopup(false);
+  const openPopup = () => setShowPopup(true);
 
   const deleteButton = (
-    <ButtonItem onClick={onDelete} isDisabled={disableDelete}>
+    <ButtonItem
+      onClick={() => {
+        onDelete();
+        closePopup();
+      }}
+      isDisabled={disableDelete}
+    >
       Delete
     </ButtonItem>
   );
@@ -62,11 +70,11 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
 
       <Popup
         isOpen={showPopup}
-        onClose={() => setShowPopup(false)}
+        onClose={closePopup}
         placement="bottom-end"
         content={() => (
           <Section>
-            <ButtonItem>Set column limit</ButtonItem>
+            <ButtonItem onClick={closePopup}>Set column limit</ButtonItem>
             {renderDeleteButton()}
           </Section>
         )}
@@ -74,7 +82,7 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
           <Button
             {...triggerProps}
             isSelected={showPopup}
-            onClick={() => setShowPopup(true)}
+            onClick={openPopup}
             className={showPopup ? 'more-icon show' : 'more-icon'}
             iconBefore={<MoreIcon size="large" label="More" />}
           />
