@@ -425,9 +425,8 @@ app
       }
 
       const { columnId } = req.params;
-      const columnPredicate = (c) => c.id !== columnId;
 
-      const column = project.columns.find(columnPredicate);
+      const column = project.columns.find((c) => c.id === columnId);
 
       if (!column) {
         return res.status(404).json({
@@ -435,7 +434,7 @@ app
         });
       }
 
-      project.columns = project.columns.filter(columnPredicate);
+      project.columns = project.columns.filter((c) => c.id !== columnId);
       dbTools.replaceDb(db);
 
       res.json({ columns: project.columns });
