@@ -434,6 +434,12 @@ app
         });
       }
 
+      if (project.columns.length === 1) {
+        return res.status(400).json({
+          message: 'Cannot delete the last column!'
+        });
+      }
+
       project.columns = project.columns.filter((c) => c.id !== columnId);
       dbTools.replaceDb(db);
 
