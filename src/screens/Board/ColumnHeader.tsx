@@ -7,6 +7,7 @@ import Popup from '@atlaskit/popup';
 import Button from '@atlaskit/button';
 import TextField from '@atlaskit/textfield';
 import InlineEdit from '@atlaskit/inline-edit';
+import { Tooltip } from 'react-tippy';
 
 interface ColumnHeaderProps {
   column: Column;
@@ -14,15 +15,34 @@ interface ColumnHeaderProps {
   onChange: (value: string) => void;
   onDelete: () => void;
   onChangeCancel: () => void;
+  disableDelete: boolean;
+  disableDeleteMessage: string;
 }
 
 export const ColumnHeader: FC<ColumnHeaderProps> = ({
   column,
   showCheckmark,
   onChange,
-  onDelete
+  onDelete,
+  disableDelete,
+  disableDeleteMessage
 }) => {
   const [showPopup, setShowPopup] = useState(false);
+
+  const deleteButton = (
+    <ButtonItem onClick={onDelete} isDisabled={disableDelete}>
+      Delete
+    </ButtonItem>
+  );
+
+  const renderDeleteButton = () =>
+    disableDelete ? (
+      <Tooltip distance={-80} title={disableDeleteMessage}>
+        {deleteButton}
+      </Tooltip>
+    ) : (
+      deleteButton
+    );
 
   return (
     <header>
@@ -47,7 +67,7 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
         content={() => (
           <Section>
             <ButtonItem>Set column limit</ButtonItem>
-            <ButtonItem onClick={onDelete}>Delete</ButtonItem>
+            {renderDeleteButton()}
           </Section>
         )}
         trigger={(triggerProps) => (

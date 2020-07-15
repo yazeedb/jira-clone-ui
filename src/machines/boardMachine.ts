@@ -94,7 +94,10 @@ export const boardMachine = Machine<MachineContext>(
                 cond: 'isNewValue'
               },
               CREATE_COLUMN: 'creatingColumn',
-              DELETE_COLUMN: 'deletingColumn',
+              DELETE_COLUMN: {
+                target: 'deletingColumn',
+                cond: 'isNotLastColumn'
+              },
               MOVE_COLUMN: 'movingColumn',
               SET_COLUMN_LIMIT: 'settingColumnLimit',
               CREATE_TASK: 'creatingTask',
@@ -305,7 +308,9 @@ export const boardMachine = Machine<MachineContext>(
       noSelectedIssue: (context) => !!context.selectedIssue === false,
 
       isNewValue: (context, { oldValue, newValue }) =>
-        oldValue.toLowerCase() !== newValue.toLowerCase()
+        oldValue.toLowerCase() !== newValue.toLowerCase(),
+
+      isNotLastColumn: (context) => context.project.columns.length > 1
     },
     actions: {
       setProject: assign({

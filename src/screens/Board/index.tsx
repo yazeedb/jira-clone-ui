@@ -108,6 +108,8 @@ export const Board = () => {
                             id: c.id
                           })
                         }
+                        disableDelete={project.columns.length === 1}
+                        disableDeleteMessage="The last column can't be deleted"
                       />
 
                       {!isFirstColumn && hasNoIssues ? null : (
