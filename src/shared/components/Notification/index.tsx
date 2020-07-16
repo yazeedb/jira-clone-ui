@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import './Notification.scss';
 
-type NotificationType = 'success' | 'error';
+export type NotificationType = 'success' | 'error';
 
 interface NotificationProps {
   primaryMessage: string;
