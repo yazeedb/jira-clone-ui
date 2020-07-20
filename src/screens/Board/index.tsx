@@ -89,7 +89,8 @@ export const Board = () => {
 
                   const baseClassName = 'column';
 
-                  const taskLimitExceeded = c.tasks.length > c.taskLimit;
+                  const taskLimitExceeded =
+                    c.taskLimit !== null && c.tasks.length > c.taskLimit;
 
                   const columnClassName = taskLimitExceeded
                     ? `${baseClassName} task-limit-exceeded`
@@ -113,6 +114,12 @@ export const Board = () => {
                         onSetColumnLimit={() =>
                           send({
                             type: 'SET_COLUMN_LIMIT',
+                            id: c.id
+                          })
+                        }
+                        onClearColumnLimit={() =>
+                          send({
+                            type: 'CLEAR_COLUMN_LIMIT',
                             id: c.id
                           })
                         }

@@ -100,6 +100,7 @@ export const boardMachine = Machine<MachineContext>(
               },
               MOVE_COLUMN: 'movingColumn',
               SET_COLUMN_LIMIT: 'settingColumnLimit',
+              CLEAR_COLUMN_LIMIT: 'clearingColumnLimit',
               CREATE_TASK: 'creatingTask',
 
               // Task actor events
@@ -261,6 +262,28 @@ export const boardMachine = Machine<MachineContext>(
               },
               done: { type: 'final' }
             }
+          },
+          clearingColumnLimit: {
+            initial: 'clearing',
+            entry: 'setPendingColumnId',
+            exit: 'resetPendingColumnId',
+            onDone: 'idle',
+            states: {
+              clearing: {
+                invoke: {
+                  src: 'clearColumnLimit',
+                  onDone: {
+                    target: 'done',
+                    actions: 'setColumns'
+                  },
+                  onError: {
+                    target: 'done',
+                    actions: 'flashError'
+                  }
+                }
+              },
+              done: { type: 'final' }
+            }
           }
         }
       }
@@ -318,6 +341,21 @@ export const boardMachine = Machine<MachineContext>(
         });
 
         return fetcher.put<ColumnsResponse>(url, { limit });
+      },
+      clearColumnLimit: (context, event) => {
+        if (!context.pendingColumnId) {
+          return Promise.reject();
+        }
+
+        const { project, pendingColumnId } = context;
+
+        const url = apiRoutes.setColumnLimit({
+          projectKey: project.key,
+          orgName: project.orgName,
+          columnId: pendingColumnId
+        });
+
+        return fetcher.put<ColumnsResponse>(url, { limit: null });
       }
     },
     guards: {
