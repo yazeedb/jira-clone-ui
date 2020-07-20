@@ -87,8 +87,16 @@ export const Board = () => {
                   const isFirstColumn = index === 0;
                   const isLastColumn = index === project.columns.length - 1;
 
+                  const baseClassName = 'column';
+
+                  const taskLimitExceeded = c.tasks.length > c.taskLimit;
+
+                  const columnClassName = taskLimitExceeded
+                    ? `${baseClassName} task-limit-exceeded`
+                    : baseClassName;
+
                   return (
-                    <div className="column" key={c.id}>
+                    <div className={columnClassName} key={c.id}>
                       <ColumnHeader
                         column={c}
                         showCheckmark={isLastColumn}
@@ -116,6 +124,7 @@ export const Board = () => {
                         }
                         disableDelete={project.columns.length === 1}
                         disableDeleteMessage="The last column can't be deleted"
+                        taskLimitExceeded={taskLimitExceeded}
                       />
 
                       {!isFirstColumn && hasNoIssues ? null : (

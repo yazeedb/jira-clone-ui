@@ -35,6 +35,11 @@
 
   .column {
     background-color: $code-block;
+
+    &.task-limit-exceeded {
+      background-color: $yellow-2;
+    }
+
     border-radius: 6px;
 
     min-width: 300px;

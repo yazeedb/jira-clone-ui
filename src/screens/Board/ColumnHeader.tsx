@@ -18,6 +18,7 @@ interface ColumnHeaderProps {
   onDelete: () => void;
   disableDelete: boolean;
   disableDeleteMessage: string;
+  taskLimitExceeded: boolean;
 }
 
 export const ColumnHeader: FC<ColumnHeaderProps> = ({
@@ -27,7 +28,8 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
   onSetColumnLimit,
   onDelete,
   disableDelete,
-  disableDeleteMessage
+  disableDeleteMessage,
+  taskLimitExceeded
 }) => {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
@@ -66,7 +68,12 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
 
       {column.taskLimit && (
         <Tooltip title="This column will be highlighted when the number of issues exceeds this limit.">
-          <Lozenge>MAX: {column.taskLimit}</Lozenge>
+          <Lozenge
+            appearance={taskLimitExceeded ? 'moved' : 'default'}
+            isBold={taskLimitExceeded}
+          >
+            MAX: {column.taskLimit}
+          </Lozenge>
         </Tooltip>
       )}
 
