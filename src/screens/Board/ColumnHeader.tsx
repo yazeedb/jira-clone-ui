@@ -8,6 +8,7 @@ import Button from '@atlaskit/button';
 import TextField from '@atlaskit/textfield';
 import InlineEdit from '@atlaskit/inline-edit';
 import { Tooltip } from 'react-tippy';
+import Lozenge from '@atlaskit/lozenge';
 
 interface ColumnHeaderProps {
   column: Column;
@@ -62,6 +63,12 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
         isRequired
         readView={() => <h6 className="title">{column.name}</h6>}
       />
+
+      {column.taskLimit && (
+        <Tooltip title="This column will be highlighted when the number of issues exceeds this limit.">
+          <Lozenge>MAX: {column.taskLimit}</Lozenge>
+        </Tooltip>
+      )}
 
       {showCheckmark && (
         <span className="check-icon">
