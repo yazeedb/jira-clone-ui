@@ -13,6 +13,7 @@
     "@atlaskit/icon": "^20.1.1",
     "@atlaskit/inline-edit": "^10.0.33",
     "@atlaskit/logo": "^12.3.4",
+    "@atlaskit/lozenge": "^10.0.1",
     "@atlaskit/menu": "^0.4.7",
     "@atlaskit/modal-dialog": "^11.0.0",
     "@atlaskit/popup": "^0.4.1",
