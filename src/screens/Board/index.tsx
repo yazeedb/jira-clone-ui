@@ -7,7 +7,7 @@ import {
   getTotalIssues
 } from 'machines/boardMachine';
 import ProgressBar from '@atlaskit/progress-bar';
-import Modal, { ModalTransition } from '@atlaskit/modal-dialog';
+import Modal from '@atlaskit/modal-dialog';
 import Breadcrumbs, { BreadcrumbsItem } from '@atlaskit/breadcrumbs';
 import TextField from '@atlaskit/textfield';
 import EditorSearchIcon from '@atlaskit/icon/glyph/editor/search';
@@ -21,6 +21,7 @@ import EditorAddIcon from '@atlaskit/icon/glyph/editor/add';
 import Button from '@atlaskit/button';
 import { ColumnHeader } from './ColumnHeader';
 import InlineEdit from '@atlaskit/inline-edit';
+import { SetColumnLimit } from './SetColumnLimit';
 
 export const Board = () => {
   const projectParams = useParams<FindOneProjectParams>();
@@ -91,7 +92,6 @@ export const Board = () => {
                       <ColumnHeader
                         column={c}
                         showCheckmark={isLastColumn}
-                        onChangeCancel={() => {}}
                         onChange={(newValue) => {
                           send({
                             type: 'CHANGE_COLUMN_NAME',
@@ -102,6 +102,12 @@ export const Board = () => {
                             orgName: project.orgName
                           });
                         }}
+                        onSetColumnLimit={() =>
+                          send({
+                            type: 'SET_COLUMN_LIMIT',
+                            id: c.id
+                          })
+                        }
                         onDelete={() =>
                           send({
                             type: 'DELETE_COLUMN',
@@ -205,6 +211,18 @@ export const Board = () => {
               >
                 Are you sure you want to delete this column?
               </Modal>
+            )}
+
+            {current.matches('viewingProject.settingColumnLimit.awaiting') && (
+              <SetColumnLimit
+                onClose={() => send({ type: 'CLOSE_COLUMN_LIMIT' })}
+                onSubmit={(limit) =>
+                  send({
+                    type: 'SUBMIT_COLUMN_LIMIT',
+                    limit
+                  })
+                }
+              />
             )}
           </>
         );

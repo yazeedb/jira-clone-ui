@@ -1,0 +1,11 @@
+.set-column-limit {
+  footer {
+    display: flex;
+    margin: 15px 0;
+    justify-content: flex-end;
+  }
+
+  button[type='submit'] {
+    margin-right: 10px;
+  }
+}

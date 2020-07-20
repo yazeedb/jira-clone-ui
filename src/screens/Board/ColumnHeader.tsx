@@ -13,8 +13,8 @@ interface ColumnHeaderProps {
   column: Column;
   showCheckmark: boolean;
   onChange: (value: string) => void;
+  onSetColumnLimit: () => void;
   onDelete: () => void;
-  onChangeCancel: () => void;
   disableDelete: boolean;
   disableDeleteMessage: string;
 }
@@ -23,6 +23,7 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
   column,
   showCheckmark,
   onChange,
+  onSetColumnLimit,
   onDelete,
   disableDelete,
   disableDeleteMessage
@@ -74,7 +75,14 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
         placement="bottom-end"
         content={() => (
           <Section>
-            <ButtonItem onClick={closePopup}>Set column limit</ButtonItem>
+            <ButtonItem
+              onClick={() => {
+                onSetColumnLimit();
+                closePopup();
+              }}
+            >
+              Set column limit
+            </ButtonItem>
             {renderDeleteButton()}
           </Section>
         )}
