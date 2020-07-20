@@ -42,7 +42,7 @@ export interface Column {
   projectId: string;
   name: string;
   dateCreated: string;
-  taskLimit: number;
+  taskLimit: number | null;
   uiSequence: number;
   tasks: Task[];
 }

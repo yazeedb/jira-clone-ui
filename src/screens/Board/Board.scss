@@ -35,6 +35,11 @@
 
   .column {
     background-color: $code-block;
+
+    &.task-limit-exceeded {
+      background-color: $yellow-2;
+    }
+
     border-radius: 6px;
 
     min-width: 300px;
@@ -53,6 +58,7 @@
       align-items: center;
       min-height: 35px;
       padding: 5px 10px;
+      cursor: grab;
 
       .more-icon {
         margin-left: auto;
@@ -74,6 +80,7 @@
 
       .check-icon {
         color: $green;
+        margin-left: 5px;
       }
     }
   }

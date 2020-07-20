@@ -8,24 +8,30 @@ import Button from '@atlaskit/button';
 import TextField from '@atlaskit/textfield';
 import InlineEdit from '@atlaskit/inline-edit';
 import { Tooltip } from 'react-tippy';
+import Lozenge from '@atlaskit/lozenge';
 
 interface ColumnHeaderProps {
   column: Column;
   showCheckmark: boolean;
   onChange: (value: string) => void;
+  onSetColumnLimit: () => void;
+  onClearColumnLimit: () => void;
   onDelete: () => void;
-  onChangeCancel: () => void;
   disableDelete: boolean;
   disableDeleteMessage: string;
+  taskLimitExceeded: boolean;
 }
 
 export const ColumnHeader: FC<ColumnHeaderProps> = ({
   column,
   showCheckmark,
   onChange,
+  onSetColumnLimit,
+  onClearColumnLimit,
   onDelete,
   disableDelete,
-  disableDeleteMessage
+  disableDeleteMessage,
+  taskLimitExceeded
 }) => {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
@@ -62,6 +68,17 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
         readView={() => <h6 className="title">{column.name}</h6>}
       />
 
+      {column.taskLimit && (
+        <Tooltip title="This column will be highlighted when the number of issues exceeds this limit.">
+          <Lozenge
+            appearance={taskLimitExceeded ? 'moved' : 'default'}
+            isBold={taskLimitExceeded}
+          >
+            MAX: {column.taskLimit}
+          </Lozenge>
+        </Tooltip>
+      )}
+
       {showCheckmark && (
         <span className="check-icon">
           <CheckIcon label="check" size="small" />
@@ -74,7 +91,24 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
         placement="bottom-end"
         content={() => (
           <Section>
-            <ButtonItem onClick={closePopup}>Set column limit</ButtonItem>
+            <ButtonItem
+              onClick={() => {
+                onSetColumnLimit();
+                closePopup();
+              }}
+            >
+              Set column limit
+            </ButtonItem>
+
+            <ButtonItem
+              onClick={() => {
+                onClearColumnLimit();
+                closePopup();
+              }}
+            >
+              Clear column limit
+            </ButtonItem>
+
             {renderDeleteButton()}
           </Section>
         )}

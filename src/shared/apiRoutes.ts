@@ -28,5 +28,8 @@ export const apiRoutes = {
     `${apiBase}/orgs/${orgId}/validateProjectKey?key=${projectKey}`,
 
   findOneColumn: ({ orgName, projectKey, columnId }: FindOneColumnParams) =>
-    `${apiBase}/orgs/${orgName}/projects/${projectKey}/columns/${columnId}`
+    `${apiBase}/orgs/${orgName}/projects/${projectKey}/columns/${columnId}`,
+
+  setColumnLimit: (params: FindOneColumnParams) =>
+    `${apiRoutes.findOneColumn(params)}/setColumnLimit`
 };

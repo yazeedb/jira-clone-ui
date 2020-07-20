@@ -7,7 +7,7 @@ import {
   getTotalIssues
 } from 'machines/boardMachine';
 import ProgressBar from '@atlaskit/progress-bar';
-import Modal, { ModalTransition } from '@atlaskit/modal-dialog';
+import Modal from '@atlaskit/modal-dialog';
 import Breadcrumbs, { BreadcrumbsItem } from '@atlaskit/breadcrumbs';
 import TextField from '@atlaskit/textfield';
 import EditorSearchIcon from '@atlaskit/icon/glyph/editor/search';
@@ -21,6 +21,7 @@ import EditorAddIcon from '@atlaskit/icon/glyph/editor/add';
 import Button from '@atlaskit/button';
 import { ColumnHeader } from './ColumnHeader';
 import InlineEdit from '@atlaskit/inline-edit';
+import { SetColumnLimit } from './SetColumnLimit';
 
 export const Board = () => {
   const projectParams = useParams<FindOneProjectParams>();
@@ -86,12 +87,20 @@ export const Board = () => {
                   const isFirstColumn = index === 0;
                   const isLastColumn = index === project.columns.length - 1;
 
+                  const baseClassName = 'column';
+
+                  const taskLimitExceeded =
+                    c.taskLimit !== null && c.tasks.length > c.taskLimit;
+
+                  const columnClassName = taskLimitExceeded
+                    ? `${baseClassName} task-limit-exceeded`
+                    : baseClassName;
+
                   return (
-                    <div className="column" key={c.id}>
+                    <div className={columnClassName} key={c.id}>
                       <ColumnHeader
                         column={c}
                         showCheckmark={isLastColumn}
-                        onChangeCancel={() => {}}
                         onChange={(newValue) => {
                           send({
                             type: 'CHANGE_COLUMN_NAME',
@@ -102,6 +111,18 @@ export const Board = () => {
                             orgName: project.orgName
                           });
                         }}
+                        onSetColumnLimit={() =>
+                          send({
+                            type: 'SET_COLUMN_LIMIT',
+                            id: c.id
+                          })
+                        }
+                        onClearColumnLimit={() =>
+                          send({
+                            type: 'CLEAR_COLUMN_LIMIT',
+                            id: c.id
+                          })
+                        }
                         onDelete={() =>
                           send({
                             type: 'DELETE_COLUMN',
@@ -110,6 +131,7 @@ export const Board = () => {
                         }
                         disableDelete={project.columns.length === 1}
                         disableDeleteMessage="The last column can't be deleted"
+                        taskLimitExceeded={taskLimitExceeded}
                       />
 
                       {!isFirstColumn && hasNoIssues ? null : (
@@ -205,6 +227,18 @@ export const Board = () => {
               >
                 Are you sure you want to delete this column?
               </Modal>
+            )}
+
+            {current.matches('viewingProject.settingColumnLimit.awaiting') && (
+              <SetColumnLimit
+                onClose={() => send({ type: 'CLOSE_COLUMN_LIMIT' })}
+                onSubmit={(limit) =>
+                  send({
+                    type: 'SUBMIT_COLUMN_LIMIT',
+                    limit
+                  })
+                }
+              />
             )}
           </>
         );
