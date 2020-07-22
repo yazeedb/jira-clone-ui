@@ -35,13 +35,14 @@ export const Notification: FC<NotificationProps> = ({
   const className = show ? `${baseClassName} show` : baseClassName;
 
   return (
-    <div
-      className={className}
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
-      onClick={handleClose}
-    >
-      <Flag title={primaryMessage} icon={iconMap.get(type)} id="1" key="1" />
+    <div className={className} onMouseEnter={onHover} onMouseLeave={onLeave}>
+      <Flag
+        title={primaryMessage}
+        icon={iconMap.get(type)}
+        id="1"
+        key="1"
+        actions={[{ content: 'Okay', onClick: handleClose }]}
+      />
     </div>
   );
 };
