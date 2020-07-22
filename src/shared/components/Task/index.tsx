@@ -9,7 +9,7 @@ interface TaskProps {
 export const TaskComponent: FC<TaskProps> = ({ task }) => {
   return (
     <div className="task">
-      <h1>Hello</h1> {JSON.stringify(task)}
+      <span>{task.name}</span>
     </div>
   );
 };

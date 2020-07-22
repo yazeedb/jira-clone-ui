@@ -141,12 +141,15 @@ export const Board: FC<BoardProps> = ({ user }) => {
                       />
 
                       {c.tasks.map((t) => (
-                        <TaskComponent task={t} />
+                        <TaskComponent task={t} key={t.id} />
                       ))}
 
                       {!isFirstColumn && hasNoIssues ? null : (
                         <InlineEdit
                           defaultValue=""
+                          readViewFitContainerWidth
+                          hideActionButtons
+                          isRequired
                           onConfirm={(taskName) =>
                             send({
                               type: 'CREATE_TASK',
@@ -155,9 +158,6 @@ export const Board: FC<BoardProps> = ({ user }) => {
                               columnId: c.id
                             })
                           }
-                          readViewFitContainerWidth
-                          hideActionButtons
-                          isRequired
                           readView={() => (
                             <Button
                               appearance="subtle"
@@ -169,8 +169,9 @@ export const Board: FC<BoardProps> = ({ user }) => {
                               Create issue
                             </Button>
                           )}
-                          editView={() => (
+                          editView={(fieldProps) => (
                             <TextField
+                              {...fieldProps}
                               autoFocus
                               placeholder="What needs to be done?"
                               style={{
