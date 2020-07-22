@@ -1,9 +1,9 @@
 import { Machine, assign, interpret } from 'xstate';
-import { NotificationType } from 'shared/components/Notification/index';
+import { AppearanceTypes } from '@atlaskit/flag';
 
 interface MachineContext {
   message: string;
-  notificationType: NotificationType;
+  notificationType: AppearanceTypes;
 }
 
 type Event = Open | Close | Pause | Resume;
@@ -60,7 +60,7 @@ export const NotificationMachine = Machine<MachineContext, any, Event>(
 type Open = {
   type: 'OPEN';
   message: string;
-  notificationType: NotificationType;
+  notificationType: AppearanceTypes;
 };
 type Close = { type: 'CLOSE' };
 type Pause = { type: 'PAUSE' };

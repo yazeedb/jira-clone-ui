@@ -25,17 +25,16 @@ export const App = () => {
 
   return (
     <BrowserRouter>
+      <AuthShell />
+
       <Notification
         show={['opened', 'paused'].some(current.matches)}
         type={current.context.notificationType}
         primaryMessage={current.context.message}
-        secondaryMessage=""
         onHover={() => send('PAUSE')}
         onLeave={() => send('RESUME')}
         handleClose={() => send('CLOSE')}
       />
-
-      <AuthShell />
     </BrowserRouter>
   );
 };

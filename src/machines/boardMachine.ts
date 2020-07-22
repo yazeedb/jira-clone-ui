@@ -420,7 +420,7 @@ export const boardMachine = Machine<MachineContext>(
         notificationService.send({
           type: 'OPEN',
           message: event.data.message,
-          notificationType: 'error'
+          notificationType: 'warning'
         });
 
         return context;

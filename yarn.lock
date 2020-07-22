@@ -127,6 +127,20 @@
     react-beautiful-dnd "^12.1.1"
     tslib "^1.9.3"
 
+"@atlaskit/flag@^14.0.0":
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/flag/-/flag-14.0.0.tgz#493abb9ef0e434e5d242cc55b22665674d83a5d9"
+  integrity sha512-vI+OkoVh+oLGi61pYCKxD3qbncZKCWwgqtCMAGy63vm9w0+8I8m/7goh4eT0EWmsi9Ao3xDAiguJCJyD2MNQcA==
+  dependencies:
+    "@atlaskit/analytics-next" "^7.0.0"
+    "@atlaskit/button" "^14.0.0"
+    "@atlaskit/icon" "^21.0.0"
+    "@atlaskit/motion" "^0.4.0"
+    "@atlaskit/portal" "^4.0.0"
+    "@atlaskit/theme" "^10.0.0"
+    "@emotion/core" "^10.0.9"
+    tslib "^1.9.3"
+
 "@atlaskit/form@^7.2.2":
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/@atlaskit/form/-/form-7.2.2.tgz#e99a531086dec27a10ac0d467a5d2347317dd7ec"
@@ -251,6 +265,14 @@
     react-transition-group "^4.4.1"
     react-uid "^2.2.0"
     tiny-invariant "^0.0.3"
+    tslib "^1.9.3"
+
+"@atlaskit/motion@^0.4.0":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@atlaskit/motion/-/motion-0.4.1.tgz#17e9d76b092b103a48c2edcfaeb2b16678d119fe"
+  integrity sha512-8NUQO7ct1w4WxezPGtmYy7vvLMRPhwwEFl2zc9w073K0S7l1dk4fOGi+gzf5ISEOBvVOa6qyvSboK66zUv4hiQ==
+  dependencies:
+    "@emotion/core" "^10.0.9"
     tslib "^1.9.3"
 
 "@atlaskit/pagination@^12.0.19":
