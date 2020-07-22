@@ -10,6 +10,7 @@ import {
 import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { isValidColumnLimit } from 'screens/Board/validateColumnLimit';
+import { notificationService } from './notificationMachine';
 
 interface MachineContext {
   projectParams: FindOneProjectParams;
@@ -17,7 +18,6 @@ interface MachineContext {
   error: string;
   selectedIssue?: string;
   pendingColumnId?: string;
-  openNotification: any
 }
 
 /*
@@ -55,8 +55,7 @@ export const initialContext: MachineContext = {
   project: createEmptyProject(),
   error: '',
   selectedIssue: undefined,
-  pendingColumnId: undefined,
-  openNotification: () => {}
+  pendingColumnId: undefined
 };
 
 export const boardMachine = Machine<MachineContext>(
@@ -418,8 +417,13 @@ export const boardMachine = Machine<MachineContext>(
         pendingColumnId: (context, event) => undefined
       }),
       flashError: assign((context, event) => {
-        context.openNotification(event.data.message, '', 'error')
-        return context
+        notificationService.send({
+          type: 'OPEN',
+          message: event.data.message,
+          notificationType: 'error'
+        });
+
+        return context;
       })
     }
   }
