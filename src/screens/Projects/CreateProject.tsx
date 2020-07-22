@@ -234,7 +234,7 @@ export const CreateProject: FC<CreateProjectProps> = ({
                         )}
 
                         {state.matches('available') && (
-                          <ValidMessage>Project name available!</ValidMessage>
+                          <ValidMessage>Key name available!</ValidMessage>
                         )}
 
                         {state.context.errorMessage && (
