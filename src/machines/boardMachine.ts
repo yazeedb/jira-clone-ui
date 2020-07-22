@@ -17,6 +17,7 @@ interface MachineContext {
   error: string;
   selectedIssue?: string;
   pendingColumnId?: string;
+  openNotification: any
 }
 
 /*
@@ -54,7 +55,8 @@ export const initialContext: MachineContext = {
   project: createEmptyProject(),
   error: '',
   selectedIssue: undefined,
-  pendingColumnId: undefined
+  pendingColumnId: undefined,
+  openNotification: () => {}
 };
 
 export const boardMachine = Machine<MachineContext>(
@@ -414,6 +416,10 @@ export const boardMachine = Machine<MachineContext>(
       }),
       resetPendingColumnId: assign({
         pendingColumnId: (context, event) => undefined
+      }),
+      flashError: assign((context, event) => {
+        context.openNotification(event.data.message, '', 'error')
+        return context
       })
     }
   }
