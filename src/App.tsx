@@ -8,12 +8,9 @@ import {
   Redirect,
   useLocation
 } from 'react-router-dom';
-import { useMachine } from '@xstate/react';
+import { useMachine, useService } from '@xstate/react';
 import { CompleteSignup } from './screens/CompleteSignup';
-import {
-  Notification,
-  NotificationType
-} from './shared/components/Notification';
+import { Notification } from './shared/components/Notification';
 import { authMachine } from './machines/authMachine';
 import { ConfirmOrg } from './screens/ConfirmOrg';
 import { GlobalNav } from './shared/components/GlobalNav';
@@ -21,11 +18,23 @@ import { NotFoundSvg } from './shared/components/NotFoundSvg';
 import { Projects } from './screens/Projects';
 import { Board } from './screens/Board';
 import { appRoutes } from 'shared/appRoutes';
-import { NotificationMachine } from 'machines/notificationMachine';
+import { notificationService } from 'machines/notificationMachine';
 
 export const App = () => {
+  const [current, send] = useService(notificationService);
+
   return (
     <BrowserRouter>
+      <Notification
+        show={['opened', 'paused'].some(current.matches)}
+        type={current.context.notificationType}
+        primaryMessage={current.context.message}
+        secondaryMessage=""
+        onHover={() => send('PAUSE')}
+        onLeave={() => send('RESUME')}
+        handleClose={() => send('CLOSE')}
+      />
+
       <AuthShell />
     </BrowserRouter>
   );
@@ -51,23 +60,8 @@ const AuthShell = () => {
 
   switch (true) {
     case current.matches('notSignedIn'):
-    case current.matches('signinFailed'):
     case current.matches('authenticating'):
-      return (
-        <>
-          <Login loading={current.matches('authenticating')} send={send} />
-
-          <Notification
-            show={current.matches('signinFailed')}
-            type="error"
-            primaryMessage={current.context.error}
-            secondaryMessage="Please try again"
-            handleClose={() => send('CLEAR_ERROR')}
-            onHover={() => {}}
-            onLeave={() => {}}
-          />
-        </>
-      );
+      return <Login loading={current.matches('authenticating')} send={send} />;
 
     case current.matches('awaitingSignup'):
       return (
@@ -94,73 +88,44 @@ const AuthShell = () => {
   }
 };
 
-export const NotificationContext = React.createContext<any>({});
-
 const AuthenticatedApp = () => {
-  const [current, send] = useMachine(NotificationMachine, {
-    devTools: true
-  });
-
-  const openNotification = (
-    primaryMessage: string,
-    secondaryMessage: string,
-    type: NotificationType
-  ) => {
-    send({
-      type: 'OPEN',
-      message: primaryMessage,
-      notificationType: type
-    });
-  };
-
   return (
-    <NotificationContext.Provider value={openNotification}>
-      <div className="authenticated-app">
-        <GlobalNav />
+    <div className="authenticated-app">
+      <GlobalNav />
 
-        <Route
-          exact
-          path={appRoutes.index}
-          component={() => <Redirect to={appRoutes.projects} />}
-        />
-
-        <Switch>
-          <Route exact path={appRoutes.projects}>
-            <Projects />
-          </Route>
-
-          <Route exact path={appRoutes.board}>
-            <Board />
-          </Route>
-
-          <Route exact path={appRoutes.people}>
-            <h1>TODO: Create people page</h1>
-          </Route>
-
-          <Route path="*">
-            <div
-              style={{
-                width: '400px',
-                margin: '100px auto',
-                textAlign: 'center'
-              }}
-            >
-              <NotFoundSvg />
-              <h1>Oops!</h1>
-              <h2>404 - Not found</h2>
-            </div>
-          </Route>
-        </Switch>
-      </div>
-      <Notification
-        show={['opened', 'paused'].some(current.matches)}
-        type={current.context.notificationType}
-        primaryMessage={current.context.message}
-        secondaryMessage=""
-        onHover={() => send('PAUSE')}
-        onLeave={() => send('RESUME')}
-        handleClose={() => send('CLOSE')}
+      <Route
+        exact
+        path={appRoutes.index}
+        component={() => <Redirect to={appRoutes.projects} />}
       />
-    </NotificationContext.Provider>
+
+      <Switch>
+        <Route exact path={appRoutes.projects}>
+          <Projects />
+        </Route>
+
+        <Route exact path={appRoutes.board}>
+          <Board />
+        </Route>
+
+        <Route exact path={appRoutes.people}>
+          <h1>TODO: Create people page</h1>
+        </Route>
+
+        <Route path="*">
+          <div
+            style={{
+              width: '400px',
+              margin: '100px auto',
+              textAlign: 'center'
+            }}
+          >
+            <NotFoundSvg />
+            <h1>Oops!</h1>
+            <h2>404 - Not found</h2>
+          </div>
+        </Route>
+      </Switch>
+    </div>
   );
 };

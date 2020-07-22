@@ -9,6 +9,7 @@ import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { User } from 'shared/interfaces/User';
 import { Optional } from 'shared/interfaces/Optional';
+import { notificationService } from './notificationMachine';
 
 type SignupFields = Optional<User>;
 
@@ -30,7 +31,6 @@ export const validateForm = (fields: User) => {
 export enum SignupStates {
   editing = 'editing',
   submitting = 'submitting',
-  fail = 'fail',
   success = 'success'
 }
 
@@ -38,7 +38,6 @@ export interface SignupStateSchema {
   states: {
     [SignupStates.editing]: {};
     [SignupStates.submitting]: {};
-    [SignupStates.fail]: {};
     [SignupStates.success]: {};
   };
 }
@@ -66,14 +65,7 @@ export type SignupEvent =
 
 export interface SignupContext {
   formData: SignupFields;
-  errorMessage: string;
 }
-
-export type SignupMachineActor = Interpreter<
-  SignupContext,
-  SignupStateSchema,
-  SignupEvent
->;
 
 export type SignupService = Interpreter<
   SignupContext,
@@ -90,8 +82,7 @@ export const signupMachine = Machine<
     id: 'signup',
     initial: SignupStates.editing,
     context: {
-      formData: {},
-      errorMessage: ''
+      formData: {}
     },
     on: {
       SUBMIT: {
@@ -115,17 +106,11 @@ export const signupMachine = Machine<
             })
           },
           onError: {
-            target: SignupStates.fail,
-            actions: 'updateErrorMessage'
+            target: SignupStates.editing,
+            actions: 'flashError'
           }
         },
         on: { SUBMIT: undefined }
-      },
-      fail: {
-        on: {
-          CLEAR_ERROR: { target: SignupStates.editing }
-        },
-        after: { 3000: SignupStates.editing }
       },
       success: { type: 'final' }
     }
@@ -139,12 +124,16 @@ export const signupMachine = Machine<
           return e.formData;
         }
       }),
-      updateErrorMessage: assign({
-        errorMessage: (_, event) => {
-          const e = event as DoneInvokeEvent<Error>;
+      flashError: assign((context, event) => {
+        const e = event as DoneInvokeEvent<Error>;
 
-          return e.data.message;
-        }
+        notificationService.send({
+          type: 'OPEN',
+          message: e.data.message,
+          notificationType: 'error'
+        });
+
+        return context;
       })
     },
     services: {

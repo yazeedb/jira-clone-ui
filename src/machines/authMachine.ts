@@ -4,11 +4,11 @@ import { apiRoutes } from 'shared/apiRoutes';
 import { signupMachine, SignupService } from './signupMachine';
 import { User, createEmptyUser } from 'shared/interfaces/User';
 import { confirmOrgMachine, ConfirmOrgService } from './confirmOrgMachine';
+import { notificationService } from './notificationMachine';
 
 interface AuthStateSchema {
   states: {
     notSignedIn: {};
-    signinFailed: {};
     authenticating: {};
     awaitingSignup: {};
     awaitingOrgConfirmation: {};
@@ -20,13 +20,11 @@ type AuthEvent =
   | { type: 'TRY_AUTH' }
   | { type: 'SUCCESS'; user: User }
   | { type: 'SIGN_IN_FAILED'; error: string }
-  | { type: 'CLEAR_ERROR' }
   | { type: 'ORG_CONFIRMED' }
   | { type: 'SIGNUP_COMPLETE'; user: User };
 
 interface AuthContext {
   user: User;
-  error: string;
   signupService: SignupService;
   confirmOrgService: ConfirmOrgService;
 }
@@ -36,7 +34,6 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
     id: 'auth',
     context: {
       user: createEmptyUser(),
-      error: '',
       signupService: spawn(signupMachine),
       confirmOrgService: spawn(confirmOrgMachine)
     },
@@ -47,23 +44,8 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
         on: {
           TRY_AUTH: 'authenticating',
           SIGN_IN_FAILED: {
-            target: 'signinFailed',
-            actions: assign({
-              error: (context, event) => event.error
-            })
-          }
-        }
-      },
-      signinFailed: {
-        after: { 3000: 'notSignedIn' },
-        on: {
-          CLEAR_ERROR: 'notSignedIn',
-          TRY_AUTH: 'authenticating',
-          SIGN_IN_FAILED: {
-            target: 'signinFailed',
-            actions: assign({
-              error: (context, event) => event.error
-            })
+            target: 'notSignedIn',
+            actions: 'flashError'
           }
         }
       },
@@ -83,8 +65,8 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
             }
           ],
           onError: {
-            target: 'signinFailed',
-            actions: 'updateErrorMessage'
+            target: 'notSignedIn',
+            actions: 'flashError'
           }
         }
       },
@@ -147,6 +129,17 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
       }
     },
     actions: {
+      flashError: assign((context, event) => {
+        const e = event as DoneInvokeEvent<Error>;
+
+        notificationService.send({
+          type: 'OPEN',
+          message: e.data.message,
+          notificationType: 'error'
+        });
+
+        return context;
+      }),
       spawnSignupService: assign({
         signupService: (context, event) => spawn(signupMachine)
       }),
@@ -158,13 +151,6 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
           const e = event as DoneInvokeEvent<AuthResponse>;
 
           return e.data.data.user;
-        }
-      }),
-      updateErrorMessage: assign({
-        error: (context, event) => {
-          const e = event as DoneInvokeEvent<Error>;
-
-          return e.data.message;
         }
       })
     }

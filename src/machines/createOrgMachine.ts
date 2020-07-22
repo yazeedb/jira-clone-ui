@@ -7,26 +7,21 @@ import {
 } from 'xstate';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
+import { notificationService } from './notificationMachine';
 
 export enum CreateOrgStates {
   editing = 'editing',
   submitting = 'submitting',
-  success = 'success',
-  submitFailed = 'submitFailed'
+  success = 'success'
 }
 
 type FormFields = { org: string };
 
 interface MachineContext {
   formData: FormFields;
-  errorMessage: string;
 }
 
-type SubmitEvent = { type: 'SUBMIT'; formData: FormFields };
-type ClearErrorEvent = { type: 'CLEAR_ERROR' };
-type RetryEvent = { type: 'RETRY' };
-
-type MachineEvent = SubmitEvent | ClearErrorEvent | RetryEvent;
+type MachineEvent = SubmitEvent | RetryEvent;
 
 export type CreateOrgService = Interpreter<MachineContext, any, MachineEvent>;
 
@@ -34,8 +29,7 @@ export const createOrgMachine = Machine<MachineContext, any, MachineEvent>(
   {
     initial: CreateOrgStates.editing,
     context: {
-      formData: { org: '' },
-      errorMessage: ''
+      formData: { org: '' }
     },
     on: {
       SUBMIT: {
@@ -54,15 +48,11 @@ export const createOrgMachine = Machine<MachineContext, any, MachineEvent>(
             actions: sendParent('ORG_CREATED')
           },
           onError: {
-            target: CreateOrgStates.submitFailed,
-            actions: 'updateErrorMessage'
+            target: CreateOrgStates.editing,
+            actions: 'flashError'
           }
         },
         on: { SUBMIT: undefined }
-      },
-      submitFailed: {
-        after: { 5000: CreateOrgStates.editing },
-        on: { CLEAR_ERROR: CreateOrgStates.editing }
       },
       success: { type: 'final' }
     }
@@ -77,18 +67,22 @@ export const createOrgMachine = Machine<MachineContext, any, MachineEvent>(
         })
     },
     actions: {
+      flashError: assign((context, event) => {
+        const e = event as DoneInvokeEvent<Error>;
+
+        notificationService.send({
+          type: 'OPEN',
+          message: e.data.message,
+          notificationType: 'error'
+        });
+
+        return context;
+      }),
       updateFormData: assign({
         formData: (_, event) => {
           const e = event as SubmitEvent;
 
           return e.formData;
-        }
-      }),
-      updateErrorMessage: assign({
-        errorMessage: (_, event) => {
-          const e = event as DoneInvokeEvent<Error>;
-
-          return e.data.message;
         }
       })
     },
@@ -101,3 +95,6 @@ export const createOrgMachine = Machine<MachineContext, any, MachineEvent>(
     }
   }
 );
+
+type SubmitEvent = { type: 'SUBMIT'; formData: FormFields };
+type RetryEvent = { type: 'RETRY' };
