@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import React, { useState, forwardRef, useContext } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import {
@@ -22,8 +22,11 @@ import Button from '@atlaskit/button';
 import { ColumnHeader } from './ColumnHeader';
 import InlineEdit from '@atlaskit/inline-edit';
 import { SetColumnLimit } from './SetColumnLimit';
+import { NotificationContext } from '../../App';
 
 export const Board = () => {
+  const openNotification = useContext(NotificationContext)
+
   const projectParams = useParams<FindOneProjectParams>();
   const { selectedIssue } = parseQuery(useLocation().search);
 
@@ -31,7 +34,8 @@ export const Board = () => {
     boardMachine.withContext({
       ...initialContext,
       projectParams,
-      selectedIssue
+      selectedIssue,
+      openNotification
     }),
     { devTools: true }
   );
