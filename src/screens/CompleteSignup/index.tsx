@@ -104,6 +104,8 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
         handleClose={() => send('CLEAR_ERROR')}
         type="error"
         secondaryMessage="Please try again"
+        onHover={() => {}}
+        onLeave={() => {}}
       />
     </>
   );

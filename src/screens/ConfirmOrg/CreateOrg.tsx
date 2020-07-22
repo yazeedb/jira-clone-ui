@@ -63,6 +63,8 @@ export const CreateOrg: FC<CreateOrgProps> = ({ user, createOrgService }) => {
         secondaryMessage="Please try again"
         show={current.matches(CreateOrgStates.submitFailed)}
         type="error"
+        onHover={() => {}}
+        onLeave={() => {}}
       />
     </>
   );
