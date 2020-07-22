@@ -4,7 +4,6 @@ import { User } from 'shared/interfaces/User';
 import { Formik, Form } from 'formik';
 import { FormField } from 'shared/components/FormField';
 import { useService } from '@xstate/react';
-import { Notification } from 'shared/components/Notification';
 import Button from '@atlaskit/button';
 import { LandingForm } from 'shared/components/LandingForm';
 
@@ -22,6 +21,7 @@ export const CreateOrg: FC<CreateOrgProps> = ({ user, createOrgService }) => {
         <Formik
           initialValues={{ org: '' }}
           validate={(values) => {
+            // TODO: Validate this form
             return {};
           }}
           onSubmit={(values) => {
@@ -55,17 +55,6 @@ export const CreateOrg: FC<CreateOrgProps> = ({ user, createOrgService }) => {
           )}
         </Formik>
       </LandingForm>
-      <Notification
-        handleClose={() => {
-          send('CLEAR_ERROR');
-        }}
-        primaryMessage={current.context.errorMessage}
-        secondaryMessage="Please try again"
-        show={current.matches(CreateOrgStates.submitFailed)}
-        type="error"
-        onHover={() => {}}
-        onLeave={() => {}}
-      />
     </>
   );
 };

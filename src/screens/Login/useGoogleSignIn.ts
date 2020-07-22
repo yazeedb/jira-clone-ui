@@ -48,17 +48,19 @@ export const useGoogleSignIn = (
                 type: 'TRY_AUTH'
               });
             })
-            .catch((error) => {
+            .catch(({ message }) => {
               send({
                 type: 'SIGN_IN_FAILED',
-                error: error.message
+                data: { message }
               });
             });
         },
         onfailure: ({ error }: any) => {
           send({
             type: 'SIGN_IN_FAILED',
-            error: 'Error encountered while signing in with Google'
+            data: {
+              message: 'Error encountered while signing in with Google'
+            }
           });
         }
       });

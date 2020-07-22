@@ -1,4 +1,4 @@
-import { Machine, assign } from 'xstate';
+import { Machine, assign, interpret } from 'xstate';
 import { NotificationType } from 'shared/components/Notification/index';
 
 interface MachineContext {
@@ -65,3 +65,7 @@ type Open = {
 type Close = { type: 'CLOSE' };
 type Pause = { type: 'PAUSE' };
 type Resume = { type: 'RESUME' };
+
+// Globally available service
+// to open notifications
+export const notificationService = interpret(NotificationMachine).start();

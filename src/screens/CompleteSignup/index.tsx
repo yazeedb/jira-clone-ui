@@ -15,7 +15,6 @@ import {
 import { User } from 'shared/interfaces/User';
 import { Interpreter } from 'xstate';
 import { LandingForm } from 'shared/components/LandingForm';
-import { Notification } from 'shared/components/Notification';
 
 interface CompleteSignupProps {
   signupService: Interpreter<SignupContext, SignupStateSchema, SignupEvent>;
@@ -27,7 +26,6 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
   signupService
 }) => {
   const [current, send] = useService(signupService);
-  const { context } = current;
 
   const fieldsWithEmptyStringDefaults = mapObject((value) => value || '', user);
 
@@ -98,15 +96,6 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
           )}
         </Formik>
       </LandingForm>
-      <Notification
-        show={current.matches(SignupStates.fail)}
-        primaryMessage={context.errorMessage}
-        handleClose={() => send('CLEAR_ERROR')}
-        type="error"
-        secondaryMessage="Please try again"
-        onHover={() => {}}
-        onLeave={() => {}}
-      />
     </>
   );
 };
