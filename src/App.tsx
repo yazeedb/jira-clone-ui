@@ -88,8 +88,6 @@ const AuthShell = () => {
   }
 };
 
-export const NotificationContext = React.createContext<any>({});
-
 const AuthenticatedApp = () => {
   return (
     <div className="authenticated-app">
