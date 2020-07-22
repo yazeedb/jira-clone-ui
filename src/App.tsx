@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, FC } from 'react';
 import { Login } from './screens/Login';
 import {
   BrowserRouter,
@@ -19,6 +19,7 @@ import { Projects } from './screens/Projects';
 import { Board } from './screens/Board';
 import { appRoutes } from 'shared/appRoutes';
 import { notificationService } from 'machines/notificationMachine';
+import { User } from 'shared/interfaces/User';
 
 export const App = () => {
   const [current, send] = useService(notificationService);
@@ -79,7 +80,7 @@ const AuthShell = () => {
       );
 
     case current.matches('appUsable'):
-      return <AuthenticatedApp />;
+      return <AuthenticatedApp user={current.context.user} />;
 
     default:
       console.error('Default case hit!', current);
@@ -87,7 +88,10 @@ const AuthShell = () => {
   }
 };
 
-const AuthenticatedApp = () => {
+interface AuthenticatedAppProps {
+  user: User;
+}
+const AuthenticatedApp: FC<AuthenticatedAppProps> = ({ user }) => {
   return (
     <div className="authenticated-app">
       <GlobalNav />
@@ -104,7 +108,7 @@ const AuthenticatedApp = () => {
         </Route>
 
         <Route exact path={appRoutes.board}>
-          <Board />
+          <Board user={user} />
         </Route>
 
         <Route exact path={appRoutes.people}>

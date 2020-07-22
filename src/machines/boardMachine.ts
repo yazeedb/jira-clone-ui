@@ -292,6 +292,23 @@ export const boardMachine = Machine<MachineContext>(
   },
   {
     services: {
+      createTask: (context, event) => {
+        const { key, orgName } = context.project;
+        const { name, reporterId, columnId } = event;
+
+        const url = apiRoutes.findOneColumnTasks({
+          columnId,
+          orgName,
+          projectKey: key
+        });
+
+        return fetcher.post(url, {
+          name,
+          reporterId,
+          columnId
+        });
+      },
+
       fetchProject: ({ projectParams }) =>
         fetcher.get<ProjectResponse>(apiRoutes.findOneProject(projectParams)),
 

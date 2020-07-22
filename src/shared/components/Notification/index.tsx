@@ -41,7 +41,7 @@ export const Notification: FC<NotificationProps> = ({
         icon={iconMap.get(type)}
         id="1"
         key="1"
-        actions={[{ content: 'Okay', onClick: handleClose }]}
+        actions={[{ content: 'Dismiss', onClick: handleClose }]}
       />
     </div>
   );

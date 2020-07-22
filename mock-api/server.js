@@ -447,6 +447,71 @@ app
     }
   )
 
+  .post(
+    '/api/orgs/:orgName/projects/:projectKey/columns/:columnId/tasks',
+    (req, res) => {
+      // Find associated user
+      const { user } = req[env.sessionName];
+      const db = dbTools.getDb();
+      const existingUser = db.users.find((u) => u.sub === user.sub);
+
+      // Find associated org
+      const { orgName, projectKey, columnId } = req.params;
+      const org = existingUser.orgs.find((o) => o.name === orgName);
+
+      if (!org) {
+        return res.status(404).json({
+          message: 'Org not found!'
+        });
+      }
+
+      // Find associated project
+      const project = org.projects.find((p) => p.key === projectKey);
+
+      if (!project) {
+        return res.status(404).json({
+          message: 'Project not found!'
+        });
+      }
+
+      const column = project.columns.find((c) => c.id === columnId);
+
+      if (!column) {
+        return res.status(404).json({
+          message: 'Not found!'
+        });
+      }
+
+      const { name, reporterId } = req.body;
+
+      // Create task
+      const newTask = {
+        id: uniqId(),
+
+        // From request
+        name,
+        reporterId,
+        orgName,
+        columnId,
+
+        projectId: project.id,
+        assigneeId: null,
+        dateCreated: new Date(),
+        dateUpdated: new Date(),
+        description: '',
+
+        // TODO: How will uiSequence be implemented?
+        uiSequence: Infinity
+      };
+
+      column.tasks.push(newTask);
+
+      dbTools.replaceDb(db);
+
+      res.json({ columns: project.columns });
+    }
+  )
+
   .put(
     '/api/orgs/:orgName/projects/:projectKey/columns/:columnId/setColumnLimit',
     (req, res) => {

@@ -30,6 +30,9 @@ export const apiRoutes = {
   findOneColumn: ({ orgName, projectKey, columnId }: FindOneColumnParams) =>
     `${apiBase}/orgs/${orgName}/projects/${projectKey}/columns/${columnId}`,
 
+  findOneColumnTasks: (params: FindOneColumnParams) =>
+    `${apiRoutes.findOneColumn(params)}/tasks`,
+
   setColumnLimit: (params: FindOneColumnParams) =>
     `${apiRoutes.findOneColumn(params)}/setColumnLimit`
 };

@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import React, { useState, forwardRef, FC } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { useMachine } from '@xstate/react';
 import {
@@ -22,8 +22,14 @@ import Button from '@atlaskit/button';
 import { ColumnHeader } from './ColumnHeader';
 import InlineEdit from '@atlaskit/inline-edit';
 import { SetColumnLimit } from './SetColumnLimit';
+import { TaskComponent } from 'shared/components/Task';
+import { User } from 'shared/interfaces/User';
 
-export const Board = () => {
+interface BoardProps {
+  user: User;
+}
+
+export const Board: FC<BoardProps> = ({ user }) => {
   const projectParams = useParams<FindOneProjectParams>();
   const { selectedIssue } = parseQuery(useLocation().search);
 
@@ -134,10 +140,21 @@ export const Board = () => {
                         taskLimitExceeded={taskLimitExceeded}
                       />
 
+                      {c.tasks.map((t) => (
+                        <TaskComponent task={t} />
+                      ))}
+
                       {!isFirstColumn && hasNoIssues ? null : (
                         <InlineEdit
                           defaultValue=""
-                          onConfirm={console.log}
+                          onConfirm={(taskName) =>
+                            send({
+                              type: 'CREATE_TASK',
+                              name: taskName,
+                              reporterId: user.sub,
+                              columnId: c.id
+                            })
+                          }
                           readViewFitContainerWidth
                           hideActionButtons
                           isRequired
