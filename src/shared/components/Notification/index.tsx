@@ -7,7 +7,7 @@ import Info from '@atlaskit/icon/glyph/info';
 import Warning from '@atlaskit/icon/glyph/warning';
 import './Notification.scss';
 
-const iconMap = new Map<AppearanceTypes, any>([
+const iconMap = new Map<AppearanceTypes, JSX.Element>([
   ['info', <Info label="Info icon" primaryColor={N500} />],
   ['success', <Tick label="Success" primaryColor={G400} />],
   ['warning', <Warning label="Warning icon" primaryColor={Y300} />],
