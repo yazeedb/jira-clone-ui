@@ -178,6 +178,7 @@ export const Board: FC<BoardProps> = ({ user }) => {
                               {...fieldProps}
                               autoFocus
                               placeholder="What needs to be done?"
+                              autoComplete="off"
                               style={{
                                 paddingTop: '20px',
                                 paddingBottom: '70px',
