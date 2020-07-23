@@ -8,9 +8,10 @@ import './Task.scss';
 
 interface TaskProps {
   task: Task;
+  onDelete: () => void;
 }
 
-export const TaskComponent: FC<TaskProps> = ({ task }) => {
+export const TaskComponent: FC<TaskProps> = ({ task, onDelete }) => {
   const [showPopup, setShowPopup] = useState(false);
 
   const closePopup = () => setShowPopup(false);
@@ -27,17 +28,20 @@ export const TaskComponent: FC<TaskProps> = ({ task }) => {
           placement="bottom-end"
           content={() => (
             <Section>
+              {/* 
+              TODO: Add Copy Issue Link functionality
               <ButtonItem
                 onClick={() => {
                   closePopup();
                 }}
               >
                 Copy issue link
-              </ButtonItem>
+              </ButtonItem> */}
 
               <ButtonItem
                 onClick={() => {
                   closePopup();
+                  onDelete();
                 }}
               >
                 Delete

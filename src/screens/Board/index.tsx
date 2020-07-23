@@ -141,7 +141,11 @@ export const Board: FC<BoardProps> = ({ user }) => {
                       />
 
                       {c.tasks.map((t) => (
-                        <TaskComponent task={t} key={t.id} />
+                        <TaskComponent
+                          task={t}
+                          key={t.id}
+                          onDelete={() => send('DELETE_TASK')}
+                        />
                       ))}
 
                       {!isFirstColumn && hasNoIssues ? null : (
@@ -244,6 +248,36 @@ export const Board: FC<BoardProps> = ({ user }) => {
                 heading="You're about to delete this column"
               >
                 Are you sure you want to delete this column?
+              </Modal>
+            )}
+
+            {current.matches('viewingProject.pendingDeleteTask') && (
+              <Modal
+                autoFocus
+                key="active-modal"
+                appearance="danger"
+                width="small"
+                heading="Delete FP-18?"
+                actions={[
+                  {
+                    text: 'Delete',
+                    onClick: () => send({ type: 'CONFIRM' })
+                  },
+                  {
+                    text: 'Cancel',
+                    onClick: () => send({ type: 'CANCEL' })
+                  }
+                ]}
+                onClose={() => send({ type: 'CANCEL' })}
+              >
+                <p>
+                  You're about to permanently delete this issue, its comments
+                  and attachments, and all of its data.
+                </p>
+                <p>
+                  If you're not sure, you can resolve or close this issue
+                  instead.
+                </p>
               </Modal>
             )}
 

@@ -64,12 +64,22 @@
         display: initial;
       }
 
+      .title,
+      .tasks-count {
+        color: $subtle-heading;
+        padding: 2.5px;
+      }
+
       .title {
         text-transform: uppercase;
-        color: $subtle-heading;
-        margin-right: 5px;
-        padding: 5px;
         font-weight: normal;
+        margin-right: 2.5px;
+      }
+
+      .tasks-count {
+        font-size: 12px;
+        margin-top: 1px;
+        margin-right: 5px;
       }
 
       .check-icon {

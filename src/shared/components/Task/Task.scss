@@ -4,8 +4,8 @@
   margin: 5px 0px;
   padding-top: 6px;
   padding-bottom: 12px;
-  padding-left: 12px;
-  padding-right: 12px;
+  padding-left: 15px;
+  padding-right: 15px;
 
   cursor: pointer;
   user-select: none;
@@ -32,8 +32,7 @@
   header {
     display: flex;
     height: 32px;
-
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     justify-content: space-between;
     align-items: center;
   }

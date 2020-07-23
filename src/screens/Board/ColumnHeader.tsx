@@ -58,23 +58,27 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
       deleteButton
     );
 
+  const { name, tasks, taskLimit } = column;
+
   return (
     <header>
       <InlineEdit
-        defaultValue={column.name}
+        defaultValue={name}
         onConfirm={onChange}
         editView={(fieldProps) => <TextField {...fieldProps} autoFocus />}
         isRequired
-        readView={() => <h6 className="title">{column.name}</h6>}
+        readView={() => <h6 className="title">{name}</h6>}
       />
 
-      {column.taskLimit && (
+      <span className="tasks-count">{tasks.length}</span>
+
+      {taskLimit && (
         <Tooltip title="This column will be highlighted when the number of issues exceeds this limit.">
           <Lozenge
             appearance={taskLimitExceeded ? 'moved' : 'default'}
             isBold={taskLimitExceeded}
           >
-            MAX: {column.taskLimit}
+            MAX: {taskLimit}
           </Lozenge>
         </Tooltip>
       )}
