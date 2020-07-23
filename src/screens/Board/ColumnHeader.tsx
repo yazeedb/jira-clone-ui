@@ -70,7 +70,7 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
         readView={() => <h6 className="title">{name}</h6>}
       />
 
-      <span className="tasks-count">{tasks.length}</span>
+      {tasks.length > 0 && <span className="tasks-count">{tasks.length}</span>}
 
       {taskLimit && (
         <Tooltip title="This column will be highlighted when the number of issues exceeds this limit.">
