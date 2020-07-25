@@ -40,6 +40,10 @@
       background-color: $yellow-2;
     }
 
+    &.locked {
+      opacity: 0.5;
+    }
+
     border-radius: 6px;
     min-height: 120px;
 
@@ -85,6 +89,10 @@
       .check-icon {
         color: $green;
         margin-left: 5px;
+      }
+
+      .spinner-icon {
+        margin-left: auto;
       }
     }
   }

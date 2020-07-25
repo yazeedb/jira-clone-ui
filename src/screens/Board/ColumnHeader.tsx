@@ -3,6 +3,7 @@ import CheckIcon from '@atlaskit/icon/glyph/check';
 import { Column } from 'shared/interfaces/Project';
 import { ButtonItem, Section } from '@atlaskit/menu';
 import MoreIcon from '@atlaskit/icon/glyph/editor/more';
+import Spinner from '@atlaskit/spinner';
 import Popup from '@atlaskit/popup';
 import Button from '@atlaskit/button';
 import TextField from '@atlaskit/textfield';
@@ -20,6 +21,7 @@ interface ColumnHeaderProps {
   disableDelete: boolean;
   disableDeleteMessage: string;
   taskLimitExceeded: boolean;
+  isLoading: boolean;
 }
 
 export const ColumnHeader: FC<ColumnHeaderProps> = ({
@@ -31,7 +33,8 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
   onDelete,
   disableDelete,
   disableDeleteMessage,
-  taskLimitExceeded
+  taskLimitExceeded,
+  isLoading
 }) => {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
@@ -86,6 +89,12 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
       {showCheckmark && (
         <span className="check-icon">
           <CheckIcon label="check" size="small" />
+        </span>
+      )}
+
+      {isLoading && (
+        <span className="spinner-icon">
+          <Spinner />
         </span>
       )}
 

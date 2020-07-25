@@ -98,9 +98,31 @@ export const Board: FC<BoardProps> = ({ user }) => {
                   const taskLimitExceeded =
                     c.taskLimit !== null && c.tasks.length > c.taskLimit;
 
-                  const columnClassName = taskLimitExceeded
-                    ? `${baseClassName} task-limit-exceeded`
-                    : baseClassName;
+                  const lockColumns = [
+                    'changingColumnName',
+                    'creatingColumn',
+                    'movingColumn',
+                    'clearingColumnLimit',
+                    'settingColumnLimit.saving',
+                    'deletingColumn.saving'
+                  ].some((s) => current.matches(`viewingProject.${s}`));
+
+                  const columnClassName = [
+                    {
+                      cond: taskLimitExceeded,
+                      className: 'task-limit-exceeded'
+                    },
+                    {
+                      cond: lockColumns,
+                      className: 'locked'
+                    }
+                  ].reduce(
+                    (baseClassName, { cond, className }) =>
+                      cond === true
+                        ? `${baseClassName} ${className}`
+                        : baseClassName,
+                    'column'
+                  );
 
                   return (
                     <div className={columnClassName} key={c.id}>
@@ -138,6 +160,7 @@ export const Board: FC<BoardProps> = ({ user }) => {
                         disableDelete={project.columns.length === 1}
                         disableDeleteMessage="The last column can't be deleted"
                         taskLimitExceeded={taskLimitExceeded}
+                        isLoading={lockColumns}
                       />
 
                       {c.tasks.map((t) => (
