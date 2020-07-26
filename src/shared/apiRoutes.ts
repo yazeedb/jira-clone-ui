@@ -1,6 +1,7 @@
 import {
   FindOneProjectParams,
-  FindOneColumnParams
+  FindOneColumnParams,
+  FindOneTaskParams
 } from './interfaces/Project';
 
 const apiBase = '/api';
@@ -32,6 +33,16 @@ export const apiRoutes = {
 
   findOneColumnTasks: (params: FindOneColumnParams) =>
     `${apiRoutes.findOneColumn(params)}/tasks`,
+
+  findOneTask: (params: FindOneTaskParams) => {
+    const tasksRoute = apiRoutes.findOneColumnTasks({
+      columnId: params.columnId,
+      projectKey: params.projectKey,
+      orgName: params.orgName
+    });
+
+    return `${tasksRoute}/${params.taskId}`;
+  },
 
   setColumnLimit: (params: FindOneColumnParams) =>
     `${apiRoutes.findOneColumn(params)}/setColumnLimit`

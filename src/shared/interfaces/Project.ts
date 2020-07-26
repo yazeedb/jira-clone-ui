@@ -77,3 +77,7 @@ export interface FindOneProjectParams {
 export interface FindOneColumnParams extends FindOneProjectParams {
   columnId: string;
 }
+
+export interface FindOneTaskParams extends FindOneColumnParams {
+  taskId: string;
+}
