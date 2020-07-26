@@ -512,6 +512,51 @@ app
     }
   )
 
+  .put(
+    '/api/orgs/:orgName/projects/:projectKey/columns/:columnId/tasks/:taskId/rename',
+    (req, res) => {
+      // Find associated user
+      const { user } = req[env.sessionName];
+      const db = dbTools.getDb();
+      const existingUser = db.users.find((u) => u.sub === user.sub);
+
+      // Find associated org
+      const { orgName, projectKey, columnId, taskId, newTaskName } = req.params;
+      const org = existingUser.orgs.find((o) => o.name === orgName);
+
+      if (!org) {
+        return res.status(404).json({
+          message: 'Org not found!'
+        });
+      }
+
+      // Find associated project
+      const project = org.projects.find((p) => p.key === projectKey);
+
+      if (!project) {
+        return res.status(404).json({
+          message: 'Project not found!'
+        });
+      }
+
+      const column = project.columns.find((c) => c.id === columnId);
+
+      if (!column) {
+        return res.status(404).json({
+          message: 'Not found!'
+        });
+      }
+
+      column.tasks = column.tasks.map((t) =>
+        t.id !== taskId ? t : { ...t, name: newTaskName }
+      );
+
+      dbTools.replaceDb(db);
+
+      res.json({ columns: project.columns });
+    }
+  )
+
   .delete(
     '/api/orgs/:orgName/projects/:projectKey/columns/:columnId/tasks/:taskId',
     (req, res) => {
