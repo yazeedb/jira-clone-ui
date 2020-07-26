@@ -44,6 +44,9 @@ export const apiRoutes = {
     return `${tasksRoute}/${params.taskId}`;
   },
 
+  renameTask: (params: FindOneTaskParams) =>
+    `${apiRoutes.findOneTask(params)}/rename`,
+
   setColumnLimit: (params: FindOneColumnParams) =>
     `${apiRoutes.findOneColumn(params)}/setColumnLimit`
 };
