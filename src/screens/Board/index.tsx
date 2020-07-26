@@ -163,19 +163,22 @@ export const Board: FC<BoardProps> = ({ user }) => {
                         isLoading={lockColumns}
                       />
 
-                      {c.tasks.map((t) => (
-                        <TaskComponent
-                          task={t}
-                          key={t.id}
-                          onDelete={() =>
-                            send({
-                              type: 'DELETE_TASK',
-                              column: c,
-                              task: t
-                            })
-                          }
-                        />
-                      ))}
+                      {c.tasks
+                        .sort((a, b) => a.uiSequence - b.uiSequence)
+                        .map((t) => (
+                          <TaskComponent
+                            task={t}
+                            key={t.id}
+                            projectKey={project.key}
+                            onDelete={() =>
+                              send({
+                                type: 'DELETE_TASK',
+                                column: c,
+                                task: t
+                              })
+                            }
+                          />
+                        ))}
 
                       {!isFirstColumn && hasNoIssues ? null : (
                         <InlineEdit

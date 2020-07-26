@@ -8,10 +8,15 @@ import './Task.scss';
 
 interface TaskProps {
   task: Task;
+  projectKey: string;
   onDelete: () => void;
 }
 
-export const TaskComponent: FC<TaskProps> = ({ task, onDelete }) => {
+export const TaskComponent: FC<TaskProps> = ({
+  task,
+  projectKey,
+  onDelete
+}) => {
   const [showPopup, setShowPopup] = useState(false);
 
   const closePopup = () => setShowPopup(false);
@@ -62,7 +67,9 @@ export const TaskComponent: FC<TaskProps> = ({ task, onDelete }) => {
 
       <footer>
         <img src="/task-icon.svg" />
-        <span className="ui-sequence">FP-13</span>
+        <span className="ui-sequence">
+          {projectKey}-{task.uiSequence}
+        </span>
       </footer>
     </div>
   );

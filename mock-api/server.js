@@ -483,6 +483,9 @@ app
       }
 
       const { name, reporterId } = req.body;
+      const highestUiSequence = project.columns
+        .reduce((acc, c) => [...acc, ...c.tasks], [])
+        .reduce((acc, t) => Math.max(acc, t.uiSequence), 0);
 
       // Create task
       const newTask = {
@@ -500,8 +503,7 @@ app
         dateUpdated: new Date(),
         description: '',
 
-        // TODO: How will uiSequence be implemented?
-        uiSequence: Infinity
+        uiSequence: highestUiSequence + 1
       };
 
       column.tasks.push(newTask);
