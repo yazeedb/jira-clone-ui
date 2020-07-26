@@ -1,23 +1,27 @@
-import { Machine, assign, DoneInvokeEvent } from 'xstate';
+import { Machine, assign, DoneInvokeEvent, Interpreter, spawn } from 'xstate';
 import {
   Project,
   createEmptyProject,
   ProjectResponse,
   FindOneProjectParams,
   Column,
-  ColumnsResponse
+  ColumnsResponse,
+  Task
 } from 'shared/interfaces/Project';
 import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { isValidColumnLimit } from 'screens/Board/validateColumnLimit';
 import { notificationService } from './notificationMachine';
+import { deleteTaskActor } from './deleteTaskActor';
 
 interface MachineContext {
   projectParams: FindOneProjectParams;
   project: Project;
   error: string;
   selectedIssue?: string;
-  pendingColumnId?: string;
+  pendingColumn?: Column;
+  pendingTask?: Task;
+  taskActorMap: Map<string, Interpreter<any>>;
 }
 
 /*
@@ -55,7 +59,9 @@ export const initialContext: MachineContext = {
   project: createEmptyProject(),
   error: '',
   selectedIssue: undefined,
-  pendingColumnId: undefined
+  pendingColumn: undefined,
+  pendingTask: undefined,
+  taskActorMap: new Map()
 };
 
 export const boardMachine = Machine<MachineContext>(
@@ -105,14 +111,19 @@ export const boardMachine = Machine<MachineContext>(
               CREATE_TASK: 'creatingTask',
 
               // Task actor events
-              DELETE_TASK: 'pendingDeleteTask',
-              RENAME_TASK: {
-                target: 'idle',
-                actions: 'spawnRenameTaskActor'
+              DELETE_TASK: {
+                target: 'pendingDeleteTask',
+                actions: ['setPendingColumn', 'setPendingTask']
               },
               MOVE_TASK: {
                 target: 'idle',
                 actions: 'spawnMoveTaskActor'
+              },
+
+              // Undo optimistic update events
+              UNDO_DELETE_TASK: {
+                target: 'idle',
+                actions: 'undoDeleteTask'
               }
             }
           },
@@ -121,7 +132,7 @@ export const boardMachine = Machine<MachineContext>(
               CANCEL: 'idle',
               CONFIRM: {
                 target: 'idle',
-                actions: 'spawnDeleteTaskActor'
+                actions: ['spawnDeleteTaskActor', 'optimisticallyDeleteTask']
               }
             }
           },
@@ -187,8 +198,8 @@ export const boardMachine = Machine<MachineContext>(
           },
           deletingColumn: {
             initial: 'awaiting',
-            entry: 'setPendingColumnId',
-            exit: 'resetPendingColumnId',
+            entry: 'setPendingColumn',
+            exit: 'resetPendingColumn',
             onDone: 'idle',
             states: {
               awaiting: {
@@ -235,8 +246,8 @@ export const boardMachine = Machine<MachineContext>(
           },
           settingColumnLimit: {
             initial: 'awaiting',
-            entry: 'setPendingColumnId',
-            exit: 'resetPendingColumnId',
+            entry: 'setPendingColumn',
+            exit: 'resetPendingColumn',
             onDone: 'idle',
             states: {
               awaiting: {
@@ -266,8 +277,8 @@ export const boardMachine = Machine<MachineContext>(
           },
           clearingColumnLimit: {
             initial: 'clearing',
-            entry: 'setPendingColumnId',
-            exit: 'resetPendingColumnId',
+            entry: 'setPendingColumn',
+            exit: 'resetPendingColumn',
             onDone: 'idle',
             states: {
               clearing: {
@@ -332,45 +343,45 @@ export const boardMachine = Machine<MachineContext>(
         return fetcher.post<ColumnsResponse>(url, { name: event.name });
       },
       deleteColumn: (context, event) => {
-        if (!context.pendingColumnId) {
+        if (!context.pendingColumn) {
           return Promise.reject();
         }
 
         const url = apiRoutes.findOneColumn({
           projectKey: context.project.key,
           orgName: context.project.orgName,
-          columnId: context.pendingColumnId
+          columnId: context.pendingColumn.id
         });
 
         return fetcher.delete<ColumnsResponse>(url);
       },
       setColumnLimit: (context, event) => {
-        if (!context.pendingColumnId) {
+        if (!context.pendingColumn) {
           return Promise.reject();
         }
 
-        const { project, pendingColumnId } = context;
+        const { project, pendingColumn } = context;
         const { limit } = event;
 
         const url = apiRoutes.setColumnLimit({
           projectKey: project.key,
           orgName: project.orgName,
-          columnId: pendingColumnId
+          columnId: pendingColumn.id
         });
 
         return fetcher.put<ColumnsResponse>(url, { limit });
       },
       clearColumnLimit: (context, event) => {
-        if (!context.pendingColumnId) {
+        if (!context.pendingColumn) {
           return Promise.reject();
         }
 
-        const { project, pendingColumnId } = context;
+        const { project, pendingColumn } = context;
 
         const url = apiRoutes.setColumnLimit({
           projectKey: project.key,
           orgName: project.orgName,
-          columnId: pendingColumnId
+          columnId: pendingColumn.id
         });
 
         return fetcher.put<ColumnsResponse>(url, { limit: null });
@@ -427,12 +438,91 @@ export const boardMachine = Machine<MachineContext>(
           };
         }
       }),
-      setPendingColumnId: assign({
-        pendingColumnId: (context, event) => event.id
+
+      // Pending column/task actions
+      setPendingColumn: assign({
+        pendingColumn: (context, event) => event.column
       }),
-      resetPendingColumnId: assign({
-        pendingColumnId: (context, event) => undefined
+      resetPendingColumn: assign({
+        pendingColumn: (context, event) => undefined
       }),
+      setPendingTask: assign({
+        pendingTask: (context, event) => event.task
+      }),
+      resetPendingTask: assign({
+        pendingTask: (context, event) => undefined
+      }),
+
+      // Rename task actions
+      undoDeleteTask: assign({
+        project: ({ project }, { columnId, oldTask }) => {
+          // If task's column no longer exists,
+          // fallback to the project's first column
+          const [firstColumn] = project.columns;
+          const destinationColumn =
+            project.columns.find((c) => c.id === columnId) || firstColumn;
+
+          return {
+            ...project,
+            columns: project.columns.map((c) => {
+              if (c.id !== destinationColumn.id) {
+                return c;
+              }
+
+              return {
+                ...c,
+                tasks: [...c.tasks, oldTask]
+              };
+            })
+          };
+        }
+      }),
+      optimisticallyDeleteTask: assign({
+        project: ({ project, pendingTask }) => {
+          if (!pendingTask) {
+            return project;
+          }
+
+          const newColumns = project.columns.map((c) => ({
+            ...c,
+            tasks: c.tasks.filter((t) => t.id !== pendingTask.id)
+          }));
+
+          return {
+            ...project,
+            columns: newColumns
+          };
+        }
+      }),
+      spawnDeleteTaskActor: assign({
+        taskActorMap: ({
+          projectParams,
+          taskActorMap,
+          pendingColumn,
+          pendingTask
+        }) => {
+          if (!pendingColumn || !pendingTask) {
+            return taskActorMap;
+          }
+
+          const actor = spawn(
+            deleteTaskActor.withContext({
+              params: {
+                orgName: projectParams.orgName,
+                projectKey: projectParams.projectKey,
+                columnId: pendingColumn.id,
+                taskId: pendingTask.id
+              },
+              oldTask: pendingTask
+            })
+          );
+
+          taskActorMap.set(pendingTask.id, actor);
+
+          return taskActorMap;
+        }
+      }),
+      // Flash error notifications
       flashError: assign((context, event) => {
         notificationService.send({
           type: 'OPEN',
@@ -448,6 +538,18 @@ export const boardMachine = Machine<MachineContext>(
 
 export const getTotalIssues = (columns: Column[]) =>
   columns.reduce((total, c) => total + c.tasks.length, 0);
+
+const deleteTask = (project: Project, taskId: string): Project => {
+  const newColumns = project.columns.map((c) => ({
+    ...c,
+    tasks: c.tasks.filter((t) => t.id !== taskId)
+  }));
+
+  return {
+    ...project,
+    columns: newColumns
+  };
+};
 
 /*
           Init websocket now??

@@ -142,19 +142,19 @@ export const Board: FC<BoardProps> = ({ user }) => {
                         onSetColumnLimit={() =>
                           send({
                             type: 'SET_COLUMN_LIMIT',
-                            id: c.id
+                            column: c
                           })
                         }
                         onClearColumnLimit={() =>
                           send({
                             type: 'CLEAR_COLUMN_LIMIT',
-                            id: c.id
+                            column: c
                           })
                         }
                         onDelete={() =>
                           send({
                             type: 'DELETE_COLUMN',
-                            id: c.id
+                            column: c
                           })
                         }
                         disableDelete={project.columns.length === 1}
@@ -167,7 +167,13 @@ export const Board: FC<BoardProps> = ({ user }) => {
                         <TaskComponent
                           task={t}
                           key={t.id}
-                          onDelete={() => send('DELETE_TASK')}
+                          onDelete={() =>
+                            send({
+                              type: 'DELETE_TASK',
+                              column: c,
+                              task: t
+                            })
+                          }
                         />
                       ))}
 
