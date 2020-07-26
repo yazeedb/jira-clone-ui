@@ -521,7 +521,8 @@ app
       const existingUser = db.users.find((u) => u.sub === user.sub);
 
       // Find associated org
-      const { orgName, projectKey, columnId, taskId, newTaskName } = req.params;
+      const { orgName, projectKey, columnId, taskId } = req.params;
+      const { newTaskName } = req.body;
       const org = existingUser.orgs.find((o) => o.name === orgName);
 
       if (!org) {
