@@ -9,12 +9,14 @@ import './Task.scss';
 interface TaskProps {
   task: Task;
   projectKey: string;
+  isLocked: boolean;
   onDelete: () => void;
 }
 
 export const TaskComponent: FC<TaskProps> = ({
   task,
   projectKey,
+  isLocked,
   onDelete
 }) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -53,15 +55,19 @@ export const TaskComponent: FC<TaskProps> = ({
               </ButtonItem>
             </Section>
           )}
-          trigger={(triggerProps) => (
-            <Button
-              {...triggerProps}
-              isSelected={showPopup}
-              onClick={showPopup ? closePopup : openPopup}
-              className={showPopup ? 'more-actions show' : 'more-actions hide'}
-              iconBefore={<MoreIcon size="large" label="More" />}
-            />
-          )}
+          trigger={(triggerProps) =>
+            !isLocked && (
+              <Button
+                {...triggerProps}
+                isSelected={showPopup}
+                onClick={showPopup ? closePopup : openPopup}
+                className={
+                  showPopup ? 'more-actions show' : 'more-actions hide'
+                }
+                iconBefore={<MoreIcon size="large" label="More" />}
+              />
+            )
+          }
         />
       </header>
 

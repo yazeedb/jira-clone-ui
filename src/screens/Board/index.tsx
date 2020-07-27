@@ -170,6 +170,7 @@ export const Board: FC<BoardProps> = ({ user }) => {
                             task={t}
                             key={t.id}
                             projectKey={project.key}
+                            isLocked={lockColumns}
                             onDelete={() =>
                               send({
                                 type: 'DELETE_TASK',
@@ -194,17 +195,19 @@ export const Board: FC<BoardProps> = ({ user }) => {
                               columnId: c.id
                             })
                           }
-                          readView={() => (
-                            <Button
-                              appearance="subtle"
-                              iconBefore={
-                                <EditorAddIcon label="Create project" />
-                              }
-                              className="create-project-button"
-                            >
-                              Create issue
-                            </Button>
-                          )}
+                          readView={() =>
+                            !lockColumns && (
+                              <Button
+                                appearance="subtle"
+                                iconBefore={
+                                  <EditorAddIcon label="Create project" />
+                                }
+                                className="create-project-button"
+                              >
+                                Create issue
+                              </Button>
+                            )
+                          }
                           editView={(fieldProps) => (
                             <TextField
                               {...fieldProps}

@@ -125,15 +125,17 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
             {renderDeleteButton()}
           </Section>
         )}
-        trigger={(triggerProps) => (
-          <Button
-            {...triggerProps}
-            isSelected={showPopup}
-            onClick={openPopup}
-            className={showPopup ? 'more-icon show' : 'more-icon'}
-            iconBefore={<MoreIcon size="large" label="More" />}
-          />
-        )}
+        trigger={(triggerProps) =>
+          !isLoading && (
+            <Button
+              {...triggerProps}
+              isSelected={showPopup}
+              onClick={openPopup}
+              className={showPopup ? 'more-icon show' : 'more-icon'}
+              iconBefore={<MoreIcon size="large" label="More" />}
+            />
+          )
+        }
       />
     </header>
   );
