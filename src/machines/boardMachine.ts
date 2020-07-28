@@ -6,13 +6,16 @@ import {
   FindOneProjectParams,
   Column,
   ColumnsResponse,
-  Task
+  Task,
+  createPendingTask
 } from 'shared/interfaces/Project';
+import { v4 as uuid } from 'uuid';
 import { fetcher, FetcherResponse } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { isValidColumnLimit } from 'screens/Board/validateColumnLimit';
 import { notificationService } from './notificationMachine';
 import { deleteTaskActor } from './deleteTaskActor';
+import { createTaskActor } from './createTaskActor';
 
 interface MachineContext {
   projectParams: FindOneProjectParams;
@@ -111,13 +114,19 @@ export const boardMachine = Machine<MachineContext>(
 
               // Task actor events
               CREATE_TASK: {
-                target: 'creatingTask',
+                target: 'idle',
                 actions: [
                   'setPendingColumn',
                   'setPendingTask',
-                  'spawnCreateTaskActor'
+                  'createPendingTaskAndActor'
                 ]
               },
+              // Successful actor events
+              CREATE_TASK_SUCCESS: {
+                target: 'idle',
+                actions: 'setColumns'
+              },
+
               DELETE_TASK: {
                 target: 'pendingDeleteTask',
                 actions: ['setPendingColumn', 'setPendingTask']
@@ -131,6 +140,10 @@ export const boardMachine = Machine<MachineContext>(
               UNDO_DELETE_TASK: {
                 target: 'idle',
                 actions: 'undoDeleteTask'
+              },
+              UNDO_CREATE_TASK: {
+                target: 'idle',
+                actions: 'undoDeleteTask'
               }
             }
           },
@@ -141,26 +154,6 @@ export const boardMachine = Machine<MachineContext>(
                 target: 'idle',
                 actions: ['spawnDeleteTaskActor', 'optimisticallyDeleteTask']
               }
-            }
-          },
-          creatingTask: {
-            initial: 'creating',
-            onDone: 'idle',
-            states: {
-              creating: {
-                invoke: {
-                  src: 'createTask',
-                  onDone: {
-                    target: 'done',
-                    actions: ['setColumns', 'spawnTaskActor']
-                  },
-                  onError: {
-                    target: 'done',
-                    actions: 'flashError'
-                  }
-                }
-              },
-              done: { type: 'final' }
             }
           },
           changingColumnName: {
@@ -310,23 +303,6 @@ export const boardMachine = Machine<MachineContext>(
   },
   {
     services: {
-      createTask: (context, event) => {
-        const { key, orgName } = context.project;
-        const { name, reporterId, columnId } = event;
-
-        const url = apiRoutes.findOneColumnTasks({
-          columnId,
-          orgName,
-          projectKey: key
-        });
-
-        return fetcher.post(url, {
-          name,
-          reporterId,
-          columnId
-        });
-      },
-
       fetchProject: ({ projectParams }) =>
         fetcher.get<ProjectResponse>(apiRoutes.findOneProject(projectParams)),
 
@@ -458,6 +434,63 @@ export const boardMachine = Machine<MachineContext>(
       }),
       resetPendingTask: assign({
         pendingTask: (context, event) => undefined
+      }),
+
+      createPendingTaskAndActor: assign(
+        ({ project, taskActorMap }, { name, columnId, reporterId }) => {
+          // The pending task + actor work is combined
+          // Because we need the uuid for the taskActorMap
+          const pendingTaskId = uuid();
+
+          const actor = spawn(
+            createTaskActor.withContext({
+              params: {
+                columnId,
+                orgName: project.orgName,
+                projectKey: project.key
+              },
+              reporterId,
+              taskName: name,
+              taskTempId: pendingTaskId
+            })
+          );
+
+          taskActorMap.set(pendingTaskId, actor);
+
+          return {
+            taskActorMap,
+            project: {
+              ...project,
+              columns: project.columns.map((c) => {
+                if (c.id !== columnId) {
+                  return c;
+                }
+
+                const newPendingTask = createPendingTask(pendingTaskId, name);
+
+                return {
+                  ...c,
+                  tasks: [...c.tasks, newPendingTask]
+                };
+              })
+            }
+          };
+        }
+      ),
+      undoCreateTask: assign({
+        project: ({ project }, { columnId, taskTempId }) => {
+          return {
+            ...project,
+            columns: project.columns.map((c) =>
+              c.id !== columnId
+                ? c
+                : {
+                    ...c,
+                    tasks: c.tasks.filter((t) => t.id !== taskTempId)
+                  }
+            )
+          };
+        }
       }),
 
       // Rename task actions

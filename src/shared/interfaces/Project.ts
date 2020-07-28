@@ -64,7 +64,31 @@ export interface Task {
   dateUpdated: string;
   description: string;
   pendingDelete?: boolean;
+  pendingCreation?: boolean;
 }
+
+export const createPendingTask = (id: string, name: string): Task => {
+  return {
+    id,
+    name,
+    pendingCreation: true,
+    // This'll force the task to render last
+    uiSequence: Infinity,
+
+    // Useless properties for pending task
+    // TODO: This feels like leaky abstraction.
+    // How do we fix it?
+    orgName: '',
+    projectId: '',
+    assigneeId: '',
+    columnId: '',
+    reporterId: '',
+    dateCreated: '',
+    dateUpdated: '',
+    description: '',
+    pendingDelete: false
+  };
+};
 
 export interface ProjectAvailableResponse {
   available: boolean;
