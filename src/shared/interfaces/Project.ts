@@ -76,7 +76,7 @@ export const createPendingTask = (id: string, name: string): Task => {
     uiSequence: Infinity,
 
     // Useless properties for pending task
-    // TODO: This feels like leaky abstraction.
+    // TODO: Code smell? Task interface is starting to feel brittle.
     // How do we fix it?
     orgName: '',
     projectId: '',

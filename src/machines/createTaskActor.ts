@@ -54,10 +54,8 @@ export const createTaskActor = Machine<MachineContext>(
     },
     actions: {
       notifyParentSuccess: sendParent((context: MachineContext, event: any) => {
-        const e = event as DoneInvokeEvent<{ data: ColumnsResponse }>;
-
         return {
-          ...e,
+          ...event,
           type: 'CREATE_TASK_SUCCESS'
         };
       }),
