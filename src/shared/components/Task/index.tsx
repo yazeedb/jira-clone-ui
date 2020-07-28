@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import MoreIcon from '@atlaskit/icon/glyph/editor/more';
 import Button from '@atlaskit/button';
+import Spinner from '@atlaskit/spinner';
 import { ButtonItem, Section } from '@atlaskit/menu';
 import Popup from '@atlaskit/popup';
 import { Task } from 'shared/interfaces/Project';
@@ -29,13 +30,14 @@ export const TaskComponent: FC<TaskProps> = ({
       <header>
         <span>{task.name}</span>
 
-        <Popup
-          isOpen={showPopup}
-          onClose={closePopup}
-          placement="bottom-end"
-          content={() => (
-            <Section>
-              {/* 
+        {!task.pendingCreation && (
+          <Popup
+            isOpen={showPopup}
+            onClose={closePopup}
+            placement="bottom-end"
+            content={() => (
+              <Section>
+                {/* 
               TODO: Add Copy Issue Link functionality
               <ButtonItem
                 onClick={() => {
@@ -45,37 +47,46 @@ export const TaskComponent: FC<TaskProps> = ({
                 Copy issue link
               </ButtonItem> */}
 
-              <ButtonItem
-                onClick={() => {
-                  closePopup();
-                  onDelete();
-                }}
-              >
-                Delete
-              </ButtonItem>
-            </Section>
-          )}
-          trigger={(triggerProps) =>
-            !isLocked && (
-              <Button
-                {...triggerProps}
-                isSelected={showPopup}
-                onClick={showPopup ? closePopup : openPopup}
-                className={
-                  showPopup ? 'more-actions show' : 'more-actions hide'
-                }
-                iconBefore={<MoreIcon size="large" label="More" />}
-              />
-            )
-          }
-        />
+                <ButtonItem
+                  onClick={() => {
+                    closePopup();
+                    onDelete();
+                  }}
+                >
+                  Delete
+                </ButtonItem>
+              </Section>
+            )}
+            trigger={(triggerProps) =>
+              !isLocked && (
+                <Button
+                  {...triggerProps}
+                  isSelected={showPopup}
+                  onClick={showPopup ? closePopup : openPopup}
+                  className={
+                    showPopup ? 'more-actions show' : 'more-actions hide'
+                  }
+                  iconBefore={<MoreIcon size="large" label="More" />}
+                />
+              )
+            }
+          />
+        )}
       </header>
 
       <footer>
-        <img src="/task-icon.svg" />
-        <span className="ui-sequence">
-          {projectKey}-{task.uiSequence}
-        </span>
+        {task.pendingCreation ? (
+          <div className="spinner-container" style={{ marginLeft: 'auto' }}>
+            <Spinner />
+          </div>
+        ) : (
+          <>
+            <img src="/task-icon.svg" />
+            <span className="ui-sequence">
+              {projectKey}-{task.uiSequence}
+            </span>
+          </>
+        )}
       </footer>
     </div>
   );
