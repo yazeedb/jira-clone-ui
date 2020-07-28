@@ -439,7 +439,7 @@ export const boardMachine = Machine<MachineContext>(
       createPendingTaskAndActor: assign(
         ({ project, taskActorMap }, { name, columnId, reporterId }) => {
           // The pending task + actor work is combined
-          // Because we need the uuid for the taskActorMap
+          // because taskActorMap needs the temp UUID
           const pendingTaskId = uuid();
 
           const actor = spawn(
