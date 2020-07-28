@@ -506,11 +506,13 @@ app
         uiSequence: highestUiSequence + 1
       };
 
-      column.tasks.push(newTask);
+      setTimeout(() => {
+        column.tasks.push(newTask);
 
-      dbTools.replaceDb(db);
+        dbTools.replaceDb(db);
 
-      res.json({ columns: project.columns });
+        res.json({ columns: project.columns });
+      }, 2000);
     }
   )
 

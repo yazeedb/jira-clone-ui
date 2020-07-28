@@ -108,9 +108,16 @@ export const boardMachine = Machine<MachineContext>(
               MOVE_COLUMN: 'movingColumn',
               SET_COLUMN_LIMIT: 'settingColumnLimit',
               CLEAR_COLUMN_LIMIT: 'clearingColumnLimit',
-              CREATE_TASK: 'creatingTask',
 
               // Task actor events
+              CREATE_TASK: {
+                target: 'creatingTask',
+                actions: [
+                  'setPendingColumn',
+                  'setPendingTask',
+                  'spawnCreateTaskActor'
+                ]
+              },
               DELETE_TASK: {
                 target: 'pendingDeleteTask',
                 actions: ['setPendingColumn', 'setPendingTask']
