@@ -63,6 +63,7 @@ export interface Task {
   dateCreated: string;
   dateUpdated: string;
   description: string;
+  pendingDelete?: boolean;
 }
 
 export interface ProjectAvailableResponse {

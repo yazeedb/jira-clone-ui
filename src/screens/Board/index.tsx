@@ -164,6 +164,7 @@ export const Board: FC<BoardProps> = ({ user }) => {
                       />
 
                       {c.tasks
+                        .filter((t) => !t.pendingDelete)
                         .sort((a, b) => a.uiSequence - b.uiSequence)
                         .map((t) => (
                           <TaskComponent
