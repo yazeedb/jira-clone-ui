@@ -455,25 +455,10 @@ export const boardMachine = Machine<MachineContext>(
 
       // Rename task actions
       undoDeleteTask: assign({
-        project: ({ project }, { columnId, oldTask }) => {
-          // If task's column no longer exists,
-          // fallback to the project's first column
-          const [firstColumn] = project.columns;
-          const destinationColumn =
-            project.columns.find((c) => c.id === columnId) || firstColumn;
-
+        project: ({ project }, { oldTask }) => {
           return {
             ...project,
-            columns: project.columns.map((c) => {
-              if (c.id !== destinationColumn.id) {
-                return c;
-              }
-
-              return {
-                ...c,
-                tasks: [...c.tasks, oldTask]
-              };
-            })
+            columns: setPendingDeleteTask(false, oldTask.id, project.columns)
           };
         }
       }),
@@ -483,14 +468,9 @@ export const boardMachine = Machine<MachineContext>(
             return project;
           }
 
-          const newColumns = project.columns.map((c) => ({
-            ...c,
-            tasks: c.tasks.filter((t) => t.id !== pendingTask.id)
-          }));
-
           return {
             ...project,
-            columns: newColumns
+            columns: setPendingDeleteTask(true, pendingTask.id, project.columns)
           };
         }
       }),
@@ -539,17 +519,22 @@ export const boardMachine = Machine<MachineContext>(
 export const getTotalIssues = (columns: Column[]) =>
   columns.reduce((total, c) => total + c.tasks.length, 0);
 
-const deleteTask = (project: Project, taskId: string): Project => {
-  const newColumns = project.columns.map((c) => ({
+const setPendingDeleteTask = (
+  pendingDelete: boolean,
+  taskId: string,
+  columns: Column[]
+): Column[] =>
+  columns.map((c) => ({
     ...c,
-    tasks: c.tasks.filter((t) => t.id !== taskId)
+    tasks: c.tasks.map((t) =>
+      t.id !== taskId
+        ? t
+        : {
+            ...t,
+            pendingDelete
+          }
+    )
   }));
-
-  return {
-    ...project,
-    columns: newColumns
-  };
-};
 
 /*
           Init websocket now??
