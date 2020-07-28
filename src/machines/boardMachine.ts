@@ -143,7 +143,7 @@ export const boardMachine = Machine<MachineContext>(
               },
               UNDO_CREATE_TASK: {
                 target: 'idle',
-                actions: 'undoDeleteTask'
+                actions: 'undoCreateTask'
               }
             }
           },
