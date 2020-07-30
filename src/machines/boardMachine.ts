@@ -133,7 +133,7 @@ export const boardMachine = Machine<MachineContext>(
               },
               MOVE_TASK: {
                 target: 'idle',
-                actions: 'spawnMoveTaskActor'
+                actions: ['optimisticallyMoveTask', 'spawnMoveTaskActor']
               },
 
               // Undo optimistic update events
@@ -382,6 +382,42 @@ export const boardMachine = Machine<MachineContext>(
       isValidColumnLimit: (context, { limit }) => isValidColumnLimit(limit)
     },
     actions: {
+      optimisticallyMoveTask: assign({
+        project: (
+          { project },
+          { task, fromColumnId, toColumnId, oldIndex, newIndex }
+        ) => {
+          if (fromColumnId === toColumnId) {
+            return {
+              ...project,
+              columns: project.columns.map((c) => {
+                if (c.id !== fromColumnId) {
+                  return c;
+                }
+
+                const otherTasks = c.tasks.filter((t) => t.id !== task.id);
+
+                const newTasks =
+                  newIndex <= 0
+                    ? [task, ...otherTasks]
+                    : newIndex >= c.tasks.length - 1
+                    ? [...otherTasks, task]
+                    : otherTasks.flatMap((t, index) =>
+                        index === newIndex ? [task, t] : [t]
+                      );
+
+                return {
+                  ...c,
+                  tasks: newTasks
+                };
+              })
+            };
+          }
+
+          // TODO: Implement cross-column moving logic
+          return project;
+        }
+      }),
       setProject: assign({
         project: (context, event) => {
           const e = event as DoneInvokeEvent<FetcherResponse<ProjectResponse>>;

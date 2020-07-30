@@ -13,6 +13,8 @@ interface TaskProps {
   isLocked: boolean;
   isFirstInColumn: boolean;
   isLastInColumn: boolean;
+  onMoveToTop: () => void;
+  onMoveToBottom: () => void;
   onDelete: () => void;
 }
 
@@ -22,6 +24,8 @@ export const TaskComponent: FC<TaskProps> = ({
   isLocked,
   isFirstInColumn,
   isLastInColumn,
+  onMoveToTop,
+  onMoveToBottom,
   onDelete
 }) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -54,6 +58,7 @@ export const TaskComponent: FC<TaskProps> = ({
                   <ButtonItem
                     onClick={() => {
                       closePopup();
+                      onMoveToTop();
                     }}
                   >
                     Move to top
@@ -64,6 +69,7 @@ export const TaskComponent: FC<TaskProps> = ({
                   <ButtonItem
                     onClick={() => {
                       closePopup();
+                      onMoveToBottom();
                     }}
                   >
                     Move to bottom

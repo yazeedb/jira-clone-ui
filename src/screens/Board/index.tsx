@@ -165,7 +165,6 @@ export const Board: FC<BoardProps> = ({ user }) => {
 
                       {c.tasks
                         .filter((t) => !t.pendingDelete)
-                        .sort((a, b) => a.uiSequence - b.uiSequence)
                         .map((t, index) => (
                           <TaskComponent
                             task={t}
@@ -174,6 +173,26 @@ export const Board: FC<BoardProps> = ({ user }) => {
                             isLocked={lockColumns}
                             isFirstInColumn={index === 0}
                             isLastInColumn={index < c.tasks.length - 1}
+                            onMoveToTop={() =>
+                              send({
+                                type: 'MOVE_TASK',
+                                task: t,
+                                fromColumnId: c.id,
+                                toColumnId: c.id,
+                                oldIndex: index,
+                                newIndex: 0
+                              })
+                            }
+                            onMoveToBottom={() =>
+                              send({
+                                type: 'MOVE_TASK',
+                                task: t,
+                                fromColumnId: c.id,
+                                toColumnId: c.id,
+                                oldIndex: index,
+                                newIndex: c.tasks.length - 1
+                              })
+                            }
                             onDelete={() =>
                               send({
                                 type: 'DELETE_TASK',
