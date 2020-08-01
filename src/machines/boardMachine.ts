@@ -403,7 +403,7 @@ export const boardMachine = Machine<MachineContext>(
                     : newIndex >= c.tasks.length - 1
                     ? [...otherTasks, task]
                     : otherTasks.flatMap((t, index) =>
-                        index === newIndex ? [task, t] : [t]
+                        index === newIndex ? [task, t] : t
                       );
 
                 return {
@@ -414,8 +414,26 @@ export const boardMachine = Machine<MachineContext>(
             };
           }
 
-          // TODO: Implement cross-column moving logic
-          return project;
+          return {
+            ...project,
+            columns: project.columns.map((c) => {
+              if (c.id === fromColumnId) {
+                return {
+                  ...c,
+                  tasks: c.tasks.filter((t) => t.id !== task.id)
+                };
+              } else if (c.id === toColumnId) {
+                return {
+                  ...c,
+                  tasks: c.tasks.flatMap((t, index) =>
+                    index === newIndex ? [task, t] : t
+                  )
+                };
+              }
+
+              return c;
+            })
+          };
         }
       }),
       setProject: assign({
