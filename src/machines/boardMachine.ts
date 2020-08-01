@@ -16,6 +16,7 @@ import { isValidColumnLimit } from 'screens/Board/validateColumnLimit';
 import { notificationService } from './notificationMachine';
 import { deleteTaskActor } from './deleteTaskActor';
 import { createTaskActor } from './createTaskActor';
+import { moveTaskActor } from './moveTaskActor';
 
 interface MachineContext {
   projectParams: FindOneProjectParams;
@@ -121,29 +122,37 @@ export const boardMachine = Machine<MachineContext>(
                   'createPendingTaskAndActor'
                 ]
               },
-              // Successful actor events
               CREATE_TASK_SUCCESS: {
                 target: 'idle',
                 actions: 'setColumns'
+              },
+              UNDO_CREATE_TASK: {
+                target: 'idle',
+                actions: 'undoCreateTask'
               },
 
               DELETE_TASK: {
                 target: 'pendingDeleteTask',
                 actions: ['setPendingColumn', 'setPendingTask']
               },
+
               MOVE_TASK: {
                 target: 'idle',
-                actions: 'spawnMoveTaskActor'
+                actions: ['optimisticallyMoveTask', 'spawnMoveTaskActor']
+              },
+              UNDO_MOVE_TASK: {
+                target: 'idle',
+                actions: 'undoMoveTask'
+              },
+              MOVE_TASK_SUCCESS: {
+                target: 'idle',
+                actions: 'setColumns'
               },
 
               // Undo optimistic update events
               UNDO_DELETE_TASK: {
                 target: 'idle',
                 actions: 'undoDeleteTask'
-              },
-              UNDO_CREATE_TASK: {
-                target: 'idle',
-                actions: 'undoCreateTask'
               }
             }
           },
@@ -382,6 +391,64 @@ export const boardMachine = Machine<MachineContext>(
       isValidColumnLimit: (context, { limit }) => isValidColumnLimit(limit)
     },
     actions: {
+      spawnMoveTaskActor: assign({
+        taskActorMap: (
+          { project, taskActorMap },
+          { task, oldColumnId, newColumnId, oldIndex, newIndex }
+        ) => {
+          const actor = spawn(
+            moveTaskActor.withContext({
+              params: {
+                oldColumnId: oldColumnId,
+                newColumnId: newColumnId,
+                oldIndex,
+                newIndex,
+                task,
+                orgName: project.orgName,
+                projectKey: project.key
+              }
+            })
+          );
+
+          taskActorMap.set(task.id, actor);
+
+          return taskActorMap;
+        }
+      }),
+      optimisticallyMoveTask: assign({
+        project: (
+          { project },
+          { task, oldColumnId, newColumnId, newIndex }
+        ) => {
+          return {
+            ...project,
+            columns: moveTasks(
+              oldColumnId,
+              newColumnId,
+              task,
+              project.columns,
+              newIndex
+            )
+          };
+        }
+      }),
+      undoMoveTask: assign({
+        project: (
+          { project },
+          { task, oldColumnId, newColumnId, oldIndex }
+        ) => {
+          return {
+            ...project,
+            columns: moveTasks(
+              newColumnId,
+              oldColumnId,
+              task,
+              project.columns,
+              oldIndex
+            )
+          };
+        }
+      }),
       setProject: assign({
         project: (context, event) => {
           const e = event as DoneInvokeEvent<FetcherResponse<ProjectResponse>>;
@@ -575,6 +642,56 @@ const setPendingDeleteTask = (
           }
     )
   }));
+
+const moveTasks = (
+  oldColumnId: string,
+  newColumnId: string,
+  task: Task,
+  columns: Column[],
+  newIndex: number
+) => {
+  if (oldColumnId === newColumnId) {
+    return columns.map((c) => {
+      if (c.id !== oldColumnId) {
+        return c;
+      }
+
+      const otherTasks = c.tasks.filter((t) => t.id !== task.id);
+
+      const newTasks =
+        newIndex <= 0
+          ? [task, ...otherTasks]
+          : newIndex >= c.tasks.length - 1
+          ? [...otherTasks, task]
+          : otherTasks.flatMap((t, index) =>
+              index === newIndex ? [task, t] : t
+            );
+
+      return {
+        ...c,
+        tasks: newTasks
+      };
+    });
+  }
+
+  return columns.map((c) => {
+    if (c.id === oldColumnId) {
+      return {
+        ...c,
+        tasks: c.tasks.filter((t) => t.id !== task.id)
+      };
+    } else if (c.id === newColumnId) {
+      return {
+        ...c,
+        tasks: c.tasks.flatMap((t, index) =>
+          index === newIndex ? [task, t] : t
+        )
+      };
+    }
+
+    return c;
+  });
+};
 
 /*
           Init websocket now??

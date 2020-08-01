@@ -11,6 +11,10 @@ interface TaskProps {
   task: Task;
   projectKey: string;
   isLocked: boolean;
+  isFirstInColumn: boolean;
+  isLastInColumn: boolean;
+  onMoveToTop: () => void;
+  onMoveToBottom: () => void;
   onDelete: () => void;
 }
 
@@ -18,6 +22,10 @@ export const TaskComponent: FC<TaskProps> = ({
   task,
   projectKey,
   isLocked,
+  isFirstInColumn,
+  isLastInColumn,
+  onMoveToTop,
+  onMoveToBottom,
   onDelete
 }) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -37,16 +45,6 @@ export const TaskComponent: FC<TaskProps> = ({
             placement="bottom-end"
             content={() => (
               <Section>
-                {/* 
-              TODO: Add Copy Issue Link functionality
-              <ButtonItem
-                onClick={() => {
-                  closePopup();
-                }}
-              >
-                Copy issue link
-              </ButtonItem> */}
-
                 <ButtonItem
                   onClick={() => {
                     closePopup();
@@ -55,6 +53,28 @@ export const TaskComponent: FC<TaskProps> = ({
                 >
                   Delete
                 </ButtonItem>
+
+                {!isFirstInColumn && (
+                  <ButtonItem
+                    onClick={() => {
+                      closePopup();
+                      onMoveToTop();
+                    }}
+                  >
+                    Move to top
+                  </ButtonItem>
+                )}
+
+                {isLastInColumn && (
+                  <ButtonItem
+                    onClick={() => {
+                      closePopup();
+                      onMoveToBottom();
+                    }}
+                  >
+                    Move to bottom
+                  </ButtonItem>
+                )}
               </Section>
             )}
             trigger={(triggerProps) =>
