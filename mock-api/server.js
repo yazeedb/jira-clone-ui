@@ -604,6 +604,66 @@ app
   )
 
   .put(
+    '/api/orgs/:orgName/projects/:projectKey/columns/:columnId/moveTask',
+    (req, res) => {
+      // Find associated user
+      const { user } = req[env.sessionName];
+      const db = dbTools.getDb();
+      const existingUser = db.users.find((u) => u.sub === user.sub);
+
+      // Find associated org
+      const { orgName, projectKey } = req.params;
+      const org = existingUser.orgs.find((o) => o.name === orgName);
+
+      if (!org) {
+        return res.status(404).json({
+          message: 'Org not found!'
+        });
+      }
+
+      // Find associated project
+      const project = org.projects.find((p) => p.key === projectKey);
+
+      if (!project) {
+        return res.status(404).json({
+          message: 'Project not found!'
+        });
+      }
+
+      const oldColumnId = req.params.columnId;
+      const { newColumnId, newIndex, task } = req.body;
+
+      const oldColumn = project.columns.find((c) => c.id === oldColumnId);
+      const newColumn = project.columns.find((c) => c.id === newColumnId);
+
+      console.log({ oldColumn, newColumn });
+
+      if (!oldColumn || !newColumn) {
+        // if (true) {
+        return res.status(404).json({
+          message: 'Not found!'
+        });
+      }
+
+      oldColumn.tasks = oldColumn.tasks.filter((t) => t.id !== task.id);
+
+      if (newIndex <= 0) {
+        newColumn.tasks.unshift(task);
+      } else if (newIndex >= newColumn.tasks.length) {
+        newColumn.tasks.push(task);
+      } else {
+        newColumn.tasks = newColumn.tasks.flatMap((t, index) =>
+          index === newIndex ? [task, t] : t
+        );
+      }
+
+      dbTools.replaceDb(db);
+
+      res.json({ columns: project.columns });
+    }
+  )
+
+  .put(
     '/api/orgs/:orgName/projects/:projectKey/columns/:columnId/setColumnLimit',
     (req, res) => {
       // Find associated user

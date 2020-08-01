@@ -1,7 +1,8 @@
 import {
   FindOneProjectParams,
   FindOneColumnParams,
-  FindOneTaskParams
+  FindOneTaskParams,
+  MoveTaskParams
 } from './interfaces/Project';
 
 const apiBase = '/api';
@@ -48,5 +49,15 @@ export const apiRoutes = {
     `${apiRoutes.findOneTask(params)}/rename`,
 
   setColumnLimit: (params: FindOneColumnParams) =>
-    `${apiRoutes.findOneColumn(params)}/setColumnLimit`
+    `${apiRoutes.findOneColumn(params)}/setColumnLimit`,
+
+  moveTask: (params: MoveTaskParams) => {
+    const columnsRoute = `${apiRoutes.findOneColumn({
+      orgName: params.orgName,
+      projectKey: params.projectKey,
+      columnId: params.oldColumnId
+    })}`;
+
+    return `${columnsRoute}/moveTask`;
+  }
 };

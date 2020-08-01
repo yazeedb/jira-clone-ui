@@ -177,8 +177,9 @@ export const Board: FC<BoardProps> = ({ user }) => {
                               send({
                                 type: 'MOVE_TASK',
                                 task: t,
-                                fromColumnId: c.id,
-                                toColumnId: c.id,
+                                oldColumnId: c.id,
+                                newColumnId: c.id,
+                                oldIndex: index,
                                 newIndex: 0
                               })
                             }
@@ -186,8 +187,9 @@ export const Board: FC<BoardProps> = ({ user }) => {
                               send({
                                 type: 'MOVE_TASK',
                                 task: t,
-                                fromColumnId: c.id,
-                                toColumnId: c.id,
+                                oldColumnId: c.id,
+                                newColumnId: c.id,
+                                oldIndex: index,
                                 newIndex: c.tasks.length - 1
                               })
                             }

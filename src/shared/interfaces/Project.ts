@@ -106,3 +106,11 @@ export interface FindOneColumnParams extends FindOneProjectParams {
 export interface FindOneTaskParams extends FindOneColumnParams {
   taskId: string;
 }
+
+export interface MoveTaskParams extends FindOneProjectParams {
+  oldColumnId: string;
+  newColumnId: string;
+  oldIndex: number;
+  newIndex: number;
+  task: Task;
+}
