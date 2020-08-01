@@ -385,7 +385,7 @@ export const boardMachine = Machine<MachineContext>(
       optimisticallyMoveTask: assign({
         project: (
           { project },
-          { task, fromColumnId, toColumnId, oldIndex, newIndex }
+          { task, fromColumnId, toColumnId, newIndex }
         ) => {
           if (fromColumnId === toColumnId) {
             return {

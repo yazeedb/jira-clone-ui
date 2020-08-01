@@ -179,7 +179,6 @@ export const Board: FC<BoardProps> = ({ user }) => {
                                 task: t,
                                 fromColumnId: c.id,
                                 toColumnId: c.id,
-                                oldIndex: index,
                                 newIndex: 0
                               })
                             }
@@ -189,7 +188,6 @@ export const Board: FC<BoardProps> = ({ user }) => {
                                 task: t,
                                 fromColumnId: c.id,
                                 toColumnId: c.id,
-                                oldIndex: index,
                                 newIndex: c.tasks.length - 1
                               })
                             }
