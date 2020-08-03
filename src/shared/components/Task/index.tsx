@@ -6,9 +6,11 @@ import { ButtonItem, Section } from '@atlaskit/menu';
 import Popup from '@atlaskit/popup';
 import { Task } from 'shared/interfaces/Project';
 import './Task.scss';
+import { Draggable } from 'react-beautiful-dnd';
 
 interface TaskProps {
   task: Task;
+  index: number;
   projectKey: string;
   isLocked: boolean;
   isFirstInColumn: boolean;
@@ -20,6 +22,7 @@ interface TaskProps {
 
 export const TaskComponent: FC<TaskProps> = ({
   task,
+  index,
   projectKey,
   isLocked,
   isFirstInColumn,
@@ -34,80 +37,89 @@ export const TaskComponent: FC<TaskProps> = ({
   const openPopup = () => setShowPopup(true);
 
   return (
-    <div className="task">
-      <header>
-        <span>{task.name}</span>
+    <Draggable draggableId={task.id} index={index}>
+      {(dragProvided) => (
+        <div
+          className="task"
+          {...dragProvided.draggableProps}
+          {...dragProvided.dragHandleProps}
+          ref={dragProvided.innerRef}
+        >
+          <header>
+            <span>{task.name}</span>
 
-        {!task.pendingCreation && (
-          <Popup
-            isOpen={showPopup}
-            onClose={closePopup}
-            placement="bottom-end"
-            content={() => (
-              <Section>
-                <ButtonItem
-                  onClick={() => {
-                    closePopup();
-                    onDelete();
-                  }}
-                >
-                  Delete
-                </ButtonItem>
+            {!task.pendingCreation && (
+              <Popup
+                isOpen={showPopup}
+                onClose={closePopup}
+                placement="bottom-end"
+                content={() => (
+                  <Section>
+                    <ButtonItem
+                      onClick={() => {
+                        closePopup();
+                        onDelete();
+                      }}
+                    >
+                      Delete
+                    </ButtonItem>
 
-                {!isFirstInColumn && (
-                  <ButtonItem
-                    onClick={() => {
-                      closePopup();
-                      onMoveToTop();
-                    }}
-                  >
-                    Move to top
-                  </ButtonItem>
+                    {!isFirstInColumn && (
+                      <ButtonItem
+                        onClick={() => {
+                          closePopup();
+                          onMoveToTop();
+                        }}
+                      >
+                        Move to top
+                      </ButtonItem>
+                    )}
+
+                    {isLastInColumn && (
+                      <ButtonItem
+                        onClick={() => {
+                          closePopup();
+                          onMoveToBottom();
+                        }}
+                      >
+                        Move to bottom
+                      </ButtonItem>
+                    )}
+                  </Section>
                 )}
-
-                {isLastInColumn && (
-                  <ButtonItem
-                    onClick={() => {
-                      closePopup();
-                      onMoveToBottom();
-                    }}
-                  >
-                    Move to bottom
-                  </ButtonItem>
-                )}
-              </Section>
+                trigger={(triggerProps) =>
+                  !isLocked && (
+                    <Button
+                      {...triggerProps}
+                      isSelected={showPopup}
+                      onClick={showPopup ? closePopup : openPopup}
+                      className={
+                        showPopup ? 'more-actions show' : 'more-actions hide'
+                      }
+                      iconBefore={<MoreIcon size="large" label="More" />}
+                    />
+                  )
+                }
+              />
             )}
-            trigger={(triggerProps) =>
-              !isLocked && (
-                <Button
-                  {...triggerProps}
-                  isSelected={showPopup}
-                  onClick={showPopup ? closePopup : openPopup}
-                  className={
-                    showPopup ? 'more-actions show' : 'more-actions hide'
-                  }
-                  iconBefore={<MoreIcon size="large" label="More" />}
-                />
-              )
-            }
-          />
-        )}
-      </header>
+          </header>
 
-      <footer>
-        {task.pendingCreation ? (
-          <div className="spinner-container" style={{ marginLeft: 'auto' }}>
-            <Spinner />
-          </div>
-        ) : (
-          <>
-            <img src="/task-icon.svg" />
-            <span className="ui-sequence">
-              {projectKey}-{task.uiSequence}
-            </span>
-          </>
-        )}
-      </footer>
-    </div>
+          <footer>
+            {task.pendingCreation ? (
+              <div className="spinner-container" style={{ marginLeft: 'auto' }}>
+                <Spinner />
+              </div>
+            ) : (
+              <>
+                <img src="/task-icon.svg" />
+                <span className="ui-sequence">
+                  {projectKey}-{task.uiSequence}
+                </span>
+              </>
+            )}
+          </footer>
+        </div>
+      )}
+    </Draggable>
   );
 };

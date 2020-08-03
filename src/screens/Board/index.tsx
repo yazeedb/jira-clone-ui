@@ -169,45 +169,59 @@ export const Board: FC<BoardProps> = ({ user }) => {
                             isLoading={lockColumns}
                           />
 
-                          {c.tasks
-                            .filter((t) => !t.pendingDelete)
-                            .map((t, index) => (
-                              <TaskComponent
-                                task={t}
-                                key={t.id}
-                                projectKey={project.key}
-                                isLocked={lockColumns}
-                                isFirstInColumn={index === 0}
-                                isLastInColumn={index < c.tasks.length - 1}
-                                onMoveToTop={() =>
-                                  send({
-                                    type: 'MOVE_TASK',
-                                    task: t,
-                                    oldColumnId: c.id,
-                                    newColumnId: c.id,
-                                    oldIndex: index,
-                                    newIndex: 0
-                                  })
-                                }
-                                onMoveToBottom={() =>
-                                  send({
-                                    type: 'MOVE_TASK',
-                                    task: t,
-                                    oldColumnId: c.id,
-                                    newColumnId: c.id,
-                                    oldIndex: index,
-                                    newIndex: c.tasks.length - 1
-                                  })
-                                }
-                                onDelete={() =>
-                                  send({
-                                    type: 'DELETE_TASK',
-                                    column: c,
-                                    task: t
-                                  })
-                                }
-                              />
-                            ))}
+                          <Droppable droppableId={c.id}>
+                            {(dropProvided) => (
+                              <div
+                                ref={dropProvided.innerRef}
+                                {...dropProvided.droppableProps}
+                              >
+                                {c.tasks
+                                  .filter((t) => !t.pendingDelete)
+                                  .map((t, index) => (
+                                    <TaskComponent
+                                      task={t}
+                                      index={index}
+                                      key={t.id}
+                                      projectKey={project.key}
+                                      isLocked={lockColumns}
+                                      isFirstInColumn={index === 0}
+                                      isLastInColumn={
+                                        index < c.tasks.length - 1
+                                      }
+                                      onMoveToTop={() =>
+                                        send({
+                                          type: 'MOVE_TASK',
+                                          task: t,
+                                          oldColumnId: c.id,
+                                          newColumnId: c.id,
+                                          oldIndex: index,
+                                          newIndex: 0
+                                        })
+                                      }
+                                      onMoveToBottom={() =>
+                                        send({
+                                          type: 'MOVE_TASK',
+                                          task: t,
+                                          oldColumnId: c.id,
+                                          newColumnId: c.id,
+                                          oldIndex: index,
+                                          newIndex: c.tasks.length - 1
+                                        })
+                                      }
+                                      onDelete={() =>
+                                        send({
+                                          type: 'DELETE_TASK',
+                                          column: c,
+                                          task: t
+                                        })
+                                      }
+                                    />
+                                  ))}
+
+                                {dropProvided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
 
                           {!isFirstColumn && hasNoIssues ? null : (
                             <InlineEdit
