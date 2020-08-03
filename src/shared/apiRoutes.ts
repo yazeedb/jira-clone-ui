@@ -51,6 +51,9 @@ export const apiRoutes = {
   setColumnLimit: (params: FindOneColumnParams) =>
     `${apiRoutes.findOneColumn(params)}/setColumnLimit`,
 
+  moveColumn: (params: FindOneColumnParams) =>
+    `${apiRoutes.findOneColumn(params)}/move`,
+
   moveTask: (params: MoveTaskParams) => {
     const columnsRoute = `${apiRoutes.findOneColumn({
       orgName: params.orgName,

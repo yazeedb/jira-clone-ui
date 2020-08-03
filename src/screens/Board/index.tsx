@@ -369,7 +369,32 @@ export const Board: FC<BoardProps> = ({ user }) => {
 
   return (
     <DragDropContext
-      onDragEnd={({ destination, source, draggableId, type }) => {}}
+      onDragEnd={({ destination, source, draggableId, type }) => {
+        if (!destination) {
+          return;
+        }
+
+        if (
+          destination.droppableId === source.droppableId &&
+          destination.index === source.index
+        ) {
+          return;
+        }
+
+        console.log(type);
+
+        if (type === 'column') {
+          const { columns } = current.context.project;
+
+          send({
+            type: 'MOVE_COLUMN',
+            source,
+            destination,
+            draggableId,
+            column: columns.find((c) => c.id === draggableId)
+          });
+        }
+      }}
     >
       <Droppable droppableId="all-columns" direction="horizontal" type="column">
         {(dropProvided) => (
@@ -380,6 +405,7 @@ export const Board: FC<BoardProps> = ({ user }) => {
           >
             {' '}
             {renderContent()}
+            {dropProvided.placeholder}
           </main>
         )}
       </Droppable>

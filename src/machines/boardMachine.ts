@@ -109,7 +109,10 @@ export const boardMachine = Machine<MachineContext>(
                 target: 'deletingColumn',
                 cond: 'isNotLastColumn'
               },
-              MOVE_COLUMN: 'movingColumn',
+              MOVE_COLUMN: {
+                target: 'movingColumn',
+                actions: ['setPendingColumn', 'optimisticallyMoveColumn']
+              },
               SET_COLUMN_LIMIT: 'settingColumnLimit',
               CLEAR_COLUMN_LIMIT: 'clearingColumnLimit',
 
@@ -246,7 +249,7 @@ export const boardMachine = Machine<MachineContext>(
                   },
                   onError: {
                     target: 'done',
-                    actions: 'flashError'
+                    actions: ['flashError', 'undoMoveColumn']
                   }
                 }
               },
@@ -312,6 +315,23 @@ export const boardMachine = Machine<MachineContext>(
   },
   {
     services: {
+      moveColumn: ({ project, pendingColumn }, { source, destination }) => {
+        if (!pendingColumn) {
+          return Promise.reject();
+        }
+
+        return fetcher.put(
+          apiRoutes.moveColumn({
+            columnId: pendingColumn.id,
+            orgName: project.orgName,
+            projectKey: project.key
+          }),
+          {
+            source,
+            destination
+          }
+        );
+      },
       fetchProject: ({ projectParams }) =>
         fetcher.get<ProjectResponse>(apiRoutes.findOneProject(projectParams)),
 
@@ -391,6 +411,29 @@ export const boardMachine = Machine<MachineContext>(
       isValidColumnLimit: (context, { limit }) => isValidColumnLimit(limit)
     },
     actions: {
+      optimisticallyMoveColumn: assign({
+        project: ({ project, pendingColumn }, { source, destination }) => {
+          if (!pendingColumn) {
+            return project;
+          }
+
+          const { columns } = project;
+
+          columns.splice(source.index, 1);
+          columns.splice(destination.index, 0, pendingColumn);
+
+          return {
+            ...project,
+            columns
+          };
+        }
+      }),
+      undoMoveColumn: assign({
+        project: ({ project, pendingColumn }, { source, destination }) => {
+          // TODO: Undo move columns
+          return project;
+        }
+      }),
       spawnMoveTaskActor: assign({
         taskActorMap: (
           { project, taskActorMap },
