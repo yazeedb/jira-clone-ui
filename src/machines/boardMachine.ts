@@ -17,6 +17,7 @@ import { notificationService } from './notificationMachine';
 import { deleteTaskActor } from './deleteTaskActor';
 import { createTaskActor } from './createTaskActor';
 import { moveTaskActor } from './moveTaskActor';
+import { DraggableLocation } from 'react-beautiful-dnd';
 
 interface MachineContext {
   projectParams: FindOneProjectParams;
@@ -26,6 +27,14 @@ interface MachineContext {
   pendingColumn?: Column;
   pendingTask?: Task;
   taskActorMap: Map<string, Interpreter<any>>;
+
+  // TODO: Is this the best
+  // way to store MOVE_COLUMN indices?
+  // Needed for rollback.
+  dndParams: {
+    source: DraggableLocation;
+    destination: DraggableLocation;
+  };
 }
 
 /*
@@ -65,7 +74,20 @@ export const initialContext: MachineContext = {
   selectedIssue: undefined,
   pendingColumn: undefined,
   pendingTask: undefined,
-  taskActorMap: new Map()
+  taskActorMap: new Map(),
+
+  // Mock initial values
+  // to appease TypeScript
+  dndParams: {
+    source: {
+      droppableId: '',
+      index: -1
+    },
+    destination: {
+      droppableId: '',
+      index: -1
+    }
+  }
 };
 
 export const boardMachine = Machine<MachineContext>(
@@ -111,7 +133,11 @@ export const boardMachine = Machine<MachineContext>(
               },
               MOVE_COLUMN: {
                 target: 'movingColumn',
-                actions: ['setPendingColumn', 'optimisticallyMoveColumn']
+                actions: [
+                  'setPendingColumn',
+                  'setDndParams',
+                  'optimisticallyMoveColumn'
+                ]
               },
               SET_COLUMN_LIMIT: 'settingColumnLimit',
               CLEAR_COLUMN_LIMIT: 'clearingColumnLimit',
@@ -315,7 +341,7 @@ export const boardMachine = Machine<MachineContext>(
   },
   {
     services: {
-      moveColumn: ({ project, pendingColumn }, { source, destination }) => {
+      moveColumn: ({ project, pendingColumn, dndParams }) => {
         if (!pendingColumn) {
           return Promise.reject();
         }
@@ -326,10 +352,7 @@ export const boardMachine = Machine<MachineContext>(
             orgName: project.orgName,
             projectKey: project.key
           }),
-          {
-            source,
-            destination
-          }
+          dndParams
         );
       },
       fetchProject: ({ projectParams }) =>
@@ -412,12 +435,13 @@ export const boardMachine = Machine<MachineContext>(
     },
     actions: {
       optimisticallyMoveColumn: assign({
-        project: ({ project, pendingColumn }, { source, destination }) => {
+        project: ({ project, pendingColumn, dndParams }) => {
           if (!pendingColumn) {
             return project;
           }
 
           const { columns } = project;
+          const { source, destination } = dndParams;
 
           columns.splice(source.index, 1);
           columns.splice(destination.index, 0, pendingColumn);
@@ -429,9 +453,23 @@ export const boardMachine = Machine<MachineContext>(
         }
       }),
       undoMoveColumn: assign({
-        project: ({ project, pendingColumn }, { source, destination }) => {
-          // TODO: Undo move columns
-          return project;
+        project: ({ project, pendingColumn, dndParams }) => {
+          if (!pendingColumn) {
+            return project;
+          }
+
+          const { columns } = project;
+          const { source, destination } = dndParams;
+
+          // Do the same thing,
+          // but in reverse
+          columns.splice(destination.index, 1);
+          columns.splice(source.index, 0, pendingColumn);
+
+          return {
+            ...project,
+            columns
+          };
         }
       }),
       spawnMoveTaskActor: assign({
@@ -539,6 +577,14 @@ export const boardMachine = Machine<MachineContext>(
       resetPendingColumn: assign({
         pendingColumn: (context, event) => undefined
       }),
+
+      setDndParams: assign({
+        dndParams: (context, { source, destination }) => ({
+          source,
+          destination
+        })
+      }),
+
       setPendingTask: assign({
         pendingTask: (context, event) => event.task
       }),
