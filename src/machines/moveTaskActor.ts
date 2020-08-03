@@ -1,11 +1,13 @@
 import { Machine, assign, sendParent } from 'xstate';
-import { Task, MoveTaskParams } from 'shared/interfaces/Project';
+import { FindOneColumnParams } from 'shared/interfaces/Project';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { notificationService } from './notificationMachine';
+import { DndParams } from './boardMachine';
 
 interface MachineContext {
-  params: MoveTaskParams;
+  params: FindOneColumnParams;
+  dndParams: DndParams;
 }
 
 export const moveTaskActor = Machine<MachineContext>(
@@ -29,13 +31,15 @@ export const moveTaskActor = Machine<MachineContext>(
   },
   {
     services: {
-      moveTask: ({ params }) => fetcher.put(apiRoutes.moveTask(params), params)
+      moveTask: ({ params, dndParams }) =>
+        fetcher.put(apiRoutes.moveTask(params), dndParams)
     },
     actions: {
-      undoMoveTask: sendParent(({ params }: MachineContext) => {
+      undoMoveTask: sendParent(({ params, dndParams }: MachineContext) => {
         return {
-          ...params,
-          type: 'UNDO_MOVE_TASK'
+          type: 'UNDO_MOVE_TASK',
+          params,
+          dndParams
         };
       }),
       flashError: assign((context, event) => {

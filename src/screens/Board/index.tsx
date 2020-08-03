@@ -169,99 +169,95 @@ export const Board: FC<BoardProps> = ({ user }) => {
                             isLoading={lockColumns}
                           />
 
-                          {c.tasks
-                            .filter((t) => !t.pendingDelete)
-                            .map((t, index) => (
-                              <TaskComponent
-                                task={t}
-                                key={t.id}
-                                projectKey={project.key}
-                                isLocked={lockColumns}
-                                isFirstInColumn={index === 0}
-                                isLastInColumn={index < c.tasks.length - 1}
-                                onMoveToTop={() =>
-                                  send({
-                                    type: 'MOVE_TASK',
-                                    task: t,
-                                    oldColumnId: c.id,
-                                    newColumnId: c.id,
-                                    oldIndex: index,
-                                    newIndex: 0
-                                  })
-                                }
-                                onMoveToBottom={() =>
-                                  send({
-                                    type: 'MOVE_TASK',
-                                    task: t,
-                                    oldColumnId: c.id,
-                                    newColumnId: c.id,
-                                    oldIndex: index,
-                                    newIndex: c.tasks.length - 1
-                                  })
-                                }
-                                onDelete={() =>
-                                  send({
-                                    type: 'DELETE_TASK',
-                                    column: c,
-                                    task: t
-                                  })
-                                }
-                              />
-                            ))}
+                          <Droppable droppableId={c.id} type="task">
+                            {(dropProvided) => (
+                              <>
+                                <div
+                                  ref={dropProvided.innerRef}
+                                  {...dropProvided.droppableProps}
+                                >
+                                  {c.tasks
+                                    .filter((t) => !t.pendingDelete)
+                                    .map((t, index) => (
+                                      <TaskComponent
+                                        task={t}
+                                        index={index}
+                                        key={t.id}
+                                        projectKey={project.key}
+                                        isLocked={lockColumns}
+                                        isFirstInColumn={index === 0}
+                                        isLastInColumn={
+                                          index < c.tasks.length - 1
+                                        }
+                                        onDelete={() =>
+                                          send({
+                                            type: 'DELETE_TASK',
+                                            column: c,
+                                            task: t
+                                          })
+                                        }
+                                      />
+                                    ))}
 
-                          {!isFirstColumn && hasNoIssues ? null : (
-                            <InlineEdit
-                              defaultValue=""
-                              readViewFitContainerWidth
-                              hideActionButtons
-                              isRequired
-                              onConfirm={(taskName) =>
-                                send({
-                                  type: 'CREATE_TASK',
-                                  name: taskName,
-                                  reporterId: user.sub,
-                                  columnId: c.id
-                                })
-                              }
-                              readView={() =>
-                                !lockColumns && (
-                                  <Button
-                                    appearance="subtle"
-                                    iconBefore={
-                                      <EditorAddIcon label="Create project" />
+                                  {dropProvided.placeholder}
+                                </div>
+
+                                {!isFirstColumn && hasNoIssues ? null : (
+                                  <InlineEdit
+                                    defaultValue=""
+                                    readViewFitContainerWidth
+                                    hideActionButtons
+                                    isRequired
+                                    onConfirm={(taskName) =>
+                                      send({
+                                        type: 'CREATE_TASK',
+                                        name: taskName,
+                                        reporterId: user.sub,
+                                        columnId: c.id
+                                      })
                                     }
-                                    className="create-project-button"
-                                  >
-                                    Create issue
-                                  </Button>
-                                )
-                              }
-                              editView={(fieldProps) => (
-                                <TextField
-                                  {...fieldProps}
-                                  autoFocus
-                                  placeholder="What needs to be done?"
-                                  autoComplete="off"
-                                  style={{
-                                    paddingTop: '20px',
-                                    paddingBottom: '70px',
-                                    paddingLeft: '15px'
-                                  }}
-                                  elemBeforeInput={
-                                    <img
-                                      src="/task-icon.svg"
-                                      alt="Task icon"
-                                      style={{
-                                        position: 'absolute',
-                                        bottom: '10px',
-                                        left: '17px'
-                                      }}
-                                    />
-                                  }
-                                />
-                              )}
-                            />
-                          )}
+                                    readView={() =>
+                                      !lockColumns && (
+                                        <Button
+                                          appearance="subtle"
+                                          iconBefore={
+                                            <EditorAddIcon label="Create project" />
+                                          }
+                                          className="create-project-button"
+                                        >
+                                          Create issue
+                                        </Button>
+                                      )
+                                    }
+                                    editView={(fieldProps) => (
+                                      <TextField
+                                        {...fieldProps}
+                                        autoFocus
+                                        placeholder="What needs to be done?"
+                                        autoComplete="off"
+                                        style={{
+                                          paddingTop: '20px',
+                                          paddingBottom: '70px',
+                                          paddingLeft: '15px'
+                                        }}
+                                        elemBeforeInput={
+                                          <img
+                                            src="/task-icon.svg"
+                                            alt="Task icon"
+                                            style={{
+                                              position: 'absolute',
+                                              bottom: '10px',
+                                              left: '17px'
+                                            }}
+                                          />
+                                        }
+                                      />
+                                    )}
+                                  />
+                                )}
+                              </>
+                            )}
+                          </Droppable>
                         </div>
                       )}
                     </Draggable>
@@ -383,11 +379,19 @@ export const Board: FC<BoardProps> = ({ user }) => {
 
         console.log(type);
 
-        if (type === 'column') {
-          const { columns } = current.context.project;
+        const { columns } = current.context.project;
 
+        if (type === 'column') {
           send({
             type: 'MOVE_COLUMN',
+            source,
+            destination,
+            draggableId,
+            column: columns.find((c) => c.id === draggableId)
+          });
+        } else if (type === 'task') {
+          send({
+            type: 'MOVE_TASK',
             source,
             destination,
             draggableId,
