@@ -478,10 +478,7 @@ export const boardMachine = Machine<MachineContext>(
         }
       }),
       spawnMoveTaskActor: assign({
-        taskActorMap: (
-          { project, taskActorMap, dndParams },
-          { draggableId }
-        ) => {
+        taskActorMap: ({ project, taskActorMap, dndParams }) => {
           const actor = spawn(
             moveTaskActor.withContext({
               dndParams,
@@ -493,7 +490,7 @@ export const boardMachine = Machine<MachineContext>(
             })
           );
 
-          taskActorMap.set(draggableId, actor);
+          taskActorMap.set(dndParams.draggableId, actor);
 
           return taskActorMap;
         }
