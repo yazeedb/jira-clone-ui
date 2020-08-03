@@ -10,6 +10,7 @@ import TextField from '@atlaskit/textfield';
 import InlineEdit from '@atlaskit/inline-edit';
 import { Tooltip } from 'react-tippy';
 import Lozenge from '@atlaskit/lozenge';
+import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 
 interface ColumnHeaderProps {
   column: Column;
@@ -22,6 +23,7 @@ interface ColumnHeaderProps {
   disableDeleteMessage: string;
   taskLimitExceeded: boolean;
   isLoading: boolean;
+  dragHandleProps?: DraggableProvidedDragHandleProps;
 }
 
 export const ColumnHeader: FC<ColumnHeaderProps> = ({
@@ -34,7 +36,8 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
   disableDelete,
   disableDeleteMessage,
   taskLimitExceeded,
-  isLoading
+  isLoading,
+  dragHandleProps
 }) => {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
@@ -64,7 +67,7 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
   const { name, tasks, taskLimit } = column;
 
   return (
-    <header>
+    <header {...dragHandleProps}>
       <InlineEdit
         defaultValue={name}
         onConfirm={onChange}
