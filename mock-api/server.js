@@ -606,6 +606,7 @@ app
   .put(
     '/api/orgs/:orgName/projects/:projectKey/columns/:columnId/moveTask',
     (req, res) => {
+      throw new Error('no');
       // Find associated user
       const { user } = req[env.sessionName];
       const db = dbTools.getDb();

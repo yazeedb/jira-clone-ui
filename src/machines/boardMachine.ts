@@ -531,8 +531,9 @@ export const boardMachine = Machine<MachineContext>(
         }
       }),
       undoMoveTask: assign({
-        project: ({ project }, { draggableId, dndParams }) => {
-          const { source, destination } = dndParams;
+        project: ({ project }, { dndParams }) => {
+          debugger;
+          const { source, destination, draggableId } = dndParams;
           const { columns } = project;
 
           const startColumn = columns.find((c) => c.id === source.droppableId);
@@ -545,7 +546,7 @@ export const boardMachine = Machine<MachineContext>(
             return project;
           }
 
-          const task = startColumn.tasks.find((t) => t.id === draggableId);
+          const task = finishColumn.tasks.find((t) => t.id === draggableId);
 
           if (!task) {
             return project;
