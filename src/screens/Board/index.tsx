@@ -223,7 +223,7 @@ export const Board: FC<BoardProps> = ({ user }) => {
                                           iconBefore={
                                             <EditorAddIcon label="Create project" />
                                           }
-                                          className="create-project-button"
+                                          className="create-issue-button"
                                         >
                                           Create issue
                                         </Button>
