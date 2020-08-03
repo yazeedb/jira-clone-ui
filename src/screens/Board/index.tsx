@@ -93,8 +93,6 @@ export const Board: FC<BoardProps> = ({ user }) => {
                   const isFirstColumn = index === 0;
                   const isLastColumn = index === project.columns.length - 1;
 
-                  const baseClassName = 'column';
-
                   const taskLimitExceeded =
                     c.taskLimit !== null && c.tasks.length > c.taskLimit;
 
