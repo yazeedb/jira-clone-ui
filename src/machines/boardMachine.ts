@@ -499,69 +499,18 @@ export const boardMachine = Machine<MachineContext>(
         }
       }),
       optimisticallyMoveTask: assign({
-        project: ({ project, dndParams }, { draggableId }) => {
-          const { source, destination } = dndParams;
-          const { columns } = project;
-
-          const startColumn = columns.find((c) => c.id === source.droppableId);
-
-          const finishColumn = columns.find(
-            (c) => c.id === destination.droppableId
-          );
-
-          if (!startColumn || !finishColumn) {
-            return project;
-          }
-
-          const task = startColumn.tasks.find((t) => t.id === draggableId);
-
-          if (!task) {
-            return project;
-          }
-
-          if (startColumn.id === finishColumn.id) {
-            startColumn.tasks.splice(source.index, 1);
-            finishColumn.tasks.splice(destination.index, 0, task);
-          } else {
-            startColumn.tasks.splice(source.index, 1);
-            finishColumn.tasks.splice(destination.index, 0, task);
-          }
-
-          return project;
-        }
+        project: ({ project, dndParams }) => moveTasks(dndParams, project)
       }),
       undoMoveTask: assign({
-        project: ({ project }, { dndParams }) => {
-          debugger;
-          const { source, destination, draggableId } = dndParams;
-          const { columns } = project;
-
-          const startColumn = columns.find((c) => c.id === source.droppableId);
-
-          const finishColumn = columns.find(
-            (c) => c.id === destination.droppableId
-          );
-
-          if (!startColumn || !finishColumn) {
-            return project;
-          }
-
-          const task = finishColumn.tasks.find((t) => t.id === draggableId);
-
-          if (!task) {
-            return project;
-          }
-
-          if (startColumn.id === finishColumn.id) {
-            finishColumn.tasks.splice(source.index, 1);
-            startColumn.tasks.splice(destination.index, 0, task);
-          } else {
-            finishColumn.tasks.splice(source.index, 1);
-            startColumn.tasks.splice(destination.index, 0, task);
-          }
-
-          return project;
-        }
+        project: ({ project }, { dndParams }) =>
+          moveTasks(
+            {
+              source: dndParams.destination,
+              destination: dndParams.source,
+              draggableId: dndParams.draggableId
+            },
+            project
+          )
       }),
       setProject: assign({
         project: (context, event) => {
@@ -758,54 +707,33 @@ const setPendingDeleteTask = (
     )
   }));
 
-const moveTasks = (
-  oldColumnId: string,
-  newColumnId: string,
-  task: Task,
-  columns: Column[],
-  newIndex: number
-) => {
-  if (oldColumnId === newColumnId) {
-    return columns.map((c) => {
-      if (c.id !== oldColumnId) {
-        return c;
-      }
+const moveTasks = (dndParams: DndParams, project: Project) => {
+  const { source, destination, draggableId } = dndParams;
+  const { columns } = project;
 
-      const otherTasks = c.tasks.filter((t) => t.id !== task.id);
+  const startColumn = columns.find((c) => c.id === source.droppableId);
 
-      const newTasks =
-        newIndex <= 0
-          ? [task, ...otherTasks]
-          : newIndex >= c.tasks.length - 1
-          ? [...otherTasks, task]
-          : otherTasks.flatMap((t, index) =>
-              index === newIndex ? [task, t] : t
-            );
+  const finishColumn = columns.find((c) => c.id === destination.droppableId);
 
-      return {
-        ...c,
-        tasks: newTasks
-      };
-    });
+  if (!startColumn || !finishColumn) {
+    return project;
   }
 
-  return columns.map((c) => {
-    if (c.id === oldColumnId) {
-      return {
-        ...c,
-        tasks: c.tasks.filter((t) => t.id !== task.id)
-      };
-    } else if (c.id === newColumnId) {
-      return {
-        ...c,
-        tasks: c.tasks.flatMap((t, index) =>
-          index === newIndex ? [task, t] : t
-        )
-      };
-    }
+  const task = startColumn.tasks.find((t) => t.id === draggableId);
 
-    return c;
-  });
+  if (!task) {
+    return project;
+  }
+
+  if (startColumn.id === finishColumn.id) {
+    startColumn.tasks.splice(source.index, 1);
+    finishColumn.tasks.splice(destination.index, 0, task);
+  } else {
+    startColumn.tasks.splice(source.index, 1);
+    finishColumn.tasks.splice(destination.index, 0, task);
+  }
+
+  return project;
 };
 
 /*
