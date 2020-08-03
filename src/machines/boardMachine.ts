@@ -237,7 +237,6 @@ export const boardMachine = Machine<MachineContext>(
           deletingColumn: {
             initial: 'awaiting',
             entry: 'setPendingColumn',
-            exit: 'resetPendingColumn',
             onDone: 'idle',
             states: {
               awaiting: {
@@ -285,7 +284,6 @@ export const boardMachine = Machine<MachineContext>(
           settingColumnLimit: {
             initial: 'awaiting',
             entry: 'setPendingColumn',
-            exit: 'resetPendingColumn',
             onDone: 'idle',
             states: {
               awaiting: {
@@ -316,7 +314,6 @@ export const boardMachine = Machine<MachineContext>(
           clearingColumnLimit: {
             initial: 'clearing',
             entry: 'setPendingColumn',
-            exit: 'resetPendingColumn',
             onDone: 'idle',
             states: {
               clearing: {
@@ -574,22 +571,14 @@ export const boardMachine = Machine<MachineContext>(
       setPendingColumn: assign({
         pendingColumn: (context, event) => event.column
       }),
-      resetPendingColumn: assign({
-        pendingColumn: (context, event) => undefined
+      setPendingTask: assign({
+        pendingTask: (context, event) => event.task
       }),
-
       setDndParams: assign({
         dndParams: (context, { source, destination }) => ({
           source,
           destination
         })
-      }),
-
-      setPendingTask: assign({
-        pendingTask: (context, event) => event.task
-      }),
-      resetPendingTask: assign({
-        pendingTask: (context, event) => undefined
       }),
 
       createPendingTaskAndActor: assign(
