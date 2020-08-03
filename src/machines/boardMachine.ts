@@ -17,6 +17,7 @@ import { notificationService } from './notificationMachine';
 import { deleteTaskActor } from './deleteTaskActor';
 import { createTaskActor } from './createTaskActor';
 import { moveTaskActor } from './moveTaskActor';
+import { DraggableLocation } from 'react-beautiful-dnd';
 
 interface MachineContext {
   projectParams: FindOneProjectParams;
@@ -26,6 +27,14 @@ interface MachineContext {
   pendingColumn?: Column;
   pendingTask?: Task;
   taskActorMap: Map<string, Interpreter<any>>;
+
+  // TODO: Is this the best
+  // way to store MOVE_COLUMN indices?
+  // Needed for rollback.
+  dndParams: {
+    source: DraggableLocation;
+    destination: DraggableLocation;
+  };
 }
 
 /*
@@ -65,7 +74,20 @@ export const initialContext: MachineContext = {
   selectedIssue: undefined,
   pendingColumn: undefined,
   pendingTask: undefined,
-  taskActorMap: new Map()
+  taskActorMap: new Map(),
+
+  // Mock initial values
+  // to appease TypeScript
+  dndParams: {
+    source: {
+      droppableId: '',
+      index: -1
+    },
+    destination: {
+      droppableId: '',
+      index: -1
+    }
+  }
 };
 
 export const boardMachine = Machine<MachineContext>(
@@ -109,7 +131,14 @@ export const boardMachine = Machine<MachineContext>(
                 target: 'deletingColumn',
                 cond: 'isNotLastColumn'
               },
-              MOVE_COLUMN: 'movingColumn',
+              MOVE_COLUMN: {
+                target: 'movingColumn',
+                actions: [
+                  'setPendingColumn',
+                  'setDndParams',
+                  'optimisticallyMoveColumn'
+                ]
+              },
               SET_COLUMN_LIMIT: 'settingColumnLimit',
               CLEAR_COLUMN_LIMIT: 'clearingColumnLimit',
 
@@ -246,7 +275,7 @@ export const boardMachine = Machine<MachineContext>(
                   },
                   onError: {
                     target: 'done',
-                    actions: 'flashError'
+                    actions: ['flashError', 'undoMoveColumn']
                   }
                 }
               },
@@ -312,6 +341,20 @@ export const boardMachine = Machine<MachineContext>(
   },
   {
     services: {
+      moveColumn: ({ project, pendingColumn, dndParams }) => {
+        if (!pendingColumn) {
+          return Promise.reject();
+        }
+
+        return fetcher.put(
+          apiRoutes.moveColumn({
+            columnId: pendingColumn.id,
+            orgName: project.orgName,
+            projectKey: project.key
+          }),
+          dndParams
+        );
+      },
       fetchProject: ({ projectParams }) =>
         fetcher.get<ProjectResponse>(apiRoutes.findOneProject(projectParams)),
 
@@ -391,6 +434,44 @@ export const boardMachine = Machine<MachineContext>(
       isValidColumnLimit: (context, { limit }) => isValidColumnLimit(limit)
     },
     actions: {
+      optimisticallyMoveColumn: assign({
+        project: ({ project, pendingColumn, dndParams }) => {
+          if (!pendingColumn) {
+            return project;
+          }
+
+          const { columns } = project;
+          const { source, destination } = dndParams;
+
+          columns.splice(source.index, 1);
+          columns.splice(destination.index, 0, pendingColumn);
+
+          return {
+            ...project,
+            columns
+          };
+        }
+      }),
+      undoMoveColumn: assign({
+        project: ({ project, pendingColumn, dndParams }) => {
+          if (!pendingColumn) {
+            return project;
+          }
+
+          const { columns } = project;
+          const { source, destination } = dndParams;
+
+          // Do the same thing,
+          // but in reverse
+          columns.splice(destination.index, 1);
+          columns.splice(source.index, 0, pendingColumn);
+
+          return {
+            ...project,
+            columns
+          };
+        }
+      }),
       spawnMoveTaskActor: assign({
         taskActorMap: (
           { project, taskActorMap },
@@ -496,6 +577,14 @@ export const boardMachine = Machine<MachineContext>(
       resetPendingColumn: assign({
         pendingColumn: (context, event) => undefined
       }),
+
+      setDndParams: assign({
+        dndParams: (context, { source, destination }) => ({
+          source,
+          destination
+        })
+      }),
+
       setPendingTask: assign({
         pendingTask: (context, event) => event.task
       }),
