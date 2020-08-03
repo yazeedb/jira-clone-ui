@@ -19,6 +19,12 @@ import { createTaskActor } from './createTaskActor';
 import { moveTaskActor } from './moveTaskActor';
 import { DraggableLocation } from 'react-beautiful-dnd';
 
+export interface DndParams {
+  source: DraggableLocation;
+  destination: DraggableLocation;
+  draggableId: string;
+}
+
 interface MachineContext {
   projectParams: FindOneProjectParams;
   project: Project;
@@ -31,10 +37,7 @@ interface MachineContext {
   // TODO: Is this the best
   // way to store MOVE_COLUMN indices?
   // Needed for rollback.
-  dndParams: {
-    source: DraggableLocation;
-    destination: DraggableLocation;
-  };
+  dndParams: DndParams;
 }
 
 /*
@@ -86,7 +89,8 @@ export const initialContext: MachineContext = {
     destination: {
       droppableId: '',
       index: -1
-    }
+    },
+    draggableId: ''
   }
 };
 
@@ -167,7 +171,11 @@ export const boardMachine = Machine<MachineContext>(
 
               MOVE_TASK: {
                 target: 'idle',
-                actions: ['optimisticallyMoveTask', 'spawnMoveTaskActor']
+                actions: [
+                  'setDndParams',
+                  'optimisticallyMoveTask',
+                  'spawnMoveTaskActor'
+                ]
               },
               UNDO_MOVE_TASK: {
                 target: 'idle',
@@ -471,60 +479,87 @@ export const boardMachine = Machine<MachineContext>(
       }),
       spawnMoveTaskActor: assign({
         taskActorMap: (
-          { project, taskActorMap },
-          { task, oldColumnId, newColumnId, oldIndex, newIndex }
+          { project, taskActorMap, dndParams },
+          { draggableId }
         ) => {
           const actor = spawn(
             moveTaskActor.withContext({
+              dndParams,
               params: {
-                oldColumnId: oldColumnId,
-                newColumnId: newColumnId,
-                oldIndex,
-                newIndex,
-                task,
                 orgName: project.orgName,
-                projectKey: project.key
+                projectKey: project.key,
+                columnId: dndParams.source.droppableId
               }
             })
           );
 
-          taskActorMap.set(task.id, actor);
+          taskActorMap.set(draggableId, actor);
 
           return taskActorMap;
         }
       }),
       optimisticallyMoveTask: assign({
-        project: (
-          { project },
-          { task, oldColumnId, newColumnId, newIndex }
-        ) => {
-          return {
-            ...project,
-            columns: moveTasks(
-              oldColumnId,
-              newColumnId,
-              task,
-              project.columns,
-              newIndex
-            )
-          };
+        project: ({ project, dndParams }, { draggableId }) => {
+          const { source, destination } = dndParams;
+          const { columns } = project;
+
+          const startColumn = columns.find((c) => c.id === source.droppableId);
+
+          const finishColumn = columns.find(
+            (c) => c.id === destination.droppableId
+          );
+
+          if (!startColumn || !finishColumn) {
+            return project;
+          }
+
+          const task = startColumn.tasks.find((t) => t.id === draggableId);
+
+          if (!task) {
+            return project;
+          }
+
+          if (startColumn.id === finishColumn.id) {
+            startColumn.tasks.splice(source.index, 1);
+            finishColumn.tasks.splice(destination.index, 0, task);
+          } else {
+            startColumn.tasks.splice(source.index, 1);
+            finishColumn.tasks.splice(destination.index, 0, task);
+          }
+
+          return project;
         }
       }),
       undoMoveTask: assign({
-        project: (
-          { project },
-          { task, oldColumnId, newColumnId, oldIndex }
-        ) => {
-          return {
-            ...project,
-            columns: moveTasks(
-              newColumnId,
-              oldColumnId,
-              task,
-              project.columns,
-              oldIndex
-            )
-          };
+        project: ({ project }, { draggableId, dndParams }) => {
+          const { source, destination } = dndParams;
+          const { columns } = project;
+
+          const startColumn = columns.find((c) => c.id === source.droppableId);
+
+          const finishColumn = columns.find(
+            (c) => c.id === destination.droppableId
+          );
+
+          if (!startColumn || !finishColumn) {
+            return project;
+          }
+
+          const task = startColumn.tasks.find((t) => t.id === draggableId);
+
+          if (!task) {
+            return project;
+          }
+
+          if (startColumn.id === finishColumn.id) {
+            finishColumn.tasks.splice(source.index, 1);
+            startColumn.tasks.splice(destination.index, 0, task);
+          } else {
+            finishColumn.tasks.splice(source.index, 1);
+            startColumn.tasks.splice(destination.index, 0, task);
+          }
+
+          return project;
         }
       }),
       setProject: assign({
@@ -575,9 +610,10 @@ export const boardMachine = Machine<MachineContext>(
         pendingTask: (context, event) => event.task
       }),
       setDndParams: assign({
-        dndParams: (context, { source, destination }) => ({
+        dndParams: (context, { source, destination, draggableId }) => ({
           source,
-          destination
+          destination,
+          draggableId
         })
       }),
 

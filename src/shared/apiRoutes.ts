@@ -54,13 +54,6 @@ export const apiRoutes = {
   moveColumn: (params: FindOneColumnParams) =>
     `${apiRoutes.findOneColumn(params)}/move`,
 
-  moveTask: (params: MoveTaskParams) => {
-    const columnsRoute = `${apiRoutes.findOneColumn({
-      orgName: params.orgName,
-      projectKey: params.projectKey,
-      columnId: params.oldColumnId
-    })}`;
-
-    return `${columnsRoute}/moveTask`;
-  }
+  moveTask: (params: FindOneColumnParams) =>
+    `${apiRoutes.findOneColumn(params)}/moveTask`
 };

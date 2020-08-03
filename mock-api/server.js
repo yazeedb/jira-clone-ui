@@ -630,31 +630,35 @@ app
         });
       }
 
-      const oldColumnId = req.params.columnId;
-      const { newColumnId, newIndex, task } = req.body;
+      const { source, destination, draggableId } = req.body;
+      const { columns } = project;
 
-      const oldColumn = project.columns.find((c) => c.id === oldColumnId);
-      const newColumn = project.columns.find((c) => c.id === newColumnId);
+      const startColumn = columns.find((c) => c.id === source.droppableId);
 
-      console.log({ oldColumn, newColumn });
+      const finishColumn = columns.find(
+        (c) => c.id === destination.droppableId
+      );
 
-      if (!oldColumn || !newColumn) {
-        // if (true) {
+      if (!startColumn || !finishColumn) {
         return res.status(404).json({
-          message: 'Not found!'
+          message: 'Columns missing!'
         });
       }
 
-      oldColumn.tasks = oldColumn.tasks.filter((t) => t.id !== task.id);
+      const task = startColumn.tasks.find((t) => t.id === draggableId);
 
-      if (newIndex <= 0) {
-        newColumn.tasks.unshift(task);
-      } else if (newIndex >= newColumn.tasks.length) {
-        newColumn.tasks.push(task);
+      if (!task) {
+        return res.status(404).json({
+          message: 'Task missing!'
+        });
+      }
+
+      if (startColumn.id === finishColumn.id) {
+        startColumn.tasks.splice(source.index, 1);
+        finishColumn.tasks.splice(destination.index, 0, task);
       } else {
-        newColumn.tasks = newColumn.tasks.flatMap((t, index) =>
-          index === newIndex ? [task, t] : t
-        );
+        startColumn.tasks.splice(source.index, 1);
+        finishColumn.tasks.splice(destination.index, 0, task);
       }
 
       dbTools.replaceDb(db);
