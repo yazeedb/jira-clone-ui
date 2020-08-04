@@ -175,6 +175,7 @@ export const Board: FC<BoardProps> = ({ user }) => {
                                 <div
                                   ref={dropProvided.innerRef}
                                   {...dropProvided.droppableProps}
+                                  className="tasks-wrapper"
                                 >
                                   {c.tasks
                                     .filter((t) => !t.pendingDelete)
