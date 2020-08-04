@@ -57,305 +57,318 @@ export const Board: FC<BoardProps> = ({ user }) => {
         const hasNoIssues = getTotalIssues(project.columns) === 0;
 
         return (
-          <>
-            <Breadcrumbs>
-              <BreadcrumbsItem
-                href={appRoutes.projects}
-                text="Projects"
-                component={forwardRef(({ href, ...otherProps }: any, ref) => (
-                  <Link to={href} ref={ref} {...otherProps} />
-                ))}
-              />
+          <Droppable
+            droppableId="all-columns"
+            direction="horizontal"
+            type="column"
+          >
+            {(dropProvided) => (
+              <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
+                <Breadcrumbs>
+                  <BreadcrumbsItem
+                    href={appRoutes.projects}
+                    text="Projects"
+                    component={forwardRef(
+                      ({ href, ...otherProps }: any, ref) => (
+                        <Link to={href} ref={ref} {...otherProps} />
+                      )
+                    )}
+                  />
 
-              <BreadcrumbsItem href="" text={project.name} />
-            </Breadcrumbs>
+                  <BreadcrumbsItem href="" text={project.name} />
+                </Breadcrumbs>
 
-            <h1 className="board-title">{project.key} board</h1>
+                <h1 className="board-title">{project.key} board</h1>
 
-            <div className="filter-container">
-              <TextField
-                className="filter"
-                placeholder="Filter issues"
-                elemAfterInput={
-                  <div style={{ marginRight: '5px' }}>
-                    <EditorSearchIcon label="Find project" />
-                  </div>
-                }
-                value={filter}
-                onChange={(event) => {
-                  setFilter(event.currentTarget.value.trim());
-                }}
-              />
-            </div>
-
-            <section className="columns-wrapper">
-              <section className="columns">
-                {project.columns.map((c, index) => {
-                  const isFirstColumn = index === 0;
-                  const isLastColumn = index === project.columns.length - 1;
-
-                  const taskLimitExceeded =
-                    c.taskLimit !== null && c.tasks.length > c.taskLimit;
-
-                  const lockColumns = [
-                    'changingColumnName',
-                    'creatingColumn',
-                    'movingColumn',
-                    'clearingColumnLimit',
-                    'settingColumnLimit.saving',
-                    'deletingColumn.saving'
-                  ].some((s) => current.matches(`viewingProject.${s}`));
-
-                  const columnClassName = [
-                    {
-                      cond: taskLimitExceeded,
-                      className: 'task-limit-exceeded'
-                    },
-                    {
-                      cond: lockColumns,
-                      className: 'locked'
+                <div className="filter-container">
+                  <TextField
+                    className="filter"
+                    placeholder="Filter issues"
+                    elemAfterInput={
+                      <div style={{ marginRight: '5px' }}>
+                        <EditorSearchIcon label="Find project" />
+                      </div>
                     }
-                  ].reduce(
-                    (baseClassName, { cond, className }) =>
-                      cond === true
-                        ? `${baseClassName} ${className}`
-                        : baseClassName,
-                    'column'
-                  );
+                    value={filter}
+                    onChange={(event) => {
+                      setFilter(event.currentTarget.value.trim());
+                    }}
+                  />
+                </div>
 
-                  return (
-                    <Draggable draggableId={c.id} index={index} key={c.id}>
-                      {(dragProvided, dragSnapshot) => (
-                        <div
-                          className={columnClassName}
-                          ref={dragProvided.innerRef}
-                          {...dragProvided.draggableProps}
-                        >
-                          <ColumnHeader
-                            dragHandleProps={dragProvided.dragHandleProps}
-                            column={c}
-                            showCheckmark={isLastColumn}
-                            onChange={(newValue) => {
-                              send({
-                                type: 'CHANGE_COLUMN_NAME',
-                                id: c.id,
-                                oldValue: c.name,
-                                newValue,
-                                projectKey: project.key,
-                                orgName: project.orgName
-                              });
-                            }}
-                            onSetColumnLimit={() =>
-                              send({
-                                type: 'SET_COLUMN_LIMIT',
-                                column: c
-                              })
-                            }
-                            onClearColumnLimit={() =>
-                              send({
-                                type: 'CLEAR_COLUMN_LIMIT',
-                                column: c
-                              })
-                            }
-                            onDelete={() =>
-                              send({
-                                type: 'DELETE_COLUMN',
-                                column: c
-                              })
-                            }
-                            disableDelete={project.columns.length === 1}
-                            disableDeleteMessage="The last column can't be deleted"
-                            taskLimitExceeded={taskLimitExceeded}
-                            isLoading={lockColumns}
-                          />
+                <section className="columns-wrapper">
+                  <section className="columns">
+                    {project.columns.map((c, index) => {
+                      const isFirstColumn = index === 0;
+                      const isLastColumn = index === project.columns.length - 1;
 
-                          <Droppable droppableId={c.id} type="task">
-                            {(dropProvided) => (
-                              <>
-                                <div
-                                  ref={dropProvided.innerRef}
-                                  {...dropProvided.droppableProps}
-                                  className="tasks-wrapper"
-                                >
-                                  {c.tasks
-                                    .filter((t) => !t.pendingDelete)
-                                    .map((t, index) => (
-                                      <TaskComponent
-                                        task={t}
-                                        index={index}
-                                        key={t.id}
-                                        projectKey={project.key}
-                                        isLocked={lockColumns}
-                                        isFirstInColumn={index === 0}
-                                        isLastInColumn={
-                                          index < c.tasks.length - 1
-                                        }
-                                        onDelete={() =>
+                      const taskLimitExceeded =
+                        c.taskLimit !== null && c.tasks.length > c.taskLimit;
+
+                      const lockColumns = [
+                        'changingColumnName',
+                        'creatingColumn',
+                        'movingColumn',
+                        'clearingColumnLimit',
+                        'settingColumnLimit.saving',
+                        'deletingColumn.saving'
+                      ].some((s) => current.matches(`viewingProject.${s}`));
+
+                      const columnClassName = [
+                        {
+                          cond: taskLimitExceeded,
+                          className: 'task-limit-exceeded'
+                        },
+                        {
+                          cond: lockColumns,
+                          className: 'locked'
+                        }
+                      ].reduce(
+                        (baseClassName, { cond, className }) =>
+                          cond === true
+                            ? `${baseClassName} ${className}`
+                            : baseClassName,
+                        'column'
+                      );
+
+                      return (
+                        <Draggable draggableId={c.id} index={index} key={c.id}>
+                          {(dragProvided, dragSnapshot) => (
+                            <div
+                              className={columnClassName}
+                              ref={dragProvided.innerRef}
+                              {...dragProvided.draggableProps}
+                            >
+                              <ColumnHeader
+                                dragHandleProps={dragProvided.dragHandleProps}
+                                column={c}
+                                showCheckmark={isLastColumn}
+                                onChange={(newValue) => {
+                                  send({
+                                    type: 'CHANGE_COLUMN_NAME',
+                                    id: c.id,
+                                    oldValue: c.name,
+                                    newValue,
+                                    projectKey: project.key,
+                                    orgName: project.orgName
+                                  });
+                                }}
+                                onSetColumnLimit={() =>
+                                  send({
+                                    type: 'SET_COLUMN_LIMIT',
+                                    column: c
+                                  })
+                                }
+                                onClearColumnLimit={() =>
+                                  send({
+                                    type: 'CLEAR_COLUMN_LIMIT',
+                                    column: c
+                                  })
+                                }
+                                onDelete={() =>
+                                  send({
+                                    type: 'DELETE_COLUMN',
+                                    column: c
+                                  })
+                                }
+                                disableDelete={project.columns.length === 1}
+                                disableDeleteMessage="The last column can't be deleted"
+                                taskLimitExceeded={taskLimitExceeded}
+                                isLoading={lockColumns}
+                              />
+
+                              <Droppable droppableId={c.id} type="task">
+                                {(dropProvided) => (
+                                  <>
+                                    <div
+                                      ref={dropProvided.innerRef}
+                                      {...dropProvided.droppableProps}
+                                      className="tasks-wrapper"
+                                    >
+                                      {c.tasks
+                                        .filter((t) => !t.pendingDelete)
+                                        .map((t, index) => (
+                                          <TaskComponent
+                                            task={t}
+                                            index={index}
+                                            key={t.id}
+                                            projectKey={project.key}
+                                            isLocked={lockColumns}
+                                            isFirstInColumn={index === 0}
+                                            isLastInColumn={
+                                              index < c.tasks.length - 1
+                                            }
+                                            onDelete={() =>
+                                              send({
+                                                type: 'DELETE_TASK',
+                                                column: c,
+                                                task: t
+                                              })
+                                            }
+                                          />
+                                        ))}
+
+                                      {dropProvided.placeholder}
+                                    </div>
+
+                                    {!isFirstColumn && hasNoIssues ? null : (
+                                      <InlineEdit
+                                        defaultValue=""
+                                        readViewFitContainerWidth
+                                        hideActionButtons
+                                        isRequired
+                                        onConfirm={(taskName) =>
                                           send({
-                                            type: 'DELETE_TASK',
-                                            column: c,
-                                            task: t
+                                            type: 'CREATE_TASK',
+                                            name: taskName,
+                                            reporterId: user.sub,
+                                            columnId: c.id
                                           })
                                         }
-                                      />
-                                    ))}
-
-                                  {dropProvided.placeholder}
-                                </div>
-
-                                {!isFirstColumn && hasNoIssues ? null : (
-                                  <InlineEdit
-                                    defaultValue=""
-                                    readViewFitContainerWidth
-                                    hideActionButtons
-                                    isRequired
-                                    onConfirm={(taskName) =>
-                                      send({
-                                        type: 'CREATE_TASK',
-                                        name: taskName,
-                                        reporterId: user.sub,
-                                        columnId: c.id
-                                      })
-                                    }
-                                    readView={() =>
-                                      !lockColumns && (
-                                        <Button
-                                          appearance="subtle"
-                                          iconBefore={
-                                            <EditorAddIcon label="Create project" />
-                                          }
-                                          className="create-issue-button"
-                                        >
-                                          Create issue
-                                        </Button>
-                                      )
-                                    }
-                                    editView={(fieldProps) => (
-                                      <TextField
-                                        {...fieldProps}
-                                        autoFocus
-                                        placeholder="What needs to be done?"
-                                        autoComplete="off"
-                                        style={{
-                                          paddingTop: '20px',
-                                          paddingBottom: '70px',
-                                          paddingLeft: '15px'
-                                        }}
-                                        elemBeforeInput={
-                                          <img
-                                            src="/task-icon.svg"
-                                            alt="Task icon"
-                                            style={{
-                                              position: 'absolute',
-                                              bottom: '10px',
-                                              left: '17px'
-                                            }}
-                                          />
+                                        readView={() =>
+                                          !lockColumns && (
+                                            <Button
+                                              appearance="subtle"
+                                              iconBefore={
+                                                <EditorAddIcon label="Create project" />
+                                              }
+                                              className="create-issue-button"
+                                            >
+                                              Create issue
+                                            </Button>
+                                          )
                                         }
+                                        editView={(fieldProps) => (
+                                          <TextField
+                                            {...fieldProps}
+                                            autoFocus
+                                            placeholder="What needs to be done?"
+                                            autoComplete="off"
+                                            style={{
+                                              paddingTop: '20px',
+                                              paddingBottom: '70px',
+                                              paddingLeft: '15px'
+                                            }}
+                                            elemBeforeInput={
+                                              <img
+                                                src="/task-icon.svg"
+                                                alt="Task icon"
+                                                style={{
+                                                  position: 'absolute',
+                                                  bottom: '10px',
+                                                  left: '17px'
+                                                }}
+                                              />
+                                            }
+                                          />
+                                        )}
                                       />
                                     )}
-                                  />
+                                  </>
                                 )}
-                              </>
-                            )}
-                          </Droppable>
-                        </div>
-                      )}
-                    </Draggable>
-                  );
-                })}
-              </section>
+                              </Droppable>
+                            </div>
+                          )}
+                        </Draggable>
+                      );
+                    })}
+                    {dropProvided.placeholder}
+                  </section>
 
-              <InlineEdit
-                defaultValue=""
-                isRequired
-                onConfirm={(name) =>
-                  send({
-                    type: 'CREATE_COLUMN',
-                    name
-                  })
-                }
-                editView={(fieldProps) => (
-                  <TextField
-                    {...fieldProps}
+                  <InlineEdit
+                    defaultValue=""
+                    isRequired
+                    onConfirm={(name) =>
+                      send({
+                        type: 'CREATE_COLUMN',
+                        name
+                      })
+                    }
+                    editView={(fieldProps) => (
+                      <TextField
+                        {...fieldProps}
+                        autoFocus
+                        className="create-column-input"
+                      />
+                    )}
+                    readView={() => (
+                      <Button
+                        iconBefore={<AddIcon label="Add column" />}
+                        className="add-column"
+                      />
+                    )}
+                  />
+                </section>
+
+                {current.matches('viewingProject.deletingColumn.awaiting') && (
+                  <Modal
                     autoFocus
-                    className="create-column-input"
+                    key="active-modal"
+                    appearance="danger"
+                    width="small"
+                    actions={[
+                      {
+                        text: 'Delete',
+                        onClick: () => send({ type: 'CONFIRM_DELETE_COLUMN' })
+                      },
+                      {
+                        text: 'Cancel',
+                        onClick: () => send({ type: 'CLOSE_DELETE_COLUMN' })
+                      }
+                    ]}
+                    onClose={() => send({ type: 'CLOSE_DELETE_COLUMN' })}
+                    heading="You're about to delete this column"
+                  >
+                    Are you sure you want to delete this column?
+                  </Modal>
+                )}
+
+                {current.matches('viewingProject.pendingDeleteTask') && (
+                  <Modal
+                    autoFocus
+                    key="active-modal"
+                    appearance="danger"
+                    width="small"
+                    heading="Delete FP-18?"
+                    actions={[
+                      {
+                        text: 'Delete',
+                        onClick: () => send({ type: 'CONFIRM' })
+                      },
+                      {
+                        text: 'Cancel',
+                        onClick: () => send({ type: 'CANCEL' })
+                      }
+                    ]}
+                    onClose={() => send({ type: 'CANCEL' })}
+                  >
+                    <p>
+                      You're about to permanently delete this issue, its
+                      comments and attachments, and all of its data.
+                    </p>
+                    <p>
+                      If you're not sure, you can resolve or close this issue
+                      instead.
+                    </p>
+                  </Modal>
+                )}
+
+                {current.matches(
+                  'viewingProject.settingColumnLimit.awaiting'
+                ) && (
+                  <SetColumnLimit
+                    onClose={() => send({ type: 'CLOSE_COLUMN_LIMIT' })}
+                    onSubmit={(limit) =>
+                      send({
+                        type: 'SUBMIT_COLUMN_LIMIT',
+                        limit
+                      })
+                    }
                   />
                 )}
-                readView={() => (
-                  <Button
-                    iconBefore={<AddIcon label="Add column" />}
-                    className="add-column"
-                  />
-                )}
-              />
-            </section>
-
-            {current.matches('viewingProject.deletingColumn.awaiting') && (
-              <Modal
-                autoFocus
-                key="active-modal"
-                appearance="danger"
-                width="small"
-                actions={[
-                  {
-                    text: 'Delete',
-                    onClick: () => send({ type: 'CONFIRM_DELETE_COLUMN' })
-                  },
-                  {
-                    text: 'Cancel',
-                    onClick: () => send({ type: 'CLOSE_DELETE_COLUMN' })
-                  }
-                ]}
-                onClose={() => send({ type: 'CLOSE_DELETE_COLUMN' })}
-                heading="You're about to delete this column"
-              >
-                Are you sure you want to delete this column?
-              </Modal>
+              </div>
             )}
-
-            {current.matches('viewingProject.pendingDeleteTask') && (
-              <Modal
-                autoFocus
-                key="active-modal"
-                appearance="danger"
-                width="small"
-                heading="Delete FP-18?"
-                actions={[
-                  {
-                    text: 'Delete',
-                    onClick: () => send({ type: 'CONFIRM' })
-                  },
-                  {
-                    text: 'Cancel',
-                    onClick: () => send({ type: 'CANCEL' })
-                  }
-                ]}
-                onClose={() => send({ type: 'CANCEL' })}
-              >
-                <p>
-                  You're about to permanently delete this issue, its comments
-                  and attachments, and all of its data.
-                </p>
-                <p>
-                  If you're not sure, you can resolve or close this issue
-                  instead.
-                </p>
-              </Modal>
-            )}
-
-            {current.matches('viewingProject.settingColumnLimit.awaiting') && (
-              <SetColumnLimit
-                onClose={() => send({ type: 'CLOSE_COLUMN_LIMIT' })}
-                onSubmit={(limit) =>
-                  send({
-                    type: 'SUBMIT_COLUMN_LIMIT',
-                    limit
-                  })
-                }
-              />
-            )}
-          </>
+          </Droppable>
         );
       }
 
@@ -401,19 +414,7 @@ export const Board: FC<BoardProps> = ({ user }) => {
         }
       }}
     >
-      <Droppable droppableId="all-columns" direction="horizontal" type="column">
-        {(dropProvided) => (
-          <main
-            className="board"
-            ref={dropProvided.innerRef}
-            {...dropProvided.droppableProps}
-          >
-            {' '}
-            {renderContent()}
-            {dropProvided.placeholder}
-          </main>
-        )}
-      </Droppable>
+      <main className="board">{renderContent()}</main>
     </DragDropContext>
   );
 };
