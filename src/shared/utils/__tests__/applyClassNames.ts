@@ -1,8 +1,8 @@
-import { conditionallyApplyClassNames } from '../conditionallyApplyClassNames';
+import { applyClassNames } from '../applyClassNames';
 
-describe('conditionallyApplyClassNames', () => {
+describe('applyClassNames', () => {
   it('conditionally applies classNames', () => {
-    const result = conditionallyApplyClassNames([
+    const result = applyClassNames([
       ['class1', true],
       ['class2', false],
       ['class3', true],
@@ -13,7 +13,7 @@ describe('conditionallyApplyClassNames', () => {
   });
 
   it('allows a base className', () => {
-    const result = conditionallyApplyClassNames(
+    const result = applyClassNames(
       [
         ['class1', true],
         ['class2', false],

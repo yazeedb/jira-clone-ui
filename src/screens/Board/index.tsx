@@ -25,7 +25,7 @@ import { SetColumnLimit } from './SetColumnLimit';
 import { TaskComponent } from 'shared/components/Task';
 import { User } from 'shared/interfaces/User';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { conditionallyApplyClassNames } from 'shared/utils/conditionallyApplyClassNames';
+import { applyClassNames } from 'shared/utils/applyClassNames';
 
 interface BoardProps {
   user: User;
@@ -117,7 +117,7 @@ export const Board: FC<BoardProps> = ({ user }) => {
 
                       const tasksCount = getTotalIssues([c]);
 
-                      const columnClassName = conditionallyApplyClassNames(
+                      const columnClassName = applyClassNames(
                         [
                           ['task-limit-exceeded', taskLimitExceeded],
                           ['locked', lockColumns],

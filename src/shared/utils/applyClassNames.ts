@@ -1,6 +1,6 @@
 type ClassBoolPair = [string, boolean];
 
-export const conditionallyApplyClassNames = (
+export const applyClassNames = (
   classBoolPairs: ClassBoolPair[],
   baseClassName = ''
 ) =>
