@@ -65,6 +65,7 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
     );
 
   const { name, tasks, taskLimit } = column;
+  const tasksCount = tasks.filter((t) => !t.pendingDelete).length;
 
   return (
     <header {...dragHandleProps}>
@@ -76,7 +77,7 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
         readView={() => <h6 className="title">{name}</h6>}
       />
 
-      {tasks.length > 0 && <span className="tasks-count">{tasks.length}</span>}
+      {tasksCount > 0 && <span className="tasks-count">{tasksCount}</span>}
 
       {taskLimit && (
         <Tooltip title="This column will be highlighted when the number of issues exceeds this limit.">
