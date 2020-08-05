@@ -94,14 +94,25 @@
         margin-left: auto;
       }
     }
-  }
 
-  .create-issue-button {
-    margin-left: -5px;
-    width: 100%;
-    padding: 20px 10px;
-  }
+    &.has-no-issues {
+      .create-issue-button {
+        visibility: hidden;
+      }
 
+      &:hover {
+        .create-issue-button {
+          visibility: visible;
+        }
+      }
+    }
+
+    .create-issue-button {
+      margin-left: -5px;
+      width: 100%;
+      padding: 20px 10px;
+    }
+  }
   .add-column {
     padding: 10px;
   }
