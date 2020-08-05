@@ -45,6 +45,7 @@
     }
 
     border-radius: 6px;
+    min-height: 120px;
 
     margin-right: 20px;
     padding-left: 10px;
@@ -92,10 +93,6 @@
       .spinner-icon {
         margin-left: auto;
       }
-    }
-
-    .tasks-wrapper {
-      min-height: 80px;
     }
   }
 
