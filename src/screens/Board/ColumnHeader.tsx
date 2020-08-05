@@ -14,6 +14,7 @@ import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 
 interface ColumnHeaderProps {
   column: Column;
+  tasksCount: number;
   showCheckmark: boolean;
   onChange: (value: string) => void;
   onSetColumnLimit: () => void;
@@ -28,6 +29,7 @@ interface ColumnHeaderProps {
 
 export const ColumnHeader: FC<ColumnHeaderProps> = ({
   column,
+  tasksCount,
   showCheckmark,
   onChange,
   onSetColumnLimit,
@@ -65,7 +67,6 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
     );
 
   const { name, tasks, taskLimit } = column;
-  const tasksCount = tasks.filter((t) => !t.pendingDelete).length;
 
   return (
     <header {...dragHandleProps}>

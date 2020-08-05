@@ -25,6 +25,7 @@ import { SetColumnLimit } from './SetColumnLimit';
 import { TaskComponent } from 'shared/components/Task';
 import { User } from 'shared/interfaces/User';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { conditionallyApplyClassNames } from 'shared/utils/conditionallyApplyClassNames';
 
 interface BoardProps {
   user: User;
@@ -114,20 +115,14 @@ export const Board: FC<BoardProps> = ({ user }) => {
                         'deletingColumn.saving'
                       ].some((s) => current.matches(`viewingProject.${s}`));
 
-                      const columnClassName = [
-                        {
-                          cond: taskLimitExceeded,
-                          className: 'task-limit-exceeded'
-                        },
-                        {
-                          cond: lockColumns,
-                          className: 'locked'
-                        }
-                      ].reduce(
-                        (baseClassName, { cond, className }) =>
-                          cond === true
-                            ? `${baseClassName} ${className}`
-                            : baseClassName,
+                      const tasksCount = getTotalIssues([c]);
+
+                      const columnClassName = conditionallyApplyClassNames(
+                        [
+                          ['task-limit-exceeded', taskLimitExceeded],
+                          ['locked', lockColumns],
+                          ['has-no-issues', tasksCount === 0]
+                        ],
                         'column'
                       );
 
@@ -143,6 +138,7 @@ export const Board: FC<BoardProps> = ({ user }) => {
                                 dragHandleProps={dragProvided.dragHandleProps}
                                 column={c}
                                 showCheckmark={isLastColumn}
+                                tasksCount={tasksCount}
                                 onChange={(newValue) => {
                                   send({
                                     type: 'CHANGE_COLUMN_NAME',

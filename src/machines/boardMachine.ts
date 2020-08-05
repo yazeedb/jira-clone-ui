@@ -685,7 +685,11 @@ export const boardMachine = Machine<MachineContext>(
 );
 
 export const getTotalIssues = (columns: Column[]) =>
-  columns.reduce((total, c) => total + c.tasks.length, 0);
+  columns.reduce((total, c) => {
+    const visibleTasks = c.tasks.filter((t) => !t.pendingDelete);
+
+    return total + visibleTasks.length;
+  }, 0);
 
 const setPendingDeleteTask = (
   pendingDelete: boolean,
