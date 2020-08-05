@@ -121,7 +121,7 @@ export const Board: FC<BoardProps> = ({ user }) => {
                         [
                           ['task-limit-exceeded', taskLimitExceeded],
                           ['locked', lockColumns],
-                          ['has-no-issues', tasksCount === 0]
+                          ['is-first-column', index === 0]
                         ],
                         'column'
                       );

@@ -95,22 +95,18 @@
       }
     }
 
-    &.has-no-issues {
-      .create-issue-button {
-        visibility: hidden;
-      }
-
-      &:hover {
-        .create-issue-button {
-          visibility: visible;
-        }
-      }
-    }
-
     .create-issue-button {
       margin-left: -5px;
       width: 100%;
       padding: 20px 10px;
+      visibility: hidden;
+    }
+
+    &:hover,
+    &.is-first-column {
+      .create-issue-button {
+        visibility: visible;
+      }
     }
   }
   .add-column {
