@@ -11,7 +11,6 @@ import { SomethingWentWrong } from 'shared/components/SomethingWentWrong';
 import { ImpossibleStateNotice } from 'shared/components/ImpossibleStateNotice';
 import { CreateProject } from './CreateProject';
 import { NoResultsSvg } from 'shared/components/NoResultsSvg';
-import { ProjectCard } from 'shared/components/ProjectCard';
 import './Projects.scss';
 import { Link } from 'react-router-dom';
 import { createBoardRoute } from 'shared/appRoutes';
@@ -154,7 +153,8 @@ export const Projects = () => {
                             marginRight: '8px'
                           }}
                         />
-                        <a href="#">{leadFullName}</a>
+
+                        <Button appearance="link">{leadFullName}</Button>
                       </span>
                     )
                   }

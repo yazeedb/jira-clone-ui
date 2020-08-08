@@ -1,8 +1,7 @@
 import {
   FindOneProjectParams,
   FindOneColumnParams,
-  FindOneTaskParams,
-  MoveTaskParams
+  FindOneTaskParams
 } from './interfaces/Project';
 
 const apiBase = '/api';

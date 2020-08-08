@@ -83,7 +83,7 @@ export const TaskComponent: FC<TaskProps> = ({
               </div>
             ) : (
               <>
-                <img src="/task-icon.svg" />
+                <img src="/task-icon.svg" alt="task-icon" />
                 <span className="ui-sequence">
                   {projectKey}-{task.uiSequence}
                 </span>

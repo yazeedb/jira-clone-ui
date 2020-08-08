@@ -1,8 +1,5 @@
-import { Machine, assign, sendParent, DoneInvokeEvent } from 'xstate';
-import {
-  FindOneColumnParams,
-  ColumnsResponse
-} from 'shared/interfaces/Project';
+import { Machine, assign, sendParent } from 'xstate';
+import { FindOneColumnParams } from 'shared/interfaces/Project';
 import { fetcher } from 'fetcher';
 import { apiRoutes } from 'shared/apiRoutes';
 import { notificationService } from './notificationMachine';

@@ -66,7 +66,7 @@ export const ColumnHeader: FC<ColumnHeaderProps> = ({
       deleteButton
     );
 
-  const { name, tasks, taskLimit } = column;
+  const { name, taskLimit } = column;
 
   return (
     <header {...dragHandleProps}>
