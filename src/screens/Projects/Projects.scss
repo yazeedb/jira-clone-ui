@@ -1,30 +1,11 @@
 .view-projects {
   width: 100%;
   padding: 0 40px;
-
   position: relative;
 
   th,
   td {
     padding: 10px !important;
-  }
-
-  .no-projects {
-    text-align: center;
-    max-width: 304px;
-    margin: 48px auto;
-
-    img {
-      max-width: 160px;
-    }
-
-    h3 {
-      margin-top: 15px;
-    }
-
-    p {
-      margin-bottom: 24px;
-    }
   }
 }
 
