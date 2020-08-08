@@ -9,8 +9,8 @@ const googleApiSrc = 'https://apis.google.com/js/platform.js';
 
 export const useGoogleSignIn = (
   elementId: string,
-  send: Sender<any>,
-  loading: boolean
+  onSuccess: () => void,
+  onFailure: (errorMessage: string) => void
 ) => {
   useEffect(() => {
     const meta = document.createElement('meta');
@@ -33,6 +33,10 @@ export const useGoogleSignIn = (
         height: 50,
         longtitle: true,
         theme: 'dark',
+
+        onfailure: ({ error }: any) =>
+          onFailure('Error encountered while signing in with Google'),
+
         onsuccess: (googleUser: any) => {
           const { id_token } = googleUser.getAuthResponse();
 
@@ -43,31 +47,14 @@ export const useGoogleSignIn = (
             .post(apiRoutes.login, {
               idToken: id_token
             })
-            .then(() => {
-              send({
-                type: 'TRY_AUTH'
-              });
-            })
-            .catch(({ message }) => {
-              send({
-                type: 'SIGN_IN_FAILED',
-                data: { message }
-              });
-            });
-        },
-        onfailure: ({ error }: any) => {
-          send({
-            type: 'SIGN_IN_FAILED',
-            data: {
-              message: 'Error encountered while signing in with Google'
-            }
-          });
+            .then(onSuccess)
+            .catch(({ message }) => onFailure(message));
         }
       });
     };
 
     document.body.appendChild(script);
-  }, [elementId, send, loading]);
+  }, [elementId]);
 };
 
 declare const gapi: any;

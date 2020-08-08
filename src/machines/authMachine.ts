@@ -19,9 +19,9 @@ interface AuthStateSchema {
 type AuthEvent =
   | { type: 'TRY_AUTH' }
   | { type: 'SUCCESS'; user: User }
-  | { type: 'SIGN_IN_FAILED'; error: string }
   | { type: 'ORG_CONFIRMED' }
-  | { type: 'SIGNUP_COMPLETE'; user: User };
+  | { type: 'SIGNUP_COMPLETE'; user: User }
+  | { type: 'SIGN_IN_FAILED'; data: { message: string } };
 
 interface AuthContext {
   user: User;

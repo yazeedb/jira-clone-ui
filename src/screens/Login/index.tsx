@@ -1,19 +1,19 @@
 import React, { FC } from 'react';
 import './Login.scss';
-import { Sender } from 'xstate';
 import { useGoogleSignIn } from './useGoogleSignIn';
 import { LandingForm } from 'shared/components/LandingForm';
 import Spinner from '@atlaskit/spinner';
 
 interface LoginProps {
-  send: Sender<any>;
   loading: boolean;
+  onSuccess: () => void;
+  onFailure: (errorMessage: string) => void;
 }
 
 export const googleButtonId = 'google-signin-button';
 
-export const Login: FC<LoginProps> = ({ send, loading }) => {
-  useGoogleSignIn(googleButtonId, send, loading);
+export const Login: FC<LoginProps> = ({ loading, onSuccess, onFailure }) => {
+  useGoogleSignIn(googleButtonId, onSuccess, onFailure);
 
   const renderContent = () => {
     if (loading) {

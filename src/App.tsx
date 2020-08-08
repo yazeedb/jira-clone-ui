@@ -41,7 +41,7 @@ export const App = () => {
 };
 
 const AuthShell = () => {
-  const [current, send] = useMachine(authMachine);
+  const [current, send] = useMachine(authMachine, { devTools: true });
   console.log('App.tsx', current);
 
   useEffect(() => {
@@ -61,7 +61,18 @@ const AuthShell = () => {
   switch (true) {
     case current.matches('notSignedIn'):
     case current.matches('authenticating'):
-      return <Login loading={current.matches('authenticating')} send={send} />;
+      return (
+        <Login
+          loading={current.matches('authenticating')}
+          onSuccess={() => send('TRY_AUTH')}
+          onFailure={(message) =>
+            send({
+              type: 'SIGN_IN_FAILED',
+              data: { message }
+            })
+          }
+        />
+      );
 
     case current.matches('awaitingSignup'):
       return (
