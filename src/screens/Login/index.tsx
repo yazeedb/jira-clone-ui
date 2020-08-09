@@ -6,7 +6,7 @@ import Spinner from '@atlaskit/spinner';
 
 interface LoginProps {
   loading: boolean;
-  onSuccess: () => void;
+  onSuccess: (idToken: string) => void;
   onFailure: (errorMessage: string) => void;
 }
 

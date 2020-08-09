@@ -62,12 +62,11 @@ const AuthShell = () => {
   }, [current.value, history, intendedRoute, current]);
 
   switch (true) {
-    case current.matches('notSignedIn'):
-    case current.matches('authenticating'):
+    case ['notSignedIn', 'authenticating', 'loggingIn'].some(current.matches):
       return (
         <Login
-          loading={current.matches('authenticating')}
-          onSuccess={() => send('TRY_AUTH')}
+          loading={['authenticating', 'loggingIn'].some(current.matches)}
+          onSuccess={(idToken) => send({ type: 'TRY_LOGIN', idToken })}
           onFailure={(message) =>
             send({
               type: 'SIGN_IN_FAILED',

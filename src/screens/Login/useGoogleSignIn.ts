@@ -8,7 +8,7 @@ const googleApiSrc = 'https://apis.google.com/js/platform.js';
 
 export const useGoogleSignIn = (
   elementId: string,
-  onSuccess: () => void,
+  onSuccess: (idToken: string) => void,
   onFailure: (errorMessage: string) => void
 ) => {
   useEffect(() => {
@@ -42,12 +42,7 @@ export const useGoogleSignIn = (
           // Prevent automatic Google sign-in loop if request fails
           gapi.auth2.getAuthInstance().disconnect();
 
-          fetcher
-            .post(apiRoutes.login, {
-              idToken: id_token
-            })
-            .then(onSuccess)
-            .catch(({ message }) => onFailure(message));
+          onSuccess(id_token);
         }
       });
     };

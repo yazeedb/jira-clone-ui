@@ -19,7 +19,7 @@ app
   .use(sessionMiddleware)
 
   .use((req, res, next) => {
-    setTimeout(next, 5000);
+    setTimeout(next, 1200);
   })
 
   .post('/login', (req, res) => {

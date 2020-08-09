@@ -10,6 +10,7 @@ interface AuthStateSchema {
   states: {
     notSignedIn: {};
     authenticating: {};
+    loggingIn: {};
     awaitingSignup: {};
     awaitingOrgConfirmation: {};
     appUsable: {};
@@ -18,6 +19,7 @@ interface AuthStateSchema {
 
 type AuthEvent =
   | { type: 'TRY_AUTH' }
+  | { type: 'TRY_LOGIN'; idToken: string }
   | { type: 'SUCCESS'; user: User }
   | { type: 'ORG_CONFIRMED' }
   | { type: 'SIGNUP_COMPLETE'; user: User }
@@ -43,6 +45,7 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
       notSignedIn: {
         on: {
           TRY_AUTH: 'authenticating',
+          TRY_LOGIN: 'loggingIn',
           SIGN_IN_FAILED: {
             target: 'notSignedIn',
             actions: 'flashError'
@@ -64,6 +67,16 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
               cond: 'signupNotComplete'
             }
           ],
+          onError: {
+            target: 'notSignedIn',
+            actions: 'flashError'
+          }
+        }
+      },
+      loggingIn: {
+        invoke: {
+          src: 'logUserIn',
+          onDone: 'authenticating',
           onError: {
             target: 'notSignedIn',
             actions: 'flashError'
@@ -107,6 +120,13 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
     },
     services: {
       authenticateUser: () => fetcher(apiRoutes.user),
+
+      logUserIn: (context, event) => {
+        return fetcher.post(apiRoutes.login, {
+          idToken: event.idToken
+        });
+      },
+
       kickUserIfEverUnauthenticated: () => (callback) => {
         console.log('401 logic set up');
         fetcher.interceptors.response.use(
