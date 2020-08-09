@@ -37,7 +37,8 @@ exports.sessionMiddleware = clientSessions({
   duration: ONE_HOUR,
   cookie: {
     maxAge: ONE_HOUR,
-    httpOnly: true
+    httpOnly: true,
+    sameSite: 'strict'
   }
 });
 
