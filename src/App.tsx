@@ -6,7 +6,8 @@ import {
   Switch,
   useHistory,
   Redirect,
-  useLocation
+  useLocation,
+  Link
 } from 'react-router-dom';
 import { useMachine, useService } from '@xstate/react';
 import { CompleteSignup } from './screens/CompleteSignup';
@@ -20,6 +21,8 @@ import { Board } from './screens/Board';
 import { appRoutes } from 'shared/appRoutes';
 import { notificationService } from 'machines/notificationMachine';
 import { User } from 'shared/interfaces/User';
+import EmptyState from '@atlaskit/empty-state';
+import Button from '@atlaskit/button';
 
 export const App = () => {
   const [current, send] = useService(notificationService);
@@ -127,17 +130,16 @@ const AuthenticatedApp: FC<AuthenticatedAppProps> = ({ user }) => {
         </Route>
 
         <Route path="*">
-          <div
-            style={{
-              width: '400px',
-              margin: '100px auto',
-              textAlign: 'center'
-            }}
-          >
-            <NotFoundSvg />
-            <h1>Oops!</h1>
-            <h2>404 - Not found</h2>
-          </div>
+          <EmptyState
+            renderImage={() => <NotFoundSvg />}
+            header="404 - Not found"
+            description="Oops! Seems that page doesn't exist"
+            primaryAction={
+              <Link to={appRoutes.projects}>
+                <Button appearance="primary">Go to projects</Button>
+              </Link>
+            }
+          />
         </Route>
       </Switch>
     </div>
