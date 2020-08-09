@@ -40,7 +40,7 @@ export const confirmOrgMachine = Machine<MachineContext, any, any>(
             {
               target: ConfirmOrgStates.orgConfirmed,
               cond: 'userHasOrg',
-              actions: sendParent('ORG_CONFIRMED')
+              actions: 'notifyParentOrgConfirmed'
             },
             {
               target: ConfirmOrgStates.awaitingOrgCreation,
@@ -58,7 +58,7 @@ export const confirmOrgMachine = Machine<MachineContext, any, any>(
         on: {
           ORG_CREATED: {
             target: ConfirmOrgStates.orgConfirmed,
-            actions: sendParent('ORG_CONFIRMED')
+            actions: 'notifyParentOrgConfirmed'
           }
         }
       },
@@ -85,6 +85,7 @@ export const confirmOrgMachine = Machine<MachineContext, any, any>(
       }
     },
     actions: {
+      notifyParentOrgConfirmed: sendParent('ORG_CONFIRMED'),
       spawnCreateOrgService: assign({
         createOrgService: (context, event) => spawn(createOrgMachine)
       }),

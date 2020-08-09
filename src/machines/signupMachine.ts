@@ -98,12 +98,7 @@ export const signupMachine = Machine<
           src: 'completeSignup',
           onDone: {
             target: SignupStates.success,
-            actions: sendParent((context: SignupContext) => {
-              return {
-                type: 'SIGNUP_COMPLETE',
-                user: context.formData
-              };
-            })
+            actions: 'notifyParentSuccess'
           },
           onError: {
             target: SignupStates.editing,
@@ -117,6 +112,12 @@ export const signupMachine = Machine<
   },
   {
     actions: {
+      notifyParentSuccess: sendParent((context: SignupContext, event: any) => {
+        return {
+          type: 'SIGNUP_COMPLETE',
+          user: context.formData
+        };
+      }),
       updateFormData: assign({
         formData: (_, event) => {
           const e = event as SubmitEvent;

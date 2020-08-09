@@ -18,6 +18,10 @@ app
   .use(cookieParser())
   .use(sessionMiddleware)
 
+  .use((req, res, next) => {
+    setTimeout(next, 5000);
+  })
+
   .post('/login', (req, res) => {
     const client = new OAuth2Client(env.googleClientId);
     const { idToken } = req.body;

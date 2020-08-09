@@ -88,7 +88,7 @@ export const createProjectMachine = Machine<MachineContext>(
         entry: 'spawnValidationMachines',
         on: {
           SUBMIT: { target: 'submitting', cond: 'formIsValid' },
-          CLOSE: { actions: sendParent('CLOSE') }
+          CLOSE: { actions: 'notifyParentClose' }
         }
       },
       submitting: {
@@ -96,7 +96,7 @@ export const createProjectMachine = Machine<MachineContext>(
           src: 'createProject',
           onDone: {
             target: 'editing',
-            actions: sendParent('SUBMIT_SUCCESS')
+            actions: 'notifyParentSuccess'
           },
           onError: {
             target: 'editing',
@@ -109,6 +109,8 @@ export const createProjectMachine = Machine<MachineContext>(
   {
     guards: { formIsValid },
     actions: {
+      notifyParentClose: sendParent('CLOSE'),
+      notifyParentSuccess: sendParent('SUBMIT_SUCCESS'),
       spawnValidationMachines: assign((context, event) => {
         return {
           nameValidationService: spawn(nameValidationMachine, {

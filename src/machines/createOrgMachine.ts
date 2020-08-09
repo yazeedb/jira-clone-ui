@@ -45,7 +45,7 @@ export const createOrgMachine = Machine<MachineContext, any, MachineEvent>(
           src: 'createOrg',
           onDone: {
             target: CreateOrgStates.success,
-            actions: sendParent('ORG_CREATED')
+            actions: 'notifyParentOrgCreated'
           },
           onError: {
             target: CreateOrgStates.editing,
@@ -67,6 +67,7 @@ export const createOrgMachine = Machine<MachineContext, any, MachineEvent>(
         })
     },
     actions: {
+      notifyParentOrgCreated: sendParent('ORG_CREATED'),
       flashError: assign((context, event) => {
         const e = event as DoneInvokeEvent<Error>;
 

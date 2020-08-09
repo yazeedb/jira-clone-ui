@@ -32,7 +32,7 @@ export function validationMachineFactory({
       on: {
         [validateEvent]: {
           target: 'debounceValidation',
-          actions: ['setValue', 'clearErrorMessage', sendUpdate()]
+          actions: ['setValue', 'clearErrorMessage', 'sendUpdate']
         }
       },
       states: {
@@ -43,12 +43,12 @@ export function validationMachineFactory({
               {
                 target: 'validating',
                 cond: 'isValidInput',
-                actions: sendUpdate()
+                actions: 'sendUpdate'
               },
               {
                 target: 'editing',
                 cond: 'isNotValidInput',
-                actions: sendUpdate()
+                actions: 'sendUpdate'
               }
             ]
           }
@@ -60,17 +60,17 @@ export function validationMachineFactory({
               {
                 target: 'available',
                 cond: 'isAvailable',
-                actions: sendUpdate()
+                actions: 'sendUpdate'
               },
               {
                 target: 'notAvailable',
                 cond: 'isNotAvailable',
-                actions: sendUpdate()
+                actions: 'sendUpdate'
               }
             ],
             onError: {
               target: 'editing',
-              actions: ['setErrorMessage', sendUpdate()]
+              actions: ['setErrorMessage', 'sendUpdate']
             }
           }
         },
@@ -80,6 +80,7 @@ export function validationMachineFactory({
     },
     {
       actions: {
+        sendUpdate: sendUpdate(),
         setValue: assign({
           value: (context, event) => event.value
         }),
