@@ -40,18 +40,8 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
       confirmOrgService: spawn(confirmOrgMachine)
     },
     invoke: { src: 'kickUserIfEverUnauthenticated' },
-    initial: 'notSignedIn',
+    initial: 'authenticating',
     states: {
-      notSignedIn: {
-        on: {
-          TRY_AUTH: 'authenticating',
-          TRY_LOGIN: 'loggingIn',
-          SIGN_IN_FAILED: {
-            target: 'notSignedIn',
-            actions: 'flashError'
-          }
-        }
-      },
       authenticating: {
         invoke: {
           src: 'authenticateUser',
@@ -68,6 +58,16 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
             }
           ],
           onError: {
+            target: 'notSignedIn',
+            actions: 'flashError'
+          }
+        }
+      },
+      notSignedIn: {
+        on: {
+          TRY_AUTH: 'authenticating',
+          TRY_LOGIN: 'loggingIn',
+          SIGN_IN_FAILED: {
             target: 'notSignedIn',
             actions: 'flashError'
           }

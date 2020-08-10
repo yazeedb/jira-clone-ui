@@ -47,10 +47,6 @@ const AuthShell = () => {
   const [current, send] = useMachine(authMachine, { devTools: true });
   console.log('App.tsx', current);
 
-  useEffect(() => {
-    send('TRY_AUTH');
-  }, [send]);
-
   const history = useHistory();
   const { pathname, search } = useLocation();
   const [intendedRoute] = useState(pathname + search);
