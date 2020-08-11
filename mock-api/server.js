@@ -787,41 +787,39 @@ if (process.env.NODE_ENV !== 'test') {
  */
 function createProjectValidator(prop) {
   return (req, res) => {
-    setTimeout(() => {
-      // Find associated user
-      const { user } = req[env.sessionName];
-      const db = dbTools.getDb();
-      const existingUser = db.users.find((u) => u.sub === user.sub);
+    // Find associated user
+    const { user } = req[env.sessionName];
+    const db = dbTools.getDb();
+    const existingUser = db.users.find((u) => u.sub === user.sub);
 
-      // Find associated org
-      const { orgId } = req.params;
-      const org = existingUser.orgs.find((o) => o.id === orgId);
+    // Find associated org
+    const { orgId } = req.params;
+    const org = existingUser.orgs.find((o) => o.id === orgId);
 
-      if (!org) {
-        return res.status(404).json({
-          message: 'Org not found!'
-        });
-      }
-
-      const valueToCompare = req.query[prop];
-      const existingProject = org.projects.find(
-        (p) => p[prop].toLowerCase() === valueToCompare.toLowerCase()
-      );
-
-      if (existingProject) {
-        return res.json({
-          available: false,
-          message:
-            prop === 'name'
-              ? 'That name is taken'
-              : `Project ${existingProject.name} uses this project key`
-        });
-      }
-
-      return res.json({
-        available: true
+    if (!org) {
+      return res.status(404).json({
+        message: 'Org not found!'
       });
-    }, 800);
+    }
+
+    const valueToCompare = req.query[prop];
+    const existingProject = org.projects.find(
+      (p) => p[prop].toLowerCase() === valueToCompare.toLowerCase()
+    );
+
+    if (existingProject) {
+      return res.json({
+        available: false,
+        message:
+          prop === 'name'
+            ? 'That name is taken'
+            : `Project ${existingProject.name} uses this project key`
+      });
+    }
+
+    return res.json({
+      available: true
+    });
   };
 }
 

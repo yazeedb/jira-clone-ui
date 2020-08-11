@@ -10,7 +10,12 @@ export const fetcher = axios.create({
 export const defaultHttpErrorMessage = 'Something went wrong';
 
 fetcher.interceptors.response.use(
-  (response) => response,
+  (response) =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(response);
+      }, 1200);
+    }),
   (error: AxiosError) => {
     if (!error.response) {
       // TODO: Will this branch ever be hit?
