@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 
 export const fetcher = axios.create({
   withCredentials: true,
@@ -11,15 +11,18 @@ export const defaultHttpErrorMessage = 'Something went wrong';
 
 fetcher.interceptors.response.use(
   (response) => response,
-  (error) => {
+  (error: AxiosError) => {
     if (!error.response) {
+      // TODO: Will this branch ever be hit?
+      // We might not need it...
       return Promise.reject({ message: defaultHttpErrorMessage });
     }
 
-    const { message } = error.response.data;
+    const { status, statusText, data } = error.response;
 
     return Promise.reject({
-      message: message || defaultHttpErrorMessage
+      status,
+      message: data.message || statusText || defaultHttpErrorMessage
     });
   }
 );

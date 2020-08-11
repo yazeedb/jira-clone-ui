@@ -41,6 +41,12 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
     },
     invoke: { src: 'kickUserIfEverUnauthenticated' },
     initial: 'authenticating',
+    on: {
+      SIGN_IN_FAILED: {
+        target: 'notSignedIn',
+        actions: 'flashError'
+      }
+    },
     states: {
       authenticating: {
         invoke: {
@@ -66,11 +72,7 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
       notSignedIn: {
         on: {
           TRY_AUTH: 'authenticating',
-          TRY_LOGIN: 'loggingIn',
-          SIGN_IN_FAILED: {
-            target: 'notSignedIn',
-            actions: 'flashError'
-          }
+          TRY_LOGIN: 'loggingIn'
         }
       },
       loggingIn: {
@@ -128,14 +130,13 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
       },
 
       kickUserIfEverUnauthenticated: () => (callback) => {
-        console.log('401 logic set up');
         fetcher.interceptors.response.use(
           (res) => res,
           (error) => {
-            if (error.response && error.response.status === 401) {
+            if (error.status === 401) {
               callback({
                 type: 'SIGN_IN_FAILED',
-                error: error.message
+                data: error
               });
             }
 

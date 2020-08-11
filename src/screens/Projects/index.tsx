@@ -27,7 +27,7 @@ export const Projects = () => {
       return <ProgressBar isIndeterminate />;
 
     case current.matches('fetchFailed'):
-      return <SomethingWentWrong />;
+      return <SomethingWentWrong title={current.context.errorMessage} />;
 
     case current.matches('viewingProjects'):
       return <ViewProjects />;
