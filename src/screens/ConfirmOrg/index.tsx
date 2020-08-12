@@ -25,8 +25,6 @@ export const ConfirmOrg: FC<ConfirmOrgProps> = ({
 }) => {
   const [current] = useService(confirmOrgService);
 
-  const [_, send] = useService(current.context.createOrgService);
-
   const renderFormBody = () => {
     switch (true) {
       case current.matches(ConfirmOrgStates.confirming):
@@ -53,45 +51,53 @@ export const ConfirmOrg: FC<ConfirmOrgProps> = ({
         );
 
       case current.matches(ConfirmOrgStates.awaitingOrgCreation):
-        return (
-          <Formik
-            initialValues={{ org: '' }}
-            validate={(values) => {
-              // TODO: Validate this form
-              return {};
-            }}
-            onSubmit={(values) => {
-              send({
-                type: 'SUBMIT',
-                formData: values
-              });
-            }}
-          >
-            {({ isValid }) => (
-              <Form>
-                <h4>What should your org's name be, {user.firstName}?</h4>
-
-                <FormField
-                  name="org"
-                  type="text"
-                  placeholder="Org name"
-                  autoFocus
-                />
-
-                <Button
-                  type="submit"
-                  isLoading={current.matches(CreateOrgStates.submitting)}
-                  disabled={!isValid}
-                  shouldFitContainer
-                  appearance="primary"
-                >
-                  Create and go to projects
-                </Button>
-              </Form>
-            )}
-          </Formik>
-        );
+        return <TheForm />;
     }
+  };
+
+  const TheForm = () => {
+    const [createOrgCurrent, send] = useService(
+      current.context.createOrgService
+    );
+
+    return (
+      <Formik
+        initialValues={{ org: '' }}
+        validate={(values) => {
+          // TODO: Validate this form
+          return {};
+        }}
+        onSubmit={(values) => {
+          send({
+            type: 'SUBMIT',
+            formData: values
+          });
+        }}
+      >
+        {({ isValid }) => (
+          <Form>
+            <h4>What should your org's name be, {user.firstName}?</h4>
+
+            <FormField
+              name="org"
+              type="text"
+              placeholder="Org name"
+              autoFocus
+            />
+
+            <Button
+              type="submit"
+              isLoading={createOrgCurrent.matches(CreateOrgStates.submitting)}
+              disabled={!isValid}
+              shouldFitContainer
+              appearance="primary"
+            >
+              Create and go to projects
+            </Button>
+          </Form>
+        )}
+      </Formik>
+    );
   };
 
   return (
@@ -99,28 +105,4 @@ export const ConfirmOrg: FC<ConfirmOrgProps> = ({
       {renderFormBody()}
     </LandingForm>
   );
-
-  // switch (true) {
-  //   case current.matches(ConfirmOrgStates.awaitingOrgCreation):
-  //     return (
-  //       <CreateOrg
-  //         createOrgService={current.context.createOrgService}
-  //         user={user}
-  //       />
-  //     );
-
-  //   case current.matches(ConfirmOrgStates.confirming):
-  //     return <h1>I am here!!</h1>;
-  //   // return <Spinner size="xlarge" />;
-
-  //   case current.matches(ConfirmOrgStates.orgConfirmed):
-  //     return <h1>Confirmed!</h1>;
-
-  //   case current.matches(ConfirmOrgStates.confirmFailed):
-  //     return <h1>Failure: {current.context.errorMessage}</h1>;
-
-  //   default:
-  //     console.error('Impossible state reached', current);
-  //     return null;
-  // }
 };
