@@ -16,7 +16,9 @@ export const LandingForm: FC<LandingFormProps> = ({
           <img src="jira-logo.svg" alt="Jira Logo" className="jira-logo" />
         </header>
 
-        <section className={containerClassName}>{children}</section>
+        <section className={`landing-form-section ${containerClassName}`}>
+          {children}
+        </section>
 
         <footer>
           <img src="Atlassian-horizontal-blue-rgb.svg" alt="Atlassian Logo" />
