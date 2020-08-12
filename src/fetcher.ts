@@ -14,7 +14,7 @@ fetcher.interceptors.response.use(
     new Promise((resolve) => {
       setTimeout(() => {
         resolve(response);
-      }, 1200);
+      }, 800);
     }),
   (error: AxiosError) => {
     if (!error.response) {
