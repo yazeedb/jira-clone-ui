@@ -30,7 +30,7 @@ export const ConfirmOrg: FC<ConfirmOrgProps> = ({
       case current.matches(ConfirmOrgStates.confirming):
         return (
           <>
-            <h4 style={{ marginBottom: '10px' }}>Confirming org...</h4>
+            <h4 style={{ marginBottom: '15px' }}>Confirming org...</h4>
             <Spinner size="large" />
           </>
         );
