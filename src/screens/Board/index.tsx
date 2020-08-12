@@ -64,7 +64,11 @@ export const Board: FC<BoardProps> = ({ user }) => {
             type="column"
           >
             {(dropProvided) => (
-              <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
+              <div
+                ref={dropProvided.innerRef}
+                {...dropProvided.droppableProps}
+                className="viewing-board"
+              >
                 <Breadcrumbs>
                   <BreadcrumbsItem
                     href={appRoutes.projects}

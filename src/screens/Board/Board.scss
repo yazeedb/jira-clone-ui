@@ -1,7 +1,11 @@
 @import '../../theme.scss';
 
 .board {
-  padding: 20px 40px;
+  width: 100%;
+
+  .viewing-board {
+    padding: 20px 40px;
+  }
 
   .board-title {
     margin-top: 10px;
