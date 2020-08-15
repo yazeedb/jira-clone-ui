@@ -1,6 +1,4 @@
 import { useEffect } from 'react';
-import { fetcher } from '../../fetcher';
-import { apiRoutes } from 'shared/apiRoutes';
 
 const googleClientId =
   '235318923218-s6tms65fam3o6d51shlhmci587s5mi22.apps.googleusercontent.com';
