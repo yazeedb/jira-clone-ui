@@ -29,7 +29,8 @@ export const Login: FC<LoginProps> = ({ loading, onSuccess, onFailure }) => {
       <>
         <h4 className="heading">Log in to your account</h4>
 
-        <div id={googleButtonId}></div>
+        <div id={googleButtonId} />
+
         <div className="links">
           <a
             href="https://www.atlassian.com/legal/privacy-policy"
@@ -38,6 +39,8 @@ export const Login: FC<LoginProps> = ({ loading, onSuccess, onFailure }) => {
           >
             Privacy policy
           </a>
+
+          <span className="separator">•</span>
 
           <a
             href="https://www.atlassian.com/legal/cloud-terms-of-service"

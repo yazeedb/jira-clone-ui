@@ -2,19 +2,18 @@
 
 .login {
   .heading,
-  a:first-of-type:after {
+  .separator {
     color: $subtle-heading;
   }
 
   .heading {
     font-weight: 600;
-    margin-bottom: 20px;
   }
 
   #google-signin-button {
     width: 320px;
     border-bottom: 1px solid rgba($subtle-heading, 0.3);
-    padding-bottom: 20px;
+    padding: 20px 0;
   }
 
   .links {
@@ -22,11 +21,7 @@
     margin-top: 20px;
   }
 
-  a {
-    &:first-of-type:after {
-      content: '•';
-      margin: 0 20px;
-      font-size: 14px;
-    }
+  .separator {
+    margin: 0 15px;
   }
 }

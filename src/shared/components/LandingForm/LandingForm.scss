@@ -36,13 +36,6 @@
 
     a {
       text-decoration: none;
-
-      &:first-of-type:after {
-        content: '•';
-        margin: 0 20px;
-        font-size: 14px;
-        color: $subtle-heading;
-      }
     }
   }
 
