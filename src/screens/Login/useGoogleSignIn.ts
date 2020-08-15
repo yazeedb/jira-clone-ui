@@ -31,7 +31,7 @@ export const useGoogleSignIn = (
         longtitle: true,
         theme: 'dark',
 
-        onfailure: ({ error }: any) =>
+        onfailure: () =>
           onFailure('Error encountered while signing in with Google'),
 
         onsuccess: (googleUser: any) => {
