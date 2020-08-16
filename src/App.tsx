@@ -53,6 +53,8 @@ const AuthShell = () => {
   useEffect(() => {
     if (current.matches('appUsable')) {
       history.push(intendedRoute);
+    } else {
+      history.push(appRoutes.index);
     }
   }, [current.value, history, intendedRoute, current]);
 
