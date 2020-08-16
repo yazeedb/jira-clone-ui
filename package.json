@@ -60,15 +60,18 @@
     "xstate": "^4.8.0"
   },
   "scripts": {
+    "// Dev scripts": "",
     "prestartMockApi": "node ./mock-api/createDb.js",
     "startMockApi": "nodemon ./mock-api/server.js",
     "startUi": "react-scripts start",
-    "start": "npm-run-all --parallel startMockApi startUi",
-    "build": "react-scripts build",
-    "postbuild": "node prod-server.js",
+    "startDev": "npm-run-all --parallel startMockApi startUi",
     "test": "react-scripts test --env=node",
     "eject": "react-scripts eject",
-    "format": "prettier --write ./src"
+    "format": "prettier --write ./src",
+    
+    "// Prod scripts": "",
+    "start": "node prod-server.js",
+    "build": "react-scripts build"
   },
   "eslintConfig": {
     "extends": "react-app"
