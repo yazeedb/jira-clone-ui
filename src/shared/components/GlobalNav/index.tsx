@@ -8,42 +8,40 @@ import { Tooltip } from 'react-tippy';
 import './GlobalNav.scss';
 
 export const GlobalNav: FC = () => {
-  const [secondNavOpen, setSecondNavOpen] = useState(true);
+  const [navOpen, setNavOpen] = useState(true);
 
   return (
-    <div className="global-nav">
-      <div className={secondNavOpen ? 'second-nav open' : 'second-nav closed'}>
-        <h2 className="title">Jira Software</h2>
-        <ul>
-          <li>
-            <NavLink to="/projects">
-              <FolderIcon label="Projects" />
-              <span className="link-text">Projects</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/people">
-              <PeopleIcon label="People" />
-              <span className="link-text">People</span>
-            </NavLink>
-          </li>
-        </ul>
+    <div className={navOpen ? 'global-nav open' : 'global-nav closed'}>
+      <h2 className="title">Jira Software</h2>
+      <ul>
+        <li>
+          <NavLink to="/projects">
+            <FolderIcon label="Projects" />
+            <span className="link-text">Projects</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/people">
+            <PeopleIcon label="People" />
+            <span className="link-text">People</span>
+          </NavLink>
+        </li>
+      </ul>
 
-        <button
-          className="toggle-second-nav"
-          onClick={() => setSecondNavOpen((v) => !v)}
-        >
-          {secondNavOpen ? (
-            <Tooltip position="right" title="Collapse">
-              <ChevronLeftIcon label="Collapse" secondaryColor="inherit" />
-            </Tooltip>
-          ) : (
-            <Tooltip position="right" title="Expand">
-              <ChevronRightIcon label="Expand" secondaryColor="inherit" />
-            </Tooltip>
-          )}
-        </button>
-      </div>
+      <button
+        className="toggle-global-nav"
+        onClick={() => setNavOpen((v) => !v)}
+      >
+        {navOpen ? (
+          <Tooltip position="right" title="Collapse">
+            <ChevronLeftIcon label="Collapse" secondaryColor="inherit" />
+          </Tooltip>
+        ) : (
+          <Tooltip position="right" title="Expand">
+            <ChevronRightIcon label="Expand" secondaryColor="inherit" />
+          </Tooltip>
+        )}
+      </button>
     </div>
   );
 };
