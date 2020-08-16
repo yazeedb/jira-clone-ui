@@ -29,8 +29,6 @@ export const CompleteSignup: FC<CompleteSignupProps> = ({
 
   const fieldsWithEmptyStringDefaults = mapObject((value) => value || '', user);
 
-  console.log('CompleteSignup', current);
-
   return (
     <>
       <LandingForm containerClassName="complete-signup">

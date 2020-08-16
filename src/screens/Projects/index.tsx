@@ -20,8 +20,6 @@ export const Projects = () => {
     devTools: true
   });
 
-  console.log('Projects current:', current);
-
   switch (true) {
     case current.matches('fetchingProjects'):
       return <ProgressBar isIndeterminate />;
@@ -40,8 +38,6 @@ export const Projects = () => {
   function ViewProjects() {
     const { projects, createProjectService } = current.context;
     const [filter, setFilter] = useState('');
-
-    console.log('ViewProjects current:', current);
 
     const renderContent = () => {
       if (projects.length === 0) {

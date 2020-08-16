@@ -44,8 +44,6 @@ export const Board: FC<BoardProps> = ({ user }) => {
     { devTools: true }
   );
 
-  console.log('Board machine:', current);
-
   const [filter, setFilter] = useState('');
 
   const renderContent = () => {
@@ -390,8 +388,6 @@ export const Board: FC<BoardProps> = ({ user }) => {
         ) {
           return;
         }
-
-        console.log(type);
 
         const { columns } = current.context.project;
 

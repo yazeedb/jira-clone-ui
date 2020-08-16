@@ -53,7 +53,6 @@ export const SetColumnLimit: FC<SetColumnLimitProps> = ({
                         value={limit}
                         onChange={(event) => {
                           fieldProps.onChange(event);
-                          console.log('change', event.currentTarget.value);
 
                           setLimit(event.currentTarget.value);
                         }}

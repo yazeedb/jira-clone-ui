@@ -31,8 +31,6 @@ export const CreateProject: FC<CreateProjectProps> = ({
 
   const [popupOpen, setPopupOpen] = useState(false);
 
-  console.log('createProjectService:', current);
-
   return (
     <Drawer
       width="full"

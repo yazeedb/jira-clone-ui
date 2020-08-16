@@ -45,7 +45,6 @@ export const App = () => {
 
 const AuthShell = () => {
   const [current, send] = useMachine(authMachine, { devTools: true });
-  console.log('App.tsx', current);
 
   const history = useHistory();
   const { pathname, search } = useLocation();

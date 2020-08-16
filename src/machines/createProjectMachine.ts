@@ -134,7 +134,6 @@ export const createProjectMachine = Machine<MachineContext>(
     services: {
       createProject: (context, event) =>
         fetcher.get<OrgsResponse>(apiRoutes.orgs).then((response) => {
-          console.log(event);
           // TODO: Support multiple orgs?
           // We're hardcoding the first one for now.
           const [firstOrg] = response.data.orgs;

@@ -92,8 +92,6 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
             target: 'awaitingOrgConfirmation',
             actions: assign({
               user: (context, event) => {
-                console.log('SIGNUP_COMPLETE RAN', { context, event });
-
                 return event.user;
               }
             })
@@ -143,10 +141,6 @@ export const authMachine = Machine<AuthContext, AuthStateSchema, AuthEvent>(
             return Promise.reject(error);
           }
         );
-
-        return () => {
-          console.log('401 logic cleaned up');
-        };
       }
     },
     actions: {
