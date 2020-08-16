@@ -64,6 +64,7 @@
     "startMockApi": "nodemon ./mock-api/server.js",
     "startUi": "react-scripts start",
     "start": "npm-run-all --parallel startMockApi startUi",
+    "startProd": "node prod-server.js",
     "build": "react-scripts build",
     "test": "react-scripts test --env=node",
     "eject": "react-scripts eject",
