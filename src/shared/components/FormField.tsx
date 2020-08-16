@@ -11,7 +11,14 @@ export const FormField: FC<FormFieldProps> = (props) => {
       {({ field, meta }: any) => {
         const className = meta.touched && !!meta.error ? 'error' : '';
 
-        return <input className={className} {...field} {...props} />;
+        return (
+          <input
+            className={className}
+            autoComplete="off"
+            {...field}
+            {...props}
+          />
+        );
       }}
     </Field>
   );
