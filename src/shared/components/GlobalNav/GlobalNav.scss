@@ -1,7 +1,6 @@
 @import '../../../theme.scss';
 
-$first-nav-width: 64px;
-$second-nav-width: 240px;
+$second-nav-width: 300px;
 $nav-padding-top: 30px;
 $light-global-nav-bg: lighten($primary, 10%);
 $light-global-nav-bg-2: lighten($primary, 25%);
@@ -11,7 +10,7 @@ $toggle-second-nav-width: 24px;
 .global-nav {
   height: 100vh;
   color: $background-active;
-  max-width: $first-nav-width + $second-nav-width;
+  max-width: $second-nav-width;
   display: flex;
   flex-direction: row;
 
@@ -30,45 +29,9 @@ $toggle-second-nav-width: 24px;
     text-decoration: none;
   }
 
-  .first-nav,
   .second-nav {
     padding-top: $nav-padding-top;
     background-color: $primary;
-  }
-
-  .first-nav {
-    width: $first-nav-width;
-    padding-top: $nav-padding-top - 5;
-    padding-bottom: $nav-padding-top - 15;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-
-    .icon-row {
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    .icon-wrapper {
-      margin-bottom: 8px;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      cursor: pointer;
-      text-align: center;
-      padding-top: 3px;
-
-      &:hover {
-        background-color: $light-global-nav-bg;
-      }
-    }
-
-    .jira-logo-wrapper {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 13px;
-    }
   }
 
   .second-nav {
@@ -82,7 +45,7 @@ $toggle-second-nav-width: 24px;
     white-space: nowrap;
 
     &.closed {
-      width: 20px;
+      width: 50px;
       padding: 0;
 
       .title,
