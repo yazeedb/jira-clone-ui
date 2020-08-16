@@ -19,7 +19,7 @@ export const Login: FC<LoginProps> = ({ loading, onSuccess, onFailure }) => {
     if (loading) {
       return (
         <>
-          <h4 className="heading">Authenticating...</h4>
+          <h4 className="loading-header">Authenticating...</h4>
           <Spinner size="large" />
         </>
       );
