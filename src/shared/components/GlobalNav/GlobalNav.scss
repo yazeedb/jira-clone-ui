@@ -1,6 +1,7 @@
 @import '../../../theme.scss';
 
-$second-nav-width: 250px;
+$global-nav-width: 200px;
+$global-nav-width-closed: $global-nav-width / 5;
 $light-global-nav-bg: lighten($primary, 10%);
 $dark-global-nav-bg: darken($primary, 8%);
 $toggle-width: 24px;
@@ -13,7 +14,7 @@ $toggle-width: 24px;
   color: $background-active;
   background-color: $primary;
 
-  min-width: $second-nav-width;
+  min-width: $global-nav-width;
   height: 100vh;
   transition: min-width 300ms cubic-bezier(0.2, 0, 0, 1) 0s;
   will-change: min-width;
@@ -25,7 +26,7 @@ $toggle-width: 24px;
   white-space: nowrap;
 
   &.closed {
-    min-width: 50px;
+    min-width: $global-nav-width-closed;
     padding: 0;
 
     .title,
@@ -73,15 +74,15 @@ $toggle-width: 24px;
     border: none;
     outline: none;
     cursor: pointer;
-    box-shadow: $second-nav-box-shadow 0px 0px 0px 1px,
-      $second-nav-box-shadow 0px 2px 4px 1px;
+    box-shadow: $global-nav-box-shadow 0px 0px 0px 1px,
+      $global-nav-box-shadow 0px 2px 4px 1px;
 
     transition: background-color 100ms linear 0s, color 100ms linear 0s,
       opacity 300ms cubic-bezier(0.2, 0, 0, 1) 0s,
       transform 300ms cubic-bezier(0.2, 0, 0, 1) 0s;
 
     &:hover {
-      background-color: $second-nav-hover;
+      background-color: $global-nav-hover;
       color: $white;
     }
   }
