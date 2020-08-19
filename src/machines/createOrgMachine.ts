@@ -91,11 +91,13 @@ export const createOrgMachine = Machine<MachineContext, any, MachineEvent>(
       formIsValid: (context, event) => {
         const e = event as SubmitEvent;
 
-        return e.formData.org.trim().length > 0;
+        return formIsValid(e.formData);
       }
     }
   }
 );
+
+export const formIsValid = (fields: FormFields) => !!fields.org.trim();
 
 type SubmitEvent = { type: 'SUBMIT'; formData: FormFields };
 type RetryEvent = { type: 'RETRY' };

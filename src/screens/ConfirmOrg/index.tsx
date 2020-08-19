@@ -7,7 +7,7 @@ import {
   ConfirmOrgService,
   ConfirmOrgStates
 } from 'machines/confirmOrgMachine';
-import { CreateOrgStates } from 'machines/createOrgMachine';
+import { CreateOrgStates, formIsValid } from 'machines/createOrgMachine';
 import { Formik, Form } from 'formik';
 import { FormField } from 'shared/components/FormField';
 import Button from '@atlaskit/button';
@@ -64,8 +64,13 @@ export const ConfirmOrg: FC<ConfirmOrgProps> = ({
       <Formik
         initialValues={{ org: '' }}
         validate={(values) => {
-          // TODO: Validate this form
-          return {};
+          if (formIsValid(values)) {
+            return undefined;
+          }
+
+          return {
+            org: 'Please enter a value'
+          };
         }}
         onSubmit={(values) => {
           send({
@@ -88,7 +93,7 @@ export const ConfirmOrg: FC<ConfirmOrgProps> = ({
             <Button
               type="submit"
               isLoading={createOrgCurrent.matches(CreateOrgStates.submitting)}
-              disabled={!isValid}
+              isDisabled={!isValid}
               shouldFitContainer
               appearance="primary"
             >
