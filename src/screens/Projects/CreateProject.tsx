@@ -205,11 +205,6 @@ export const CreateProject: FC<CreateProjectProps> = ({
                               return (
                                 <Button
                                   className="popup-trigger"
-                                  style={{
-                                    marginLeft: '10px',
-                                    cursor: 'pointer',
-                                    background: 'none'
-                                  }}
                                   onClick={() => setPopupOpen((v) => !v)}
                                   {...triggerProps}
                                 >

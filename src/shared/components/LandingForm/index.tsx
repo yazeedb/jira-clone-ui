@@ -12,13 +12,15 @@ export const LandingForm: FC<LandingFormProps> = ({
   return (
     <main className="landing-form">
       <div className="container">
-        <header>
-          <img src="jira-logo.svg" alt="Jira Logo" className="jira-logo" />
-        </header>
+        <div>
+          <header>
+            <img src="jira-logo.svg" alt="Jira Logo" className="jira-logo" />
+          </header>
 
-        <section className={`landing-form-section ${containerClassName}`}>
-          {children}
-        </section>
+          <section className={`landing-form-section ${containerClassName}`}>
+            {children}
+          </section>
+        </div>
 
         <footer>
           <img src="Atlassian-horizontal-blue-rgb.svg" alt="Atlassian Logo" />
